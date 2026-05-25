@@ -359,7 +359,7 @@ function esAmparo(r){return[r[2],r[5],r[9]].map(x=>String(x||'').toLowerCase()).
 
 async function cargarRutas(){
   try{
-    const j=await jsonp(KPI_SCRIPT+'?sheet=RUTAS&t='+Date.now());
+    const j=await jsonp(SCRIPT_URL+'?sheet=RUTAS&t='+Date.now());
     const rows=(j.data||[]).slice(1).filter(r=>r[0]);
     rutasData=rows.map(r=>({ruta:String(r[0]),seccion:String(r[1]),desc:String(r[2]||'')}));
     const rutas=[...new Set(rutasData.map(r=>r.ruta))];
