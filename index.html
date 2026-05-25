@@ -29,10 +29,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .field select{color:#007AFF;-webkit-appearance:none}
 .field textarea{border:none;outline:none;font-size:14px;color:#1C1C1E;background:transparent;width:100%;resize:none;height:72px;margin-top:6px;font-family:inherit;line-height:1.5}
 .field-vertical{flex-direction:column;align-items:flex-start;gap:4px}
+.field-desc{padding:10px 16px;background:#EBF3FB;border-bottom:0.5px solid #E5E5EA}
+.field-desc p{font-size:12px;color:#1F3864;font-weight:500;line-height:1.4}
 .btn-primary{width:100%;padding:14px;background:#1F3864;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
-.btn-secondary{width:100%;padding:10px;background:#EBF3FB;color:#1F3864;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
 .btn-primary:disabled{opacity:0.5}
-.btn-primary:active,.btn-secondary:active{opacity:0.8}
+.btn-primary:active{opacity:0.8}
 .toast{position:fixed;bottom:max(32px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#1F3864;color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
 .toast.error{background:#C0392B}
@@ -45,10 +46,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .stat-card{background:#fff;border-radius:12px;padding:14px;text-align:center}
 .stat-num{font-size:28px;font-weight:700;color:#1F3864;line-height:1}
 .stat-label{font-size:11px;color:#6D6D72;margin-top:4px}
-.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:4px}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .filtro-btn{padding:5px 12px;font-size:12px;border:0.5px solid #C7C7CC;border-radius:20px;background:#fff;color:#6D6D72;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
 .filtro-btn.on{background:#1F3864;color:#fff;border-color:#1F3864}
-.search-box{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:10px;color:#1C1C1E}
+.filtro-amparo{padding:5px 12px;font-size:12px;border:0.5px solid #C7C7CC;border-radius:20px;background:#fff;color:#6D6D72;cursor:pointer;white-space:nowrap;font-family:inherit}
+.filtro-amparo.on{background:#8B1A1A;color:#fff;border-color:#8B1A1A}
+.search-box{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;color:#1C1C1E}
+.select-filtro{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;color:#1C1C1E;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236D6D72' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .item-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;border-left:4px solid #E5E5EA}
 .item-card.alta{border-left-color:#FF3B30}
 .item-card.media{border-left-color:#FF9500}
@@ -69,6 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .chip-prioridad-alta{background:#FFEBEE;color:#8B1A1A}
 .chip-prioridad-media{background:#FFF3E0;color:#7A4500}
 .chip-prioridad-baja{background:#E8F8EE;color:#1A5C2E}
+.chip-amparo{background:#F3E8FF;color:#6B21A8}
 .item-fecha{font-size:11px;color:#6D6D72;margin-top:4px}
 .empty-state{text-align:center;padding:40px 20px;color:#6D6D72;font-size:14px;line-height:1.6}
 .detail-field{padding:10px 0;border-bottom:0.5px solid #E5E5EA;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -78,14 +83,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-section{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
 .detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
+.result-count{font-size:11px;color:#6D6D72;margin-bottom:8px;padding-left:4px}
 </style>
 </head>
 <body>
 
 <div class="page active" id="page-home">
   <div class="header">
-    <h1>Sistema de Gestión</h1>
-    <p>FAMCOVA – Zona 1-4 Región Central</p>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="width:80px"></div>
+      <div style="text-align:center"><h1>Sistema de Gestión</h1><p>FAMCOVA – Zona 1-4 Región Central</p></div>
+      <button class="btn-back" id="btn-refresh-home" onclick="actualizarDatos()">↻ Actualizar</button>
+    </div>
   </div>
   <div class="content">
     <div class="stats-grid">
@@ -133,7 +142,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="filtro-btn" onclick="filtrarADS('Pendiente',this)">Pendiente</button>
       <button class="filtro-btn" onclick="filtrarADS('En ejecucion',this)">En ejecución</button>
       <button class="filtro-btn" onclick="filtrarADS('Programar',this)">Programar</button>
+      <button class="filtro-amparo" id="btn-amparo" onclick="toggleAmparo()">⚖️ Recurso de amparo</button>
     </div>
+    <div id="ads-count" class="result-count"></div>
     <div id="ads-list"><div class="loading">Cargando...</div></div>
   </div>
 </div>
@@ -162,12 +173,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="content">
     <input class="search-box" id="proy-search" placeholder="Buscar por ruta, gestión, descripción..." oninput="renderProyectos()">
     <div class="filtros">
-      <button class="filtro-btn on" onclick="filtrarProy('Todos',this)">Todos</button>
-      <button class="filtro-btn" onclick="filtrarProy('Pendiente',this)">Pendiente</button>
-      <button class="filtro-btn" onclick="filtrarProy('Ejecucion',this)">En ejecución</button>
-      <button class="filtro-btn" onclick="filtrarProy('Atendido',this)">Atendido</button>
-      <button class="filtro-btn" onclick="filtrarProy('Alta',this)">Prioridad Alta</button>
+      <button class="filtro-btn on" onclick="filtrarProyEstado('Todos',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Pendiente',this)">Pendiente</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Atendido',this)">Atendido</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Alta',this)">Prioridad Alta</button>
     </div>
+    <select class="select-filtro" id="proy-filtro-gestion" onchange="renderProyectos()">
+      <option value="">Todos los tipos de gestión</option>
+      <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
+      <option>Baranda de puente</option><option>Baranda de puente, concreto y gaviones</option>
+      <option>Canal revestido</option><option>Concreto</option><option>Demarcación</option>
+      <option>Descuaje</option><option>Diseño muro contención</option><option>Escollera</option>
+      <option>Estudio Departamento Puentes</option><option>Estudio hidrológico</option>
+      <option>Guardacaminos</option><option>Limpieza</option><option>Limpiezas</option>
+      <option>Muro de contención</option><option>Parrilla</option><option>Remoción de arbol</option>
+      <option>Tapa con flanger</option><option>Tubería y canal revestido</option><option>Tubería y concreto</option>
+    </select>
+    <div id="proy-count" class="result-count"></div>
     <div id="proy-list"><div class="loading">Cargando...</div></div>
   </div>
 </div>
@@ -188,7 +211,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="field"><label>Fecha ingreso</label><input type="date" id="nads-fecha"></div>
         <div class="field"><label>Solicitante</label><input type="text" id="nads-solicitante" placeholder="Nombre del solicitante"></div>
         <div class="field field-vertical"><label>Solicitud</label><textarea id="nads-solicitud" placeholder="Descripción de la solicitud..."></textarea></div>
-        <div class="field"><label>Ruta</label><input type="text" id="nads-ruta" placeholder="Ej: 124, Todas"></div>
+        <div class="field"><label>Ruta</label>
+          <select id="nads-ruta" onchange="actualizarSeccionesADS()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field"><label>Sección de control</label>
+          <select id="nads-seccion" onchange="mostrarDescADS()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field-desc" id="nads-desc-box" style="display:none"><p id="nads-desc-texto"></p></div>
         <div class="field"><label>¿Aplica?</label>
           <select id="nads-aplica" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option>Si</option><option>No</option>
@@ -197,17 +230,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="field field-vertical"><label>Recomendación de solución</label><textarea id="nads-recomendacion" placeholder="Recomendación de solución..."></textarea></div>
         <div class="field"><label>Prioridad</label>
           <select id="nads-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
-            <option value="1">Alta (1)</option>
-            <option value="2">Media (2)</option>
-            <option value="3">Baja (3)</option>
+            <option value="1">1 — Alta</option><option value="2">2 — Media</option><option value="3">3 — Baja</option>
           </select>
         </div>
         <div class="field"><label>Estado inicial</label>
           <select id="nads-estado" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
-            <option>Pendiente</option>
-            <option>Programar</option>
-            <option>En ejecucion</option>
-            <option>Atendido</option>
+            <option>Pendiente</option><option>Programar</option><option>En ejecucion</option><option>Atendido</option>
           </select>
         </div>
         <div class="field"><label>Monto estimado (₡)</label><input type="number" id="nads-monto" placeholder="0" style="max-width:60%"></div>
@@ -232,9 +260,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="section-title">Datos del proyecto</div>
       <div class="card">
         <div class="field"><label>Zona</label><input type="text" id="nproy-zona" value="1-4" style="max-width:80px"></div>
-        <div class="field"><label>Ruta</label><input type="text" id="nproy-ruta" placeholder="Ej: 124"></div>
-        <div class="field"><label>Sección de control</label><input type="text" id="nproy-seccion" placeholder="Ej: 20262"></div>
-        <div class="field"><label>Gestión de proyecto</label><input type="text" id="nproy-gestion" placeholder="Ej: Bacheo urgencia"></div>
+        <div class="field"><label>Ruta</label>
+          <select id="nproy-ruta" onchange="actualizarSeccionesProy()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field"><label>Sección de control</label>
+          <select id="nproy-seccion" onchange="mostrarDescProy()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field-desc" id="nproy-desc-box" style="display:none"><p id="nproy-desc-texto"></p></div>
+        <div class="field"><label>Tipo de gestión</label>
+          <select id="nproy-gestion" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+            <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
+            <option>Baranda de puente</option><option>Baranda de puente, concreto y gaviones</option>
+            <option>Canal revestido</option><option>Concreto</option><option>Demarcación</option>
+            <option>Descuaje</option><option>Diseño muro contención</option><option>Escollera</option>
+            <option>Estudio Departamento Puentes</option><option>Estudio hidrológico</option>
+            <option>Guardacaminos</option><option>Limpieza</option><option>Limpiezas</option>
+            <option>Muro de contención</option><option>Parrilla</option><option>Remoción de arbol</option>
+            <option>Tapa con flanger</option><option>Tubería y canal revestido</option>
+            <option>Tubería y concreto</option><option>Otro</option>
+          </select>
+        </div>
         <div class="field field-vertical"><label>Descripción de la situación</label><textarea id="nproy-descripcion" placeholder="Descripción detallada..."></textarea></div>
         <div class="field"><label>Prioridad</label>
           <select id="nproy-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
@@ -265,20 +315,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
-let adsData=[],proyData=[];
-let filtroADS='Todos',filtroProy='Todos';
+const KPI_SCRIPT='https://script.google.com/macros/s/AKfycbzGTAhyRU1YXEc4DkIyMYe2gH5j7hHXcwlzwAg5-Ud_vuL55a59JDo8Erif3ZSQwx-OSQ/exec';
+let adsData=[],proyData=[],rutasData=[];
+let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false;
 
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
-}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 
-function toast(msg,err=false,ok=false){
-  const t=document.getElementById('toast');t.textContent=msg;
-  t.className='toast'+(err?' error':ok?' success':'')+' show';
-  setTimeout(()=>t.className='toast',3500);
-}
+function toast(msg,err=false,ok=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' error':ok?' success':'')+' show';setTimeout(()=>t.className='toast',3500);}
 
 function jsonp(url){
   return new Promise((res,rej)=>{
@@ -288,44 +331,19 @@ function jsonp(url){
     s.src=url+'&callback='+cb;
     s.onerror=()=>rej(new Error('JSONP error'));
     document.head.appendChild(s);
-    setTimeout(()=>rej(new Error('JSONP timeout')),10000);
+    setTimeout(()=>rej(new Error('Timeout')),12000);
   });
 }
 
-function fmt(n){
-  if(!n||n==='')return'—';
-  const num=parseFloat(String(n).replace(/[^\d.]/g,''));
-  if(isNaN(num))return String(n);
-  return'₡'+num.toLocaleString('es-CR');
-}
+function fmt(n){if(!n||n==='')return'—';const num=parseFloat(String(n).replace(/[^\d.]/g,''));if(isNaN(num))return String(n);return'₡'+num.toLocaleString('es-CR');}
 
-function fmtFecha(v){
-  if(!v)return'—';
-  const s=String(v);
-  if(s.includes('T'))return s.split('T')[0];
-  if(s.includes('-'))return s;
-  const n=parseFloat(s);
-  if(!isNaN(n)&&n>40000){
-    const d=new Date((n-25569)*86400*1000);
-    return d.toLocaleDateString('es-CR');
-  }
-  return s;
-}
+function fmtFecha(v){if(!v)return'—';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
 
-function chipEstado(e){
-  const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};
-  return m[e]||'chip-estado-p';
-}
+function chipEstado(e){const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};return m[e]||'chip-estado-p';}
 
-function chipPrioridad(p){
-  const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};
-  return m[String(p)]||'chip-prioridad-media';
-}
+function chipPrioridad(p){const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};return m[String(p)]||'chip-prioridad-media';}
 
-function labelPrioridad(p){
-  const m={'1':'Alta','2':'Media','3':'Baja'};
-  return m[String(p)]||String(p)||'—';
-}
+function labelPrioridad(p){const m={'1':'Alta','2':'Media','3':'Baja'};return m[String(p)]||String(p)||'—';}
 
 function cardColor(estado,prioridad){
   if(estado==='Atendido')return'atendido';
@@ -337,21 +355,66 @@ function cardColor(estado,prioridad){
   return'baja';
 }
 
-async function cargarDatos(){
+function esAmparo(r){return[r[2],r[5],r[9]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes('amparo'));}
+
+async function cargarRutas(){
   try{
-    const [j1,j2]=await Promise.all([
-      jsonp(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),
-      jsonp(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())
-    ]);
+    const j=await jsonp(KPI_SCRIPT+'?sheet=RUTAS&t='+Date.now());
+    const rows=(j.data||[]).slice(1).filter(r=>r[0]);
+    rutasData=rows.map(r=>({ruta:String(r[0]),seccion:String(r[1]),desc:String(r[2]||'')}));
+    const rutas=[...new Set(rutasData.map(r=>r.ruta))];
+    ['nads-ruta','nproy-ruta'].forEach(id=>{
+      const sel=document.getElementById(id);
+      rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
+    });
+  }catch(e){console.log('Error rutas',e);}
+}
+
+function actualizarSeccionesADS(){
+  const ruta=document.getElementById('nads-ruta').value;
+  const sel=document.getElementById('nads-seccion');
+  sel.innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nads-desc-box').style.display='none';
+  if(!ruta)return;
+  rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});
+}
+
+function mostrarDescADS(){
+  const sel=document.getElementById('nads-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';
+  const box=document.getElementById('nads-desc-box');
+  if(desc&&desc!=='undefined'){document.getElementById('nads-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';
+}
+
+function actualizarSeccionesProy(){
+  const ruta=document.getElementById('nproy-ruta').value;
+  const sel=document.getElementById('nproy-seccion');
+  sel.innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nproy-desc-box').style.display='none';
+  if(!ruta)return;
+  rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});
+}
+
+function mostrarDescProy(){
+  const sel=document.getElementById('nproy-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';
+  const box=document.getElementById('nproy-desc-box');
+  if(desc&&desc!=='undefined'){document.getElementById('nproy-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';
+}
+
+async function cargarDatos(spinner=false){
+  if(spinner){const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ ...';}
+  try{
+    const [j1,j2]=await Promise.all([jsonp(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),jsonp(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())]);
     adsData=(j1.data||[]).slice(1).filter(r=>r[0]||r[1]||r[2]);
     proyData=(j2.data||[]).slice(1).filter(r=>r[0]||r[3]||r[4]);
     actualizarStats();
     document.getElementById('last-update').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CR');
-  }catch(e){
-    document.getElementById('last-update').textContent='Error de conexión – reintentando...';
-    setTimeout(cargarDatos,5000);
-  }
+    if(document.getElementById('page-ads').classList.contains('active'))renderADS();
+    if(document.getElementById('page-proyectos').classList.contains('active'))renderProyectos();
+  }catch(e){document.getElementById('last-update').textContent='Error de conexión';}
+  const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ Actualizar';
 }
+
+function actualizarDatos(){cargarDatos(true);}
 
 function actualizarStats(){
   document.getElementById('stat-ads-total').textContent=adsData.length;
@@ -360,31 +423,23 @@ function actualizarStats(){
   document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>String(r[10]).toLowerCase().includes('jecuc')).length;
 }
 
-// ─── ADS ───
-function abrirADS(){
-  showPage('page-ads');
-  if(!adsData.length)cargarDatos().then(renderADS);
-  else renderADS();
-}
+function abrirADS(){showPage('page-ads');if(!adsData.length)cargarDatos().then(renderADS);else renderADS();}
 
-function filtrarADS(f,btn){
-  filtroADS=f;
-  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderADS();
-}
+function filtrarADS(f,btn){filtroADS=f;document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderADS();}
+
+function toggleAmparo(){soloAmparo=!soloAmparo;document.getElementById('btn-amparo').classList.toggle('on',soloAmparo);renderADS();}
 
 function renderADS(){
   const q=(document.getElementById('ads-search').value||'').toLowerCase();
   let rows=adsData;
   if(filtroADS!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroADS.toLowerCase()));
+  if(soloAmparo)rows=rows.filter(r=>esAmparo(r));
   if(q)rows=rows.filter(r=>[r[1],r[2],r[3],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=[...rows].reverse().map(r=>{
-    const idx=adsData.indexOf(r);
-    const estado=String(r[10]||'Pendiente');
-    const color=cardColor(estado,String(r[11]));
+    const idx=adsData.indexOf(r);const estado=String(r[10]||'Pendiente');const color=cardColor(estado,String(r[11]));const amparo=esAmparo(r);
     return`<div class="item-card ${color}" onclick="verADS(${idx})">
       <div class="item-title">${r[2]||'Sin descripción'}</div>
       <div style="font-size:12px;color:#6D6D72;margin-top:2px">${r[1]||'—'}</div>
@@ -392,6 +447,7 @@ function renderADS(){
         ${r[3]?`<span class="chip chip-ruta">Ruta ${r[3]}</span>`:''}
         <span class="chip ${chipEstado(estado)}">${estado}</span>
         ${r[11]?`<span class="chip ${chipPrioridad(r[11])}">${labelPrioridad(r[11])}</span>`:''}
+        ${amparo?'<span class="chip chip-amparo">⚖️ Amparo</span>':''}
       </div>
       <div class="item-fecha">${fmtFecha(r[0])}</div>
     </div>`;
@@ -402,6 +458,7 @@ function verADS(idx){
   const r=adsData[idx];if(!r)return;
   const estado=String(r[10]||'Pendiente');
   const estados=['Pendiente','Programar','En ejecucion','Atendido'];
+  const amparo=esAmparo(r);
   document.getElementById('ads-detail-content').innerHTML=`
     <div class="detail-section">
       <div class="detail-section-title">Identificación</div>
@@ -410,6 +467,7 @@ function verADS(idx){
       <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[3]||'—'}</span></div>
       <div class="detail-field"><span class="detail-label">¿Aplica?</span><span class="detail-value">${r[4]||'—'}</span></div>
       <div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">${labelPrioridad(r[11])}</span></div>
+      ${amparo?'<div class="detail-field"><span class="detail-label">Tipo</span><span class="detail-value" style="color:#6B21A8;font-weight:600">⚖️ Recurso de amparo</span></div>':''}
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Solicitud</div>
@@ -439,44 +497,30 @@ function verADS(idx){
 
 async function actualizarEstadoADS(idx){
   const nuevoEstado=document.getElementById('estado-ads-sel').value;
-  const row=[...adsData[idx]];
-  row[10]=nuevoEstado;
+  const row=[...adsData[idx]];row[10]=nuevoEstado;
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
-      body:JSON.stringify({row,updateRow:idx+1,sheet:'ADS'}),
-      headers:{'Content-Type':'application/json'}});
-    adsData[idx]=row;
-    actualizarStats();
-    toast('✓ Estado actualizado: '+nuevoEstado,false,true);
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:idx+1,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+    adsData[idx]=row;actualizarStats();toast('✓ Estado actualizado: '+nuevoEstado,false,true);
   }catch(e){toast('Error de conexión',true);}
 }
 
-// ─── PROYECTOS ───
-function abrirProyectos(){
-  showPage('page-proyectos');
-  if(!proyData.length)cargarDatos().then(renderProyectos);
-  else renderProyectos();
-}
+function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
 
-function filtrarProy(f,btn){
-  filtroProy=f;
-  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderProyectos();
-}
+function filtrarProyEstado(f,btn){filtroProyEstado=f;document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderProyectos();}
 
 function renderProyectos(){
   const q=(document.getElementById('proy-search').value||'').toLowerCase();
+  const gestion=(document.getElementById('proy-filtro-gestion').value||'').toLowerCase();
   let rows=proyData;
-  if(filtroProy==='Alta')rows=rows.filter(r=>String(r[5]).toLowerCase()==='alta');
-  else if(filtroProy!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroProy.toLowerCase()));
+  if(filtroProyEstado==='Alta')rows=rows.filter(r=>String(r[5]).toLowerCase()==='alta');
+  else if(filtroProyEstado!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroProyEstado.toLowerCase()));
+  if(gestion)rows=rows.filter(r=>String(r[3]||'').toLowerCase()===gestion);
   if(q)rows=rows.filter(r=>[r[1],r[3],r[4],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
   const list=document.getElementById('proy-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=rows.map(r=>{
-    const estado=String(r[10]||'Pendiente');
-    const prioridad=String(r[5]||'Media');
-    const color=cardColor(estado,prioridad);
+    const estado=String(r[10]||'Pendiente');const prioridad=String(r[5]||'Media');const color=cardColor(estado,prioridad);
     const costo=r[6]&&String(r[6])!==''&&String(r[6])!=='Sin monto estimado'?fmt(r[6]):'Sin monto estimado';
     return`<div class="item-card ${color} nocursor">
       <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[3]||'—'}</div>
@@ -494,9 +538,11 @@ function renderProyectos(){
   }).join('');
 }
 
-// ─── NUEVA ADS ───
 function abrirNuevaADS(){
   document.getElementById('nads-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('nads-ruta').value='';
+  document.getElementById('nads-seccion').innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nads-desc-box').style.display='none';
   showPage('page-nueva-ads');
 }
 
@@ -504,69 +550,60 @@ async function guardarADS(){
   const solicitante=document.getElementById('nads-solicitante').value.trim();
   const solicitud=document.getElementById('nads-solicitud').value.trim();
   if(!solicitante||!solicitud){toast('Solicitante y solicitud son obligatorios',true);return;}
-  const btn=document.getElementById('btn-guardar-ads');
-  btn.disabled=true;btn.textContent='Guardando...';
+  const btn=document.getElementById('btn-guardar-ads');btn.disabled=true;btn.textContent='Guardando...';
   const row=[
-    document.getElementById('nads-fecha').value,
-    solicitante,solicitud,
+    document.getElementById('nads-fecha').value,solicitante,solicitud,
     document.getElementById('nads-ruta').value,
     document.getElementById('nads-aplica').value,
     document.getElementById('nads-recomendacion').value,
-    document.getElementById('nads-monto').value||'',
-    '','',
+    document.getElementById('nads-monto').value||'','','',
     document.getElementById('nads-obs').value,
     document.getElementById('nads-estado').value,
     document.getElementById('nads-prioridad').value
   ];
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
-      body:JSON.stringify({row,sheet:'ADS'}),
-      headers:{'Content-Type':'application/json'}});
-    adsData.push(row);
-    actualizarStats();
-    toast('✓ ADS registrada correctamente',false,true);
-    ['nads-solicitante','nads-solicitud','nads-ruta','nads-recomendacion','nads-monto','nads-obs'].forEach(id=>document.getElementById(id).value='');
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+    adsData.push(row);actualizarStats();toast('✓ ADS registrada correctamente',false,true);
+    ['nads-solicitante','nads-solicitud','nads-recomendacion','nads-monto','nads-obs'].forEach(id=>document.getElementById(id).value='');
     setTimeout(()=>showPage('page-home'),1200);
   }catch(e){toast('Error de conexión',true);}
   btn.disabled=false;btn.textContent='Guardar solicitud';
 }
 
-// ─── NUEVO PROYECTO ───
-function abrirNuevoProyecto(){showPage('page-nuevo-proy');}
+function abrirNuevoProyecto(){
+  document.getElementById('nproy-ruta').value='';
+  document.getElementById('nproy-seccion').innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nproy-desc-box').style.display='none';
+  showPage('page-nuevo-proy');
+}
 
 async function guardarProyecto(){
-  const ruta=document.getElementById('nproy-ruta').value.trim();
+  const ruta=document.getElementById('nproy-ruta').value;
   const desc=document.getElementById('nproy-descripcion').value.trim();
   if(!ruta||!desc){toast('Ruta y descripción son obligatorios',true);return;}
-  const btn=document.getElementById('btn-guardar-proy');
-  btn.disabled=true;btn.textContent='Guardando...';
+  const btn=document.getElementById('btn-guardar-proy');btn.disabled=true;btn.textContent='Guardando...';
   const row=[
-    document.getElementById('nproy-zona').value,
-    ruta,
+    document.getElementById('nproy-zona').value,ruta,
     document.getElementById('nproy-seccion').value,
-    document.getElementById('nproy-gestion').value,
-    desc,
+    document.getElementById('nproy-gestion').value,desc,
     document.getElementById('nproy-prioridad').value,
-    document.getElementById('nproy-costo').value||'',
-    '','',
+    document.getElementById('nproy-costo').value||'','','',
     document.getElementById('nproy-solicitud').value,
     document.getElementById('nproy-estado').value,
     document.getElementById('nproy-contrato').value
   ];
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
-      body:JSON.stringify({row,sheet:'PROYECTOS'}),
-      headers:{'Content-Type':'application/json'}});
-    proyData.push(row);
-    actualizarStats();
-    toast('✓ Proyecto registrado correctamente',false,true);
-    ['nproy-ruta','nproy-seccion','nproy-gestion','nproy-descripcion','nproy-costo','nproy-solicitud'].forEach(id=>document.getElementById(id).value='');
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'PROYECTOS'}),headers:{'Content-Type':'application/json'}});
+    proyData.push(row);actualizarStats();toast('✓ Proyecto registrado correctamente',false,true);
+    ['nproy-descripcion','nproy-costo','nproy-solicitud'].forEach(id=>document.getElementById(id).value='');
     setTimeout(()=>showPage('page-home'),1200);
   }catch(e){toast('Error de conexión',true);}
   btn.disabled=false;btn.textContent='Guardar proyecto';
 }
 
-cargarDatos();
+cargarDatos(false);
+cargarRutas();
+setInterval(()=>cargarDatos(false),5*60*1000);
 </script>
 </body>
 </html>
