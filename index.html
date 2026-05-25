@@ -182,6 +182,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="filtro-btn" onclick="filtrarProyEstado('Ejecucion',this)">En ejecución</button>
       <button class="filtro-btn" onclick="filtrarProyEstado('Atendido',this)">Atendido</button>
       <button class="filtro-btn" onclick="filtrarProyEstado('Alta',this)">Prioridad Alta</button>
+      <button class="filtro-amparo" id="btn-amparo-proy" onclick="toggleAmparoProy()">Recurso de amparo</button>
     </div>
     <select class="select-filtro" id="proy-filtro-gestion" onchange="renderProyectos()">
       <option value="">Todos los tipos de gestión</option>
@@ -331,7 +332,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
 let adsData=[],proyData=[],rutasData=[];
-let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false;
+let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
 
 // Índices ADS
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
@@ -523,6 +524,12 @@ async function actualizarEstadoADS(idx){
 function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
 function filtrarProyEstado(f,btn){filtroProyEstado=f;document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderProyectos();}
 
+function toggleAmparoProy(){
+  soloAmparoProy=!soloAmparoProy;
+  document.getElementById('btn-amparo-proy').classList.toggle('on',soloAmparoProy);
+  renderProyectos();
+}  
+  
 function renderProyectos(){
   const q=(document.getElementById('proy-search').value||'').toLowerCase();
   const gestion=(document.getElementById('proy-filtro-gestion').value||'').toLowerCase();
@@ -530,6 +537,7 @@ function renderProyectos(){
   if(filtroProyEstado==='Alta')rows=rows.filter(r=>String(r[P.prior]).toLowerCase()==='alta');
   else if(filtroProyEstado!=='Todos')rows=rows.filter(r=>String(r[P.estado]).toLowerCase().includes(filtroProyEstado.toLowerCase()));
   if(gestion)rows=rows.filter(r=>String(r[P.gestion]||'').toLowerCase()===gestion);
+  if(soloAmparoProy)rows=rows.filter(r=>[r[P.desc],r[P.solicitud]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes('amparo')));
   if(q)rows=rows.filter(r=>[r[P.ruta],r[P.gestion],r[P.desc],r[P.solicitud]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
   document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
   const list=document.getElementById('proy-list');
