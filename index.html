@@ -264,7 +264,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="toast" id="toast"></div>
 
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxDD5XtQ8TQlcNMWGUF4LY-uD59-YCYy0jZmmMtiKUuapn5srRXK62wTT3rnojP8mmZWA/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
 let adsData=[],proyData=[];
 let filtroADS='Todos',filtroProy='Todos';
 
@@ -280,6 +280,18 @@ function toast(msg,err=false,ok=false){
   setTimeout(()=>t.className='toast',3500);
 }
 
+function jsonp(url){
+  return new Promise((res,rej)=>{
+    const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    window[cb]=data=>{res(data);delete window[cb];s.remove();};
+    const s=document.createElement('script');
+    s.src=url+'&callback='+cb;
+    s.onerror=()=>rej(new Error('JSONP error'));
+    document.head.appendChild(s);
+    setTimeout(()=>rej(new Error('JSONP timeout')),10000);
+  });
+}
+
 function fmt(n){
   if(!n||n==='')return'—';
   const num=parseFloat(String(n).replace(/[^\d.]/g,''));
@@ -290,6 +302,7 @@ function fmt(n){
 function fmtFecha(v){
   if(!v)return'—';
   const s=String(v);
+  if(s.includes('T'))return s.split('T')[0];
   if(s.includes('-'))return s;
   const n=parseFloat(s);
   if(!isNaN(n)&&n>40000){
@@ -326,11 +339,10 @@ function cardColor(estado,prioridad){
 
 async function cargarDatos(){
   try{
-    const [r1,r2]=await Promise.all([
-      fetch(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),
-      fetch(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())
+    const [j1,j2]=await Promise.all([
+      jsonp(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),
+      jsonp(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())
     ]);
-    const [j1,j2]=await Promise.all([r1.json(),r2.json()]);
     adsData=(j1.data||[]).slice(1).filter(r=>r[0]||r[1]||r[2]);
     proyData=(j2.data||[]).slice(1).filter(r=>r[0]||r[3]||r[4]);
     actualizarStats();
@@ -368,11 +380,10 @@ function renderADS(){
   if(filtroADS!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroADS.toLowerCase()));
   if(q)rows=rows.filter(r=>[r[1],r[2],r[3],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
   const list=document.getElementById('ads-list');
-  if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados para el filtro seleccionado</div>';return;}
+  if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=[...rows].reverse().map(r=>{
     const idx=adsData.indexOf(r);
     const estado=String(r[10]||'Pendiente');
-    const prioridad=labelPrioridad(r[11]);
     const color=cardColor(estado,String(r[11]));
     return`<div class="item-card ${color}" onclick="verADS(${idx})">
       <div class="item-title">${r[2]||'Sin descripción'}</div>
@@ -380,7 +391,7 @@ function renderADS(){
       <div class="item-meta">
         ${r[3]?`<span class="chip chip-ruta">Ruta ${r[3]}</span>`:''}
         <span class="chip ${chipEstado(estado)}">${estado}</span>
-        ${prioridad&&prioridad!=='—'?`<span class="chip ${chipPrioridad(r[11])}">${prioridad}</span>`:''}
+        ${r[11]?`<span class="chip ${chipPrioridad(r[11])}">${labelPrioridad(r[11])}</span>`:''}
       </div>
       <div class="item-fecha">${fmtFecha(r[0])}</div>
     </div>`;
@@ -388,8 +399,7 @@ function renderADS(){
 }
 
 function verADS(idx){
-  const r=adsData[idx];
-  if(!r)return;
+  const r=adsData[idx];if(!r)return;
   const estado=String(r[10]||'Pendiente');
   const estados=['Pendiente','Programar','En ejecucion','Atendido'];
   document.getElementById('ads-detail-content').innerHTML=`
@@ -418,7 +428,7 @@ function verADS(idx){
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Estado actual: <strong>${estado}</strong></div>
-      <div style="font-size:11px;color:#FF9500;margin-bottom:10px;background:#FFF3E0;padding:8px;border-radius:8px">⚠️ Solo Emanuel puede actualizar el estado de las ADS</div>
+      <div style="font-size:11px;color:#FF9500;margin-bottom:10px;background:#FFF3E0;padding:8px;border-radius:8px">⚠️ Solo Emanuel puede actualizar el estado</div>
       <select id="estado-ads-sel" style="width:100%;padding:10px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;font-family:inherit;color:#1C1C1E;background:#fff;-webkit-appearance:none">
         ${estados.map(e=>`<option value="${e}"${e===estado?' selected':''}>${e}</option>`).join('')}
       </select>
@@ -437,7 +447,7 @@ async function actualizarEstadoADS(idx){
       headers:{'Content-Type':'application/json'}});
     adsData[idx]=row;
     actualizarStats();
-    toast('✓ Estado actualizado a: '+nuevoEstado,false,true);
+    toast('✓ Estado actualizado: '+nuevoEstado,false,true);
   }catch(e){toast('Error de conexión',true);}
 }
 
