@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Gestión FAMCOVA">
+<title>Sistema de Gestión FAMCOVA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F2F2F7;color:#1C1C1E;min-height:100vh}
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+.header{background:#1F3864;padding:14px 16px;padding-top:max(14px,env(safe-area-inset-top));position:sticky;top:0;z-index:10}
+.header h1{color:#fff;font-size:17px;font-weight:600;text-align:center}
+.header p{color:rgba(255,255,255,0.7);font-size:12px;text-align:center;margin-top:2px}
+.header-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.btn-back{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.content{padding:16px;padding-bottom:max(40px,env(safe-area-inset-bottom))}
+.section{margin-bottom:12px}
+.section-title{font-size:12px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;padding-left:4px}
+.card{background:#fff;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.field{padding:12px 16px;border-bottom:0.5px solid #E5E5EA;display:flex;align-items:center;justify-content:space-between;min-height:48px}
+.field:last-child{border-bottom:none}
+.field label{font-size:15px;color:#1C1C1E;flex:1}
+.field input[type="date"],.field select,.field input[type="text"],.field input[type="number"]{border:none;outline:none;font-size:15px;color:#1C1C1E;text-align:right;background:transparent;max-width:60%;font-family:inherit}
+.field input[type="date"]{color:#007AFF}
+.field select{color:#007AFF;-webkit-appearance:none}
+.field textarea{border:none;outline:none;font-size:14px;color:#1C1C1E;background:transparent;width:100%;resize:none;height:72px;margin-top:6px;font-family:inherit;line-height:1.5}
+.field-vertical{flex-direction:column;align-items:flex-start;gap:4px}
+.btn-primary{width:100%;padding:14px;background:#1F3864;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.btn-secondary{width:100%;padding:10px;background:#EBF3FB;color:#1F3864;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.btn-primary:disabled{opacity:0.5}
+.btn-primary:active,.btn-secondary:active{opacity:0.8}
+.toast{position:fixed;bottom:max(32px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#1F3864;color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.error{background:#C0392B}
+.toast.success{background:#1A5C2E}
+.home-btn{display:flex;align-items:center;gap:14px;background:#fff;border-radius:12px;padding:16px;margin-bottom:8px;cursor:pointer;border:none;width:100%;text-align:left;font-family:inherit}
+.home-btn-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.home-btn-title{font-size:15px;font-weight:600;color:#1C1C1E}
+.home-btn-sub{font-size:12px;color:#6D6D72;margin-top:2px}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.stat-card{background:#fff;border-radius:12px;padding:14px;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:#1F3864;line-height:1}
+.stat-label{font-size:11px;color:#6D6D72;margin-top:4px}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:4px}
+.filtro-btn{padding:5px 12px;font-size:12px;border:0.5px solid #C7C7CC;border-radius:20px;background:#fff;color:#6D6D72;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
+.filtro-btn.on{background:#1F3864;color:#fff;border-color:#1F3864}
+.search-box{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:10px;color:#1C1C1E}
+.item-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;border-left:4px solid #E5E5EA}
+.item-card.alta{border-left-color:#FF3B30}
+.item-card.media{border-left-color:#FF9500}
+.item-card.baja{border-left-color:#34C759}
+.item-card.atendido{border-left-color:#34C759}
+.item-card.pendiente{border-left-color:#FF9500}
+.item-card.ejecucion{border-left-color:#007AFF}
+.item-card.programar{border-left-color:#FF9500}
+.item-card.nocursor{cursor:default}
+.item-title{font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:5px;line-height:1.4}
+.item-meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600}
+.chip-ruta{background:#EBF3FB;color:#1F3864}
+.chip-estado-a{background:#E8F8EE;color:#1A5C2E}
+.chip-estado-p{background:#FFF3E0;color:#7A4500}
+.chip-estado-e{background:#EBF3FB;color:#1F3864}
+.chip-estado-pr{background:#FFF3E0;color:#7A4500}
+.chip-prioridad-alta{background:#FFEBEE;color:#8B1A1A}
+.chip-prioridad-media{background:#FFF3E0;color:#7A4500}
+.chip-prioridad-baja{background:#E8F8EE;color:#1A5C2E}
+.item-fecha{font-size:11px;color:#6D6D72;margin-top:4px}
+.empty-state{text-align:center;padding:40px 20px;color:#6D6D72;font-size:14px;line-height:1.6}
+.detail-field{padding:10px 0;border-bottom:0.5px solid #E5E5EA;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.detail-field:last-child{border-bottom:none}
+.detail-label{font-size:12px;color:#6D6D72;font-weight:500;flex-shrink:0;min-width:120px}
+.detail-value{font-size:13px;color:#1C1C1E;text-align:right;line-height:1.4}
+.detail-section{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+.loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="page active" id="page-home">
+  <div class="header">
+    <h1>Sistema de Gestión</h1>
+    <p>FAMCOVA – Zona 1-4 Región Central</p>
+  </div>
+  <div class="content">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-ads-total">—</div><div class="stat-label">ADS totales</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">—</div><div class="stat-label">ADS pendientes</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-total">—</div><div class="stat-label">Proyectos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">—</div><div class="stat-label">En ejecución</div></div>
+    </div>
+    <div class="section">
+      <button class="home-btn" onclick="abrirADS()">
+        <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
+        <div><div class="home-btn-title">Solicitudes de Atención (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirProyectos()">
+        <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
+        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestión de proyectos</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirNuevaADS()">
+        <div class="home-btn-icon" style="background:#E8F8EE">➕</div>
+        <div><div class="home-btn-title">Nueva ADS</div><div class="home-btn-sub">Registrar nueva solicitud de atención</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirNuevoProyecto()">
+        <div class="home-btn-icon" style="background:#F3E8FF">📌</div>
+        <div><div class="home-btn-title">Nuevo Proyecto</div><div class="home-btn-sub">Agregar proyecto al banco</div></div>
+      </button>
+    </div>
+    <div style="text-align:center;font-size:11px;color:#C7C7CC;margin-top:8px" id="last-update">Actualizando...</div>
+  </div>
+</div>
+
+<div class="page" id="page-ads">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Solicitudes ADS</span>
+      <button class="btn-back" onclick="abrirNuevaADS()">+ Nueva</button>
+    </div>
+    <h1 style="margin-top:6px">Solicitudes de Atención</h1>
+  </div>
+  <div class="content">
+    <input class="search-box" id="ads-search" placeholder="Buscar por solicitante, solicitud, ruta..." oninput="renderADS()">
+    <div class="filtros">
+      <button class="filtro-btn on" onclick="filtrarADS('Todos',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarADS('Atendido',this)">Atendido</button>
+      <button class="filtro-btn" onclick="filtrarADS('Pendiente',this)">Pendiente</button>
+      <button class="filtro-btn" onclick="filtrarADS('En ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarADS('Programar',this)">Programar</button>
+    </div>
+    <div id="ads-list"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<div class="page" id="page-ads-detail">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-ads')">← ADS</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Detalle ADS</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Solicitud de Atención</h1>
+  </div>
+  <div class="content" id="ads-detail-content"></div>
+</div>
+
+<div class="page" id="page-proyectos">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Banco de Proyectos</span>
+      <button class="btn-back" onclick="abrirNuevoProyecto()">+ Nuevo</button>
+    </div>
+    <h1 style="margin-top:6px">Banco de Proyectos</h1>
+  </div>
+  <div class="content">
+    <input class="search-box" id="proy-search" placeholder="Buscar por ruta, gestión, descripción..." oninput="renderProyectos()">
+    <div class="filtros">
+      <button class="filtro-btn on" onclick="filtrarProy('Todos',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarProy('Pendiente',this)">Pendiente</button>
+      <button class="filtro-btn" onclick="filtrarProy('Ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarProy('Atendido',this)">Atendido</button>
+      <button class="filtro-btn" onclick="filtrarProy('Alta',this)">Prioridad Alta</button>
+    </div>
+    <div id="proy-list"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<div class="page" id="page-nueva-ads">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Nueva ADS</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Nueva Solicitud de Atención</h1>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Datos de la solicitud</div>
+      <div class="card">
+        <div class="field"><label>Fecha ingreso</label><input type="date" id="nads-fecha"></div>
+        <div class="field"><label>Solicitante</label><input type="text" id="nads-solicitante" placeholder="Nombre del solicitante"></div>
+        <div class="field field-vertical"><label>Solicitud</label><textarea id="nads-solicitud" placeholder="Descripción de la solicitud..."></textarea></div>
+        <div class="field"><label>Ruta</label><input type="text" id="nads-ruta" placeholder="Ej: 124, Todas"></div>
+        <div class="field"><label>¿Aplica?</label>
+          <select id="nads-aplica" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Si</option><option>No</option>
+          </select>
+        </div>
+        <div class="field field-vertical"><label>Recomendación de solución</label><textarea id="nads-recomendacion" placeholder="Recomendación de solución..."></textarea></div>
+        <div class="field"><label>Prioridad</label>
+          <select id="nads-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="1">Alta (1)</option>
+            <option value="2">Media (2)</option>
+            <option value="3">Baja (3)</option>
+          </select>
+        </div>
+        <div class="field"><label>Estado inicial</label>
+          <select id="nads-estado" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Pendiente</option>
+            <option>Programar</option>
+            <option>En ejecucion</option>
+            <option>Atendido</option>
+          </select>
+        </div>
+        <div class="field"><label>Monto estimado (₡)</label><input type="number" id="nads-monto" placeholder="0" style="max-width:60%"></div>
+        <div class="field field-vertical"><label>Observaciones</label><textarea id="nads-obs" placeholder="Observaciones adicionales..."></textarea></div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-guardar-ads" onclick="guardarADS()">Guardar solicitud</button>
+  </div>
+</div>
+
+<div class="page" id="page-nuevo-proy">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Nuevo Proyecto</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Nuevo Proyecto</h1>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Datos del proyecto</div>
+      <div class="card">
+        <div class="field"><label>Zona</label><input type="text" id="nproy-zona" value="1-4" style="max-width:80px"></div>
+        <div class="field"><label>Ruta</label><input type="text" id="nproy-ruta" placeholder="Ej: 124"></div>
+        <div class="field"><label>Sección de control</label><input type="text" id="nproy-seccion" placeholder="Ej: 20262"></div>
+        <div class="field"><label>Gestión de proyecto</label><input type="text" id="nproy-gestion" placeholder="Ej: Bacheo urgencia"></div>
+        <div class="field field-vertical"><label>Descripción de la situación</label><textarea id="nproy-descripcion" placeholder="Descripción detallada..."></textarea></div>
+        <div class="field"><label>Prioridad</label>
+          <select id="nproy-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Alta</option><option>Media</option><option>Baja</option>
+          </select>
+        </div>
+        <div class="field"><label>Costo estimado (₡)</label><input type="number" id="nproy-costo" placeholder="0" style="max-width:60%"></div>
+        <div class="field"><label>Estado</label>
+          <select id="nproy-estado" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Pendiente</option><option>Ejecución</option><option>Atendido</option>
+          </select>
+        </div>
+        <div class="field field-vertical"><label>Solicitud / Origen</label><textarea id="nproy-solicitud" placeholder="Expediente, COFEC, reclamo de usuario..."></textarea></div>
+        <div class="field"><label>Contrato</label>
+          <select id="nproy-contrato" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Sin asignar</option>
+            <option value="2022CD-000145-0006000001">CD-000145</option>
+            <option value="2022CD-000128-0006000001">CD-000128</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-guardar-proy" onclick="guardarProyecto()">Guardar proyecto</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxDD5XtQ8TQlcNMWGUF4LY-uD59-YCYy0jZmmMtiKUuapn5srRXK62wTT3rnojP8mmZWA/exec';
+let adsData=[],proyData=[];
+let filtroADS='Todos',filtroProy='Todos';
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function toast(msg,err=false,ok=false){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast'+(err?' error':ok?' success':'')+' show';
+  setTimeout(()=>t.className='toast',3500);
+}
+
+function fmt(n){
+  if(!n||n==='')return'—';
+  const num=parseFloat(String(n).replace(/[^\d.]/g,''));
+  if(isNaN(num))return String(n);
+  return'₡'+num.toLocaleString('es-CR');
+}
+
+function fmtFecha(v){
+  if(!v)return'—';
+  const s=String(v);
+  if(s.includes('-'))return s;
+  const n=parseFloat(s);
+  if(!isNaN(n)&&n>40000){
+    const d=new Date((n-25569)*86400*1000);
+    return d.toLocaleDateString('es-CR');
+  }
+  return s;
+}
+
+function chipEstado(e){
+  const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};
+  return m[e]||'chip-estado-p';
+}
+
+function chipPrioridad(p){
+  const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};
+  return m[String(p)]||'chip-prioridad-media';
+}
+
+function labelPrioridad(p){
+  const m={'1':'Alta','2':'Media','3':'Baja'};
+  return m[String(p)]||String(p)||'—';
+}
+
+function cardColor(estado,prioridad){
+  if(estado==='Atendido')return'atendido';
+  if(estado==='En ejecucion'||estado==='Ejecución')return'ejecucion';
+  if(estado==='Programar')return'programar';
+  const p=String(prioridad);
+  if(p==='Alta'||p==='1')return'alta';
+  if(p==='Media'||p==='2')return'media';
+  return'baja';
+}
+
+async function cargarDatos(){
+  try{
+    const [r1,r2]=await Promise.all([
+      fetch(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),
+      fetch(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())
+    ]);
+    const [j1,j2]=await Promise.all([r1.json(),r2.json()]);
+    adsData=(j1.data||[]).slice(1).filter(r=>r[0]||r[1]||r[2]);
+    proyData=(j2.data||[]).slice(1).filter(r=>r[0]||r[3]||r[4]);
+    actualizarStats();
+    document.getElementById('last-update').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CR');
+  }catch(e){
+    document.getElementById('last-update').textContent='Error de conexión – reintentando...';
+    setTimeout(cargarDatos,5000);
+  }
+}
+
+function actualizarStats(){
+  document.getElementById('stat-ads-total').textContent=adsData.length;
+  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[10]!=='Atendido').length;
+  document.getElementById('stat-proy-total').textContent=proyData.length;
+  document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>String(r[10]).toLowerCase().includes('jecuc')).length;
+}
+
+// ─── ADS ───
+function abrirADS(){
+  showPage('page-ads');
+  if(!adsData.length)cargarDatos().then(renderADS);
+  else renderADS();
+}
+
+function filtrarADS(f,btn){
+  filtroADS=f;
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderADS();
+}
+
+function renderADS(){
+  const q=(document.getElementById('ads-search').value||'').toLowerCase();
+  let rows=adsData;
+  if(filtroADS!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroADS.toLowerCase()));
+  if(q)rows=rows.filter(r=>[r[1],r[2],r[3],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  const list=document.getElementById('ads-list');
+  if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados para el filtro seleccionado</div>';return;}
+  list.innerHTML=[...rows].reverse().map(r=>{
+    const idx=adsData.indexOf(r);
+    const estado=String(r[10]||'Pendiente');
+    const prioridad=labelPrioridad(r[11]);
+    const color=cardColor(estado,String(r[11]));
+    return`<div class="item-card ${color}" onclick="verADS(${idx})">
+      <div class="item-title">${r[2]||'Sin descripción'}</div>
+      <div style="font-size:12px;color:#6D6D72;margin-top:2px">${r[1]||'—'}</div>
+      <div class="item-meta">
+        ${r[3]?`<span class="chip chip-ruta">Ruta ${r[3]}</span>`:''}
+        <span class="chip ${chipEstado(estado)}">${estado}</span>
+        ${prioridad&&prioridad!=='—'?`<span class="chip ${chipPrioridad(r[11])}">${prioridad}</span>`:''}
+      </div>
+      <div class="item-fecha">${fmtFecha(r[0])}</div>
+    </div>`;
+  }).join('');
+}
+
+function verADS(idx){
+  const r=adsData[idx];
+  if(!r)return;
+  const estado=String(r[10]||'Pendiente');
+  const estados=['Pendiente','Programar','En ejecucion','Atendido'];
+  document.getElementById('ads-detail-content').innerHTML=`
+    <div class="detail-section">
+      <div class="detail-section-title">Identificación</div>
+      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtFecha(r[0])}</span></div>
+      <div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">${r[1]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[3]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">¿Aplica?</span><span class="detail-value">${r[4]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">${labelPrioridad(r[11])}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Solicitud</div>
+      <div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[2]||'—'}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Recomendación de solución</div>
+      <div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[5]||'—'}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Seguimiento</div>
+      <div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">${fmt(r[6])}</span></div>
+      <div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">${r[7]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtFecha(r[8])}</span></div>
+      <div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">${r[9]||'—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Estado actual: <strong>${estado}</strong></div>
+      <div style="font-size:11px;color:#FF9500;margin-bottom:10px;background:#FFF3E0;padding:8px;border-radius:8px">⚠️ Solo Emanuel puede actualizar el estado de las ADS</div>
+      <select id="estado-ads-sel" style="width:100%;padding:10px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;font-family:inherit;color:#1C1C1E;background:#fff;-webkit-appearance:none">
+        ${estados.map(e=>`<option value="${e}"${e===estado?' selected':''}>${e}</option>`).join('')}
+      </select>
+      <button class="btn-primary" onclick="actualizarEstadoADS(${idx})" style="margin-top:8px">Actualizar estado</button>
+    </div>`;
+  showPage('page-ads-detail');
+}
+
+async function actualizarEstadoADS(idx){
+  const nuevoEstado=document.getElementById('estado-ads-sel').value;
+  const row=[...adsData[idx]];
+  row[10]=nuevoEstado;
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
+      body:JSON.stringify({row,updateRow:idx+1,sheet:'ADS'}),
+      headers:{'Content-Type':'application/json'}});
+    adsData[idx]=row;
+    actualizarStats();
+    toast('✓ Estado actualizado a: '+nuevoEstado,false,true);
+  }catch(e){toast('Error de conexión',true);}
+}
+
+// ─── PROYECTOS ───
+function abrirProyectos(){
+  showPage('page-proyectos');
+  if(!proyData.length)cargarDatos().then(renderProyectos);
+  else renderProyectos();
+}
+
+function filtrarProy(f,btn){
+  filtroProy=f;
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderProyectos();
+}
+
+function renderProyectos(){
+  const q=(document.getElementById('proy-search').value||'').toLowerCase();
+  let rows=proyData;
+  if(filtroProy==='Alta')rows=rows.filter(r=>String(r[5]).toLowerCase()==='alta');
+  else if(filtroProy!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroProy.toLowerCase()));
+  if(q)rows=rows.filter(r=>[r[1],r[3],r[4],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  const list=document.getElementById('proy-list');
+  if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
+  list.innerHTML=rows.map(r=>{
+    const estado=String(r[10]||'Pendiente');
+    const prioridad=String(r[5]||'Media');
+    const color=cardColor(estado,prioridad);
+    const costo=r[6]&&String(r[6])!==''&&String(r[6])!=='Sin monto estimado'?fmt(r[6]):'Sin monto estimado';
+    return`<div class="item-card ${color} nocursor">
+      <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[3]||'—'}</div>
+      <div class="item-title">${r[4]||'Sin descripción'}</div>
+      <div class="item-meta">
+        ${r[1]?`<span class="chip chip-ruta">Ruta ${r[1]}</span>`:''}
+        ${r[2]?`<span class="chip chip-ruta">Sec. ${r[2]}</span>`:''}
+        <span class="chip ${chipEstado(estado)}">${estado}</span>
+        <span class="chip ${chipPrioridad(prioridad)}">${prioridad}</span>
+      </div>
+      <div style="font-size:11px;color:#6D6D72;margin-top:6px">${costo}</div>
+      ${r[9]?`<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">${r[9]}</div>`:''}
+      ${r[11]?`<div style="font-size:10px;color:#C7C7CC;margin-top:4px">${r[11]}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ─── NUEVA ADS ───
+function abrirNuevaADS(){
+  document.getElementById('nads-fecha').value=new Date().toISOString().split('T')[0];
+  showPage('page-nueva-ads');
+}
+
+async function guardarADS(){
+  const solicitante=document.getElementById('nads-solicitante').value.trim();
+  const solicitud=document.getElementById('nads-solicitud').value.trim();
+  if(!solicitante||!solicitud){toast('Solicitante y solicitud son obligatorios',true);return;}
+  const btn=document.getElementById('btn-guardar-ads');
+  btn.disabled=true;btn.textContent='Guardando...';
+  const row=[
+    document.getElementById('nads-fecha').value,
+    solicitante,solicitud,
+    document.getElementById('nads-ruta').value,
+    document.getElementById('nads-aplica').value,
+    document.getElementById('nads-recomendacion').value,
+    document.getElementById('nads-monto').value||'',
+    '','',
+    document.getElementById('nads-obs').value,
+    document.getElementById('nads-estado').value,
+    document.getElementById('nads-prioridad').value
+  ];
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
+      body:JSON.stringify({row,sheet:'ADS'}),
+      headers:{'Content-Type':'application/json'}});
+    adsData.push(row);
+    actualizarStats();
+    toast('✓ ADS registrada correctamente',false,true);
+    ['nads-solicitante','nads-solicitud','nads-ruta','nads-recomendacion','nads-monto','nads-obs'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(()=>showPage('page-home'),1200);
+  }catch(e){toast('Error de conexión',true);}
+  btn.disabled=false;btn.textContent='Guardar solicitud';
+}
+
+// ─── NUEVO PROYECTO ───
+function abrirNuevoProyecto(){showPage('page-nuevo-proy');}
+
+async function guardarProyecto(){
+  const ruta=document.getElementById('nproy-ruta').value.trim();
+  const desc=document.getElementById('nproy-descripcion').value.trim();
+  if(!ruta||!desc){toast('Ruta y descripción son obligatorios',true);return;}
+  const btn=document.getElementById('btn-guardar-proy');
+  btn.disabled=true;btn.textContent='Guardando...';
+  const row=[
+    document.getElementById('nproy-zona').value,
+    ruta,
+    document.getElementById('nproy-seccion').value,
+    document.getElementById('nproy-gestion').value,
+    desc,
+    document.getElementById('nproy-prioridad').value,
+    document.getElementById('nproy-costo').value||'',
+    '','',
+    document.getElementById('nproy-solicitud').value,
+    document.getElementById('nproy-estado').value,
+    document.getElementById('nproy-contrato').value
+  ];
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
+      body:JSON.stringify({row,sheet:'PROYECTOS'}),
+      headers:{'Content-Type':'application/json'}});
+    proyData.push(row);
+    actualizarStats();
+    toast('✓ Proyecto registrado correctamente',false,true);
+    ['nproy-ruta','nproy-seccion','nproy-gestion','nproy-descripcion','nproy-costo','nproy-solicitud'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(()=>showPage('page-home'),1200);
+  }catch(e){toast('Error de conexión',true);}
+  btn.disabled=false;btn.textContent='Guardar proyecto';
+}
+
+cargarDatos();
+</script>
+</body>
+</html>
