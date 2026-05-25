@@ -186,6 +186,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="filtro-btn" onclick="filtrarProyEstado('Alta',this)">Prioridad Alta</button>
       <button class="filtro-amparo" id="btn-amparo-proy" onclick="toggleAmparoProy()">Recurso de amparo</button>
     </div>
+    <select class="select-filtro" id="proy-filtro-ruta" onchange="renderProyectos()">
+  <option value="">Todas las rutas</option>
+</select>
     <select class="select-filtro" id="proy-filtro-gestion" onchange="renderProyectos()">
       <option value="">Todos los tipos de gestión</option>
       <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
@@ -381,7 +384,7 @@ async function cargarRutas(){
     const rows=(j.data||[]).slice(1).filter(r=>r[0]&&String(r[0]).trim()!=='');
     rutasData=rows.map(r=>({ruta:String(r[0]).trim(),seccion:String(r[1]).trim(),desc:String(r[2]||'').trim()}));
     const rutas=[...new Set(rutasData.map(r=>r.ruta))];
-    ['nads-ruta','nproy-ruta'].forEach(id=>{
+    ['nads-ruta','nproy-ruta','proy-filtro-ruta'].forEach(id=>{
       const sel=document.getElementById(id);if(!sel)return;
       rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
     });
@@ -538,6 +541,8 @@ function renderProyectos(){
   let rows=proyData;
   if(filtroProyEstado==='Alta')rows=rows.filter(r=>String(r[P.prior]).toLowerCase()==='alta');
   else if(filtroProyEstado!=='Todos')rows=rows.filter(r=>String(r[P.estado]).toLowerCase().includes(filtroProyEstado.toLowerCase()));
+  const rutaFiltro=document.getElementById('proy-filtro-ruta').value;
+  if(rutaFiltro)rows=rows.filter(r=>String(r[P.ruta]||'')===rutaFiltro);
   if(gestion)rows=rows.filter(r=>String(r[P.gestion]||'').toLowerCase()===gestion);
   if(soloAmparoProy)rows=rows.filter(r=>[r[P.desc],r[P.solicitud]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes('amparo')));
   if(q)rows=rows.filter(r=>[r[P.ruta],r[P.gestion],r[P.desc],r[P.solicitud]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
