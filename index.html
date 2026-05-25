@@ -326,12 +326,12 @@ function toast(msg,err=false,ok=false){const t=document.getElementById('toast');
 function jsonp(url){
   return new Promise((res,rej)=>{
     const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    window[cb]=data=>{res(data);delete window[cb];s.remove();};
     const s=document.createElement('script');
+    window[cb]=data=>{res(data);delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);};
     s.src=url+'&callback='+cb;
-    s.onerror=()=>rej(new Error('JSONP error'));
+    s.onerror=()=>{delete window[cb];rej(new Error('JSONP error'));};
     document.head.appendChild(s);
-    setTimeout(()=>rej(new Error('Timeout')),12000);
+    setTimeout(()=>{delete window[cb];rej(new Error('Timeout'));},12000);
   });
 }
 
@@ -360,14 +360,23 @@ function esAmparo(r){return[r[2],r[5],r[9]].map(x=>String(x||'').toLowerCase()).
 async function cargarRutas(){
   try{
     const j=await jsonp(SCRIPT_URL+'?sheet=RUTAS&t='+Date.now());
-    const rows=(j.data||[]).slice(1).filter(r=>r[0]);
-    rutasData=rows.map(r=>({ruta:String(r[0]),seccion:String(r[1]),desc:String(r[2]||'')}));
+    const rows=(j.data||[]).slice(1).filter(r=>r[0]&&String(r[0]).trim()!=='');
+    rutasData=rows.map(r=>({ruta:String(r[0]).trim(),seccion:String(r[1]).trim(),desc:String(r[2]||'').trim()}));
     const rutas=[...new Set(rutasData.map(r=>r.ruta))];
     ['nads-ruta','nproy-ruta'].forEach(id=>{
       const sel=document.getElementById(id);
-      rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
+      if(!sel)return;
+      rutas.forEach(r=>{
+        const opt=document.createElement('option');
+        opt.value=r;
+        opt.textContent='Ruta '+r;
+        sel.appendChild(opt);
+      });
     });
-  }catch(e){console.log('Error rutas',e);}
+    toast('✓ '+rutas.length+' rutas cargadas',false,true);
+  }catch(e){
+    toast('Error cargando rutas: '+e.message,true);
+  }
 }
 
 function actualizarSeccionesADS(){
