@@ -88,6 +88,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 
+<!-- HOME -->
 <div class="page active" id="page-home">
   <div class="header">
     <div style="display:flex;align-items:center;justify-content:space-between">
@@ -125,6 +126,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- ADS LIST -->
 <div class="page" id="page-ads">
   <div class="header">
     <div class="header-actions">
@@ -149,6 +151,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- ADS DETAIL -->
 <div class="page" id="page-ads-detail">
   <div class="header">
     <div class="header-actions">
@@ -161,6 +164,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="content" id="ads-detail-content"></div>
 </div>
 
+<!-- PROYECTOS LIST -->
 <div class="page" id="page-proyectos">
   <div class="header">
     <div class="header-actions">
@@ -195,6 +199,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- NUEVA ADS -->
 <div class="page" id="page-nueva-ads">
   <div class="header">
     <div class="header-actions">
@@ -222,6 +227,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           </select>
         </div>
         <div class="field-desc" id="nads-desc-box" style="display:none"><p id="nads-desc-texto"></p></div>
+        <div class="field"><label>Estación</label><input type="text" id="nads-estacion" placeholder="Ej: 1+500"></div>
         <div class="field"><label>¿Aplica?</label>
           <select id="nads-aplica" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option>Si</option><option>No</option>
@@ -246,6 +252,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- NUEVO PROYECTO -->
 <div class="page" id="page-nuevo-proy">
   <div class="header">
     <div class="header-actions">
@@ -271,6 +278,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           </select>
         </div>
         <div class="field-desc" id="nproy-desc-box" style="display:none"><p id="nproy-desc-texto"></p></div>
+        <div class="field"><label>Estación</label><input type="text" id="nproy-estacion" placeholder="Ej: 1+500"></div>
         <div class="field"><label>Tipo de gestión</label>
           <select id="nproy-gestion" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
@@ -314,10 +322,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="toast" id="toast"></div>
 
 <script>
+// ADS columns: 0=Fecha, 1=Solicitante, 2=Solicitud, 3=Ruta, 4=Seccion, 5=Estacion,
+//              6=Aplica, 7=Recomendacion, 8=Monto, 9=Evidencia, 10=FechaCierre,
+//              11=Observaciones, 12=Estado, 13=Prioridad
+// PROY columns: 0=Zona, 1=Ruta, 2=Seccion, 3=Estacion, 4=Gestion, 5=Descripcion,
+//               6=Prioridad, 7=Costo, 8=FechaProp, 9=FechaDef, 10=Solicitud,
+//               11=Estado, 12=Contrato
+
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
-const KPI_SCRIPT='https://script.google.com/macros/s/AKfycbzGTAhyRU1YXEc4DkIyMYe2gH5j7hHXcwlzwAg5-Ud_vuL55a59JDo8Erif3ZSQwx-OSQ/exec';
 let adsData=[],proyData=[],rutasData=[];
 let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false;
+
+// Índices ADS
+const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
+// Índices PROYECTOS
+const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12};
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 
@@ -340,11 +359,8 @@ function fmt(n){if(!n||n==='')return'—';const num=parseFloat(String(n).replace
 function fmtFecha(v){if(!v)return'—';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
 
 function chipEstado(e){const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};return m[e]||'chip-estado-p';}
-
 function chipPrioridad(p){const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};return m[String(p)]||'chip-prioridad-media';}
-
 function labelPrioridad(p){const m={'1':'Alta','2':'Media','3':'Baja'};return m[String(p)]||String(p)||'—';}
-
 function cardColor(estado,prioridad){
   if(estado==='Atendido')return'atendido';
   if(estado==='En ejecucion'||estado==='Ejecución')return'ejecucion';
@@ -354,8 +370,7 @@ function cardColor(estado,prioridad){
   if(p==='Media'||p==='2')return'media';
   return'baja';
 }
-
-function esAmparo(r){return[r[2],r[5],r[9]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes('amparo'));}
+function esAmparo(r){return[r[A.solic],r[A.rec],r[A.obs]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes('amparo'));}
 
 async function cargarRutas(){
   try{
@@ -364,19 +379,10 @@ async function cargarRutas(){
     rutasData=rows.map(r=>({ruta:String(r[0]).trim(),seccion:String(r[1]).trim(),desc:String(r[2]||'').trim()}));
     const rutas=[...new Set(rutasData.map(r=>r.ruta))];
     ['nads-ruta','nproy-ruta'].forEach(id=>{
-      const sel=document.getElementById(id);
-      if(!sel)return;
-      rutas.forEach(r=>{
-        const opt=document.createElement('option');
-        opt.value=r;
-        opt.textContent='Ruta '+r;
-        sel.appendChild(opt);
-      });
+      const sel=document.getElementById(id);if(!sel)return;
+      rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
     });
-    toast('✓ '+rutas.length+' rutas cargadas',false,true);
-  }catch(e){
-    toast('Error cargando rutas: '+e.message,true);
-  }
+  }catch(e){toast('Error cargando rutas',true);}
 }
 
 function actualizarSeccionesADS(){
@@ -414,7 +420,7 @@ async function cargarDatos(spinner=false){
   try{
     const [j1,j2]=await Promise.all([jsonp(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),jsonp(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())]);
     adsData=(j1.data||[]).slice(1).filter(r=>r[0]||r[1]||r[2]);
-    proyData=(j2.data||[]).slice(1).filter(r=>r[0]||r[3]||r[4]);
+    proyData=(j2.data||[]).slice(1).filter(r=>r[0]||r[P.desc]||r[P.gestion]);
     actualizarStats();
     document.getElementById('last-update').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CR');
     if(document.getElementById('page-ads').classList.contains('active'))renderADS();
@@ -427,71 +433,72 @@ function actualizarDatos(){cargarDatos(true);}
 
 function actualizarStats(){
   document.getElementById('stat-ads-total').textContent=adsData.length;
-  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[10]!=='Atendido').length;
+  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]!=='Atendido').length;
   document.getElementById('stat-proy-total').textContent=proyData.length;
-  document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>String(r[10]).toLowerCase().includes('jecuc')).length;
+  document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>String(r[P.estado]).toLowerCase().includes('jecuc')).length;
 }
 
 function abrirADS(){showPage('page-ads');if(!adsData.length)cargarDatos().then(renderADS);else renderADS();}
-
 function filtrarADS(f,btn){filtroADS=f;document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderADS();}
-
 function toggleAmparo(){soloAmparo=!soloAmparo;document.getElementById('btn-amparo').classList.toggle('on',soloAmparo);renderADS();}
 
 function renderADS(){
   const q=(document.getElementById('ads-search').value||'').toLowerCase();
   let rows=adsData;
-  if(filtroADS!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroADS.toLowerCase()));
+  if(filtroADS!=='Todos')rows=rows.filter(r=>String(r[A.estado]).toLowerCase().includes(filtroADS.toLowerCase()));
   if(soloAmparo)rows=rows.filter(r=>esAmparo(r));
-  if(q)rows=rows.filter(r=>[r[1],r[2],r[3],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  if(q)rows=rows.filter(r=>[r[A.sol],r[A.solic],r[A.ruta],r[A.obs]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
   document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=[...rows].reverse().map(r=>{
-    const idx=adsData.indexOf(r);const estado=String(r[10]||'Pendiente');const color=cardColor(estado,String(r[11]));const amparo=esAmparo(r);
+    const idx=adsData.indexOf(r);const estado=String(r[A.estado]||'Pendiente');const color=cardColor(estado,String(r[A.prior]));const amparo=esAmparo(r);
     return`<div class="item-card ${color}" onclick="verADS(${idx})">
-      <div class="item-title">${r[2]||'Sin descripción'}</div>
-      <div style="font-size:12px;color:#6D6D72;margin-top:2px">${r[1]||'—'}</div>
+      <div class="item-title">${r[A.solic]||'Sin descripción'}</div>
+      <div style="font-size:12px;color:#6D6D72;margin-top:2px">${r[A.sol]||'—'}</div>
       <div class="item-meta">
-        ${r[3]?`<span class="chip chip-ruta">Ruta ${r[3]}</span>`:''}
+        ${r[A.ruta]?`<span class="chip chip-ruta">Ruta ${r[A.ruta]}</span>`:''}
+        ${r[A.sec]?`<span class="chip chip-ruta">Sec. ${r[A.sec]}</span>`:''}
         <span class="chip ${chipEstado(estado)}">${estado}</span>
-        ${r[11]?`<span class="chip ${chipPrioridad(r[11])}">${labelPrioridad(r[11])}</span>`:''}
+        ${r[A.prior]?`<span class="chip ${chipPrioridad(r[A.prior])}">${labelPrioridad(r[A.prior])}</span>`:''}
         ${amparo?'<span class="chip chip-amparo">⚖️ Amparo</span>':''}
       </div>
-      <div class="item-fecha">${fmtFecha(r[0])}</div>
+      <div class="item-fecha">${fmtFecha(r[A.fecha])}</div>
     </div>`;
   }).join('');
 }
 
 function verADS(idx){
   const r=adsData[idx];if(!r)return;
-  const estado=String(r[10]||'Pendiente');
+  const estado=String(r[A.estado]||'Pendiente');
   const estados=['Pendiente','Programar','En ejecucion','Atendido'];
   const amparo=esAmparo(r);
   document.getElementById('ads-detail-content').innerHTML=`
     <div class="detail-section">
       <div class="detail-section-title">Identificación</div>
-      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtFecha(r[0])}</span></div>
-      <div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">${r[1]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[3]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">¿Aplica?</span><span class="detail-value">${r[4]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">${labelPrioridad(r[11])}</span></div>
+      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtFecha(r[A.fecha])}</span></div>
+      <div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">${r[A.sol]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[A.ruta]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Sección</span><span class="detail-value">${r[A.sec]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Estación</span><span class="detail-value">${r[A.est]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">¿Aplica?</span><span class="detail-value">${r[A.aplica]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">${labelPrioridad(r[A.prior])}</span></div>
       ${amparo?'<div class="detail-field"><span class="detail-label">Tipo</span><span class="detail-value" style="color:#6B21A8;font-weight:600">⚖️ Recurso de amparo</span></div>':''}
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Solicitud</div>
-      <div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[2]||'—'}</div>
+      <div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[A.solic]||'—'}</div>
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Recomendación de solución</div>
-      <div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[5]||'—'}</div>
+      <div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[A.rec]||'—'}</div>
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Seguimiento</div>
-      <div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">${fmt(r[6])}</span></div>
-      <div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">${r[7]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtFecha(r[8])}</span></div>
-      <div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">${r[9]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">${fmt(r[A.monto])}</span></div>
+      <div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">${r[A.evid]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtFecha(r[A.fcierre])}</span></div>
+      <div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">${r[A.obs]||'—'}</span></div>
     </div>
     <div class="detail-section">
       <div class="detail-section-title">Estado actual: <strong>${estado}</strong></div>
@@ -506,7 +513,7 @@ function verADS(idx){
 
 async function actualizarEstadoADS(idx){
   const nuevoEstado=document.getElementById('estado-ads-sel').value;
-  const row=[...adsData[idx]];row[10]=nuevoEstado;
+  const row=[...adsData[idx]];row[A.estado]=nuevoEstado;
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:idx+1,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
     adsData[idx]=row;actualizarStats();toast('✓ Estado actualizado: '+nuevoEstado,false,true);
@@ -514,35 +521,35 @@ async function actualizarEstadoADS(idx){
 }
 
 function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
-
 function filtrarProyEstado(f,btn){filtroProyEstado=f;document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderProyectos();}
 
 function renderProyectos(){
   const q=(document.getElementById('proy-search').value||'').toLowerCase();
   const gestion=(document.getElementById('proy-filtro-gestion').value||'').toLowerCase();
   let rows=proyData;
-  if(filtroProyEstado==='Alta')rows=rows.filter(r=>String(r[5]).toLowerCase()==='alta');
-  else if(filtroProyEstado!=='Todos')rows=rows.filter(r=>String(r[10]).toLowerCase().includes(filtroProyEstado.toLowerCase()));
-  if(gestion)rows=rows.filter(r=>String(r[3]||'').toLowerCase()===gestion);
-  if(q)rows=rows.filter(r=>[r[1],r[3],r[4],r[9]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  if(filtroProyEstado==='Alta')rows=rows.filter(r=>String(r[P.prior]).toLowerCase()==='alta');
+  else if(filtroProyEstado!=='Todos')rows=rows.filter(r=>String(r[P.estado]).toLowerCase().includes(filtroProyEstado.toLowerCase()));
+  if(gestion)rows=rows.filter(r=>String(r[P.gestion]||'').toLowerCase()===gestion);
+  if(q)rows=rows.filter(r=>[r[P.ruta],r[P.gestion],r[P.desc],r[P.solicitud]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
   document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
   const list=document.getElementById('proy-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=rows.map(r=>{
-    const estado=String(r[10]||'Pendiente');const prioridad=String(r[5]||'Media');const color=cardColor(estado,prioridad);
-    const costo=r[6]&&String(r[6])!==''&&String(r[6])!=='Sin monto estimado'?fmt(r[6]):'Sin monto estimado';
+    const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
+    const costo=r[P.costo]&&String(r[P.costo])!==''&&String(r[P.costo])!=='Sin monto estimado'?fmt(r[P.costo]):'Sin monto estimado';
     return`<div class="item-card ${color} nocursor">
-      <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[3]||'—'}</div>
-      <div class="item-title">${r[4]||'Sin descripción'}</div>
+      <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[P.gestion]||'—'}</div>
+      <div class="item-title">${r[P.desc]||'Sin descripción'}</div>
       <div class="item-meta">
-        ${r[1]?`<span class="chip chip-ruta">Ruta ${r[1]}</span>`:''}
-        ${r[2]?`<span class="chip chip-ruta">Sec. ${r[2]}</span>`:''}
+        ${r[P.ruta]?`<span class="chip chip-ruta">Ruta ${r[P.ruta]}</span>`:''}
+        ${r[P.sec]?`<span class="chip chip-ruta">Sec. ${r[P.sec]}</span>`:''}
+        ${r[P.est]?`<span class="chip chip-ruta">${r[P.est]}</span>`:''}
         <span class="chip ${chipEstado(estado)}">${estado}</span>
         <span class="chip ${chipPrioridad(prioridad)}">${prioridad}</span>
       </div>
       <div style="font-size:11px;color:#6D6D72;margin-top:6px">${costo}</div>
-      ${r[9]?`<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">${r[9]}</div>`:''}
-      ${r[11]?`<div style="font-size:10px;color:#C7C7CC;margin-top:4px">${r[11]}</div>`:''}
+      ${r[P.solicitud]?`<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">${r[P.solicitud]}</div>`:''}
+      ${r[P.contrato]?`<div style="font-size:10px;color:#C7C7CC;margin-top:4px">${r[P.contrato]}</div>`:''}
     </div>`;
   }).join('');
 }
@@ -552,6 +559,7 @@ function abrirNuevaADS(){
   document.getElementById('nads-ruta').value='';
   document.getElementById('nads-seccion').innerHTML='<option value="">Seleccionar...</option>';
   document.getElementById('nads-desc-box').style.display='none';
+  document.getElementById('nads-estacion').value='';
   showPage('page-nueva-ads');
 }
 
@@ -561,19 +569,24 @@ async function guardarADS(){
   if(!solicitante||!solicitud){toast('Solicitante y solicitud son obligatorios',true);return;}
   const btn=document.getElementById('btn-guardar-ads');btn.disabled=true;btn.textContent='Guardando...';
   const row=[
-    document.getElementById('nads-fecha').value,solicitante,solicitud,
-    document.getElementById('nads-ruta').value,
-    document.getElementById('nads-aplica').value,
-    document.getElementById('nads-recomendacion').value,
-    document.getElementById('nads-monto').value||'','','',
-    document.getElementById('nads-obs').value,
-    document.getElementById('nads-estado').value,
-    document.getElementById('nads-prioridad').value
+    document.getElementById('nads-fecha').value,          // 0 Fecha
+    solicitante,                                           // 1 Solicitante
+    solicitud,                                             // 2 Solicitud
+    document.getElementById('nads-ruta').value,            // 3 Ruta
+    document.getElementById('nads-seccion').value,         // 4 Seccion
+    document.getElementById('nads-estacion').value,        // 5 Estacion
+    document.getElementById('nads-aplica').value,          // 6 Aplica
+    document.getElementById('nads-recomendacion').value,   // 7 Recomendacion
+    document.getElementById('nads-monto').value||'',       // 8 Monto
+    '','',                                                 // 9 Evidencia, 10 FechaCierre
+    document.getElementById('nads-obs').value,             // 11 Observaciones
+    document.getElementById('nads-estado').value,          // 12 Estado
+    document.getElementById('nads-prioridad').value        // 13 Prioridad
   ];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
     adsData.push(row);actualizarStats();toast('✓ ADS registrada correctamente',false,true);
-    ['nads-solicitante','nads-solicitud','nads-recomendacion','nads-monto','nads-obs'].forEach(id=>document.getElementById(id).value='');
+    ['nads-solicitante','nads-solicitud','nads-recomendacion','nads-monto','nads-obs','nads-estacion'].forEach(id=>document.getElementById(id).value='');
     setTimeout(()=>showPage('page-home'),1200);
   }catch(e){toast('Error de conexión',true);}
   btn.disabled=false;btn.textContent='Guardar solicitud';
@@ -583,6 +596,7 @@ function abrirNuevoProyecto(){
   document.getElementById('nproy-ruta').value='';
   document.getElementById('nproy-seccion').innerHTML='<option value="">Seleccionar...</option>';
   document.getElementById('nproy-desc-box').style.display='none';
+  document.getElementById('nproy-estacion').value='';
   showPage('page-nuevo-proy');
 }
 
@@ -592,19 +606,23 @@ async function guardarProyecto(){
   if(!ruta||!desc){toast('Ruta y descripción son obligatorios',true);return;}
   const btn=document.getElementById('btn-guardar-proy');btn.disabled=true;btn.textContent='Guardando...';
   const row=[
-    document.getElementById('nproy-zona').value,ruta,
-    document.getElementById('nproy-seccion').value,
-    document.getElementById('nproy-gestion').value,desc,
-    document.getElementById('nproy-prioridad').value,
-    document.getElementById('nproy-costo').value||'','','',
-    document.getElementById('nproy-solicitud').value,
-    document.getElementById('nproy-estado').value,
-    document.getElementById('nproy-contrato').value
+    document.getElementById('nproy-zona').value,           // 0 Zona
+    ruta,                                                  // 1 Ruta
+    document.getElementById('nproy-seccion').value,        // 2 Seccion
+    document.getElementById('nproy-estacion').value,       // 3 Estacion
+    document.getElementById('nproy-gestion').value,        // 4 Gestion
+    desc,                                                  // 5 Descripcion
+    document.getElementById('nproy-prioridad').value,      // 6 Prioridad
+    document.getElementById('nproy-costo').value||'',      // 7 Costo
+    '','',                                                 // 8 FechaProp, 9 FechaDef
+    document.getElementById('nproy-solicitud').value,      // 10 Solicitud
+    document.getElementById('nproy-estado').value,         // 11 Estado
+    document.getElementById('nproy-contrato').value        // 12 Contrato
   ];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'PROYECTOS'}),headers:{'Content-Type':'application/json'}});
     proyData.push(row);actualizarStats();toast('✓ Proyecto registrado correctamente',false,true);
-    ['nproy-descripcion','nproy-costo','nproy-solicitud'].forEach(id=>document.getElementById(id).value='');
+    ['nproy-descripcion','nproy-costo','nproy-solicitud','nproy-estacion'].forEach(id=>document.getElementById(id).value='');
     setTimeout(()=>showPage('page-home'),1200);
   }catch(e){toast('Error de conexión',true);}
   btn.disabled=false;btn.textContent='Guardar proyecto';
