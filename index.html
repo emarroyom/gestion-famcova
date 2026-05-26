@@ -549,7 +549,7 @@ async function cargarDatos(spinner=false){
 function actualizarDatos(){cargarDatos(true);}
 function actualizarStats(){
   document.getElementById('stat-ads-total').textContent=adsData.length;
-  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]!=='Atendido').length;
+  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]==='Pendiente').length;
   document.getElementById('stat-proy-total').textContent=proyData.length;
   document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>norm(r[P.estado]).includes('ejecuc')).length;
 }
