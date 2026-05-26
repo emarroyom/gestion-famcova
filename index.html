@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Gestión FAMCOVA">
-<title>Sistema de Gestión FAMCOVA v2</title>
+<meta name="apple-mobile-web-app-title" content="Gestion FAMCOVA">
+<title>Sistema de Gestion FAMCOVA</title>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="shortcut icon" href="icon.png">
 <style>
@@ -33,6 +33,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .field-vertical{flex-direction:column;align-items:flex-start;gap:4px}
 .field-desc{padding:10px 16px;background:#EBF3FB;border-bottom:0.5px solid #E5E5EA}
 .field-desc p{font-size:12px;color:#1F3864;font-weight:500;line-height:1.4}
+.field-extra{padding:10px 16px;border-bottom:0.5px solid #E5E5EA;display:flex;flex-direction:column;gap:6px}
+.field-extra input{border:none;border-bottom:0.5px solid #E5E5EA;outline:none;font-size:14px;color:#1C1C1E;background:transparent;width:100%;padding:6px 0;font-family:inherit}
 .btn-primary{width:100%;padding:14px;background:#1F3864;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
 .btn-primary:disabled{opacity:0.5}
 .btn-primary:active{opacity:0.8}
@@ -87,12 +89,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
 .result-count{font-size:11px;color:#6D6D72;margin-bottom:8px;padding-left:4px}
-.ubic-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
-.ubic-insp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.ubic-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-.ubic-frente{border:0.5px solid #E5E5EA;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:#FAFAFA}
-.ubic-frente:last-child{margin-bottom:0}
-.ubic-rango{display:inline-block;font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:12px;margin-bottom:6px}
+/* UBICACION */
+.insp-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.insp-card:active{opacity:0.8}
+.insp-left{display:flex;align-items:center;gap:12px}
+.insp-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.insp-name{font-size:15px;font-weight:600;color:#1C1C1E}
+.insp-sub{font-size:12px;color:#6D6D72;margin-top:2px}
+.insp-arrow{font-size:16px;color:#C7C7CC}
+.frente-card{background:#F8F8F8;border-radius:10px;padding:12px;margin-bottom:8px}
+.frente-card:last-child{margin-bottom:0}
+.frente-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.frente-rango{font-size:11px;font-weight:700;color:#fff;padding:3px 10px;border-radius:12px}
+.frente-contrato{font-size:10px;color:#6D6D72;font-weight:600}
+.frente-ubicacion{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.frente-ruta-badge{font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:8px}
+.frente-actividad{font-size:13px;font-weight:600;color:#1C1C1E;line-height:1.4;margin-bottom:4px}
+.frente-obs{font-size:11px;color:#6D6D72;font-style:italic;margin-top:4px}
+.frente-edit{font-size:10px;color:#C7C7CC;text-align:right;margin-top:6px}
+.sin-asignacion{background:#F8F8F8;border-radius:10px;padding:12px;text-align:center;color:#6D6D72;font-size:13px}
 </style>
 </head>
 <body>
@@ -101,29 +116,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="header">
     <div style="display:flex;align-items:center;justify-content:space-between">
       <div style="width:80px"></div>
-      <div style="text-align:center"><h1>Sistema de Gestión</h1><p>FAMCOVA – Zona 1-4 Región Central</p></div>
-      <button class="btn-back" id="btn-refresh-home" onclick="actualizarDatos()">↻ Actualizar</button>
+      <div style="text-align:center"><h1>Sistema de Gestion</h1><p>FAMCOVA - Zona 1-4 Region Central</p></div>
+      <button class="btn-back" id="btn-refresh-home" onclick="actualizarDatos()">Actualizar</button>
     </div>
   </div>
   <div class="content">
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-num" id="stat-ads-total">—</div><div class="stat-label">ADS totales</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">—</div><div class="stat-label">ADS pendientes</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-proy-total">—</div><div class="stat-label">Proyectos</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">—</div><div class="stat-label">En ejecución</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
     <div class="section">
       <button class="home-btn" onclick="abrirADS()">
         <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
-        <div><div class="home-btn-title">Solicitudes de Atención (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
+        <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
       </button>
       <button class="home-btn" onclick="abrirProyectos()">
         <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
-        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestión de proyectos</div></div>
+        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
       </button>
       <button class="home-btn" onclick="abrirNuevaADS()">
         <div class="home-btn-icon" style="background:#E8F8EE">➕</div>
-        <div><div class="home-btn-title">Nueva ADS</div><div class="home-btn-sub">Registrar nueva solicitud de atención</div></div>
+        <div><div class="home-btn-title">Nueva ADS</div><div class="home-btn-sub">Registrar nueva solicitud de atencion</div></div>
       </button>
       <button class="home-btn" onclick="abrirNuevoProyecto()">
         <div class="home-btn-icon" style="background:#F3E8FF">📌</div>
@@ -131,7 +146,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </button>
       <button class="home-btn" onclick="abrirUbicacion()">
         <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
-        <div><div class="home-btn-title">Ubicación de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
+        <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
       </button>
     </div>
     <div style="text-align:center;font-size:11px;color:#C7C7CC;margin-top:8px" id="last-update">Actualizando...</div>
@@ -141,11 +156,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="page" id="page-ads">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Solicitudes ADS</span>
       <button class="btn-back" onclick="abrirNuevaADS()">+ Nueva</button>
     </div>
-    <h1 style="margin-top:6px">Solicitudes de Atención</h1>
+    <h1 style="margin-top:6px">Solicitudes de Atencion</h1>
   </div>
   <div class="content">
     <input class="search-box" id="ads-search" placeholder="Buscar por solicitante, solicitud, ruta..." oninput="renderADS()">
@@ -153,9 +168,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="filtro-btn on" onclick="filtrarADS('Todos',this)">Todos</button>
       <button class="filtro-btn" onclick="filtrarADS('Atendido',this)">Atendido</button>
       <button class="filtro-btn" onclick="filtrarADS('Pendiente',this)">Pendiente</button>
-      <button class="filtro-btn" onclick="filtrarADS('En ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarADS('En ejecucion',this)">En ejecucion</button>
       <button class="filtro-btn" onclick="filtrarADS('Programar',this)">Programar</button>
-      <button class="filtro-amparo" id="btn-amparo" onclick="toggleAmparo()">⚖️ Recurso de amparo</button>
+      <button class="filtro-amparo" id="btn-amparo" onclick="toggleAmparo()">Recurso de amparo</button>
     </div>
     <div id="ads-count" class="result-count"></div>
     <div id="ads-list"><div class="loading">Cargando...</div></div>
@@ -165,11 +180,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="page" id="page-ads-detail">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-ads')">← ADS</button>
+      <button class="btn-back" onclick="showPage('page-ads')">ADS</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Detalle ADS</span>
       <div style="width:60px"></div>
     </div>
-    <h1 style="margin-top:6px">Solicitud de Atención</h1>
+    <h1 style="margin-top:6px">Solicitud de Atencion</h1>
   </div>
   <div class="content" id="ads-detail-content"></div>
 </div>
@@ -177,35 +192,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="page" id="page-proyectos">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Banco de Proyectos</span>
       <button class="btn-back" onclick="abrirNuevoProyecto()">+ Nuevo</button>
     </div>
     <h1 style="margin-top:6px">Banco de Proyectos</h1>
   </div>
   <div class="content">
-    <input class="search-box" id="proy-search" placeholder="Buscar por ruta, gestión, descripción..." oninput="renderProyectos()">
+    <input class="search-box" id="proy-search" placeholder="Buscar por ruta, gestion, descripcion..." oninput="renderProyectos()">
     <div class="filtros">
       <button class="filtro-btn on" onclick="filtrarProyEstado('Todos',this)">Todos</button>
       <button class="filtro-btn" onclick="filtrarProyEstado('Pendiente',this)">Pendiente</button>
-      <button class="filtro-btn" onclick="filtrarProyEstado('Ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Ejecucion',this)">En ejecucion</button>
       <button class="filtro-btn" onclick="filtrarProyEstado('Atendido',this)">Atendido</button>
       <button class="filtro-btn" onclick="filtrarProyEstado('Alta',this)">Prioridad Alta</button>
-      <button class="filtro-amparo" id="btn-amparo-proy" onclick="toggleAmparoProy()">⚖️ Recurso de amparo</button>
+      <button class="filtro-amparo" id="btn-amparo-proy" onclick="toggleAmparoProy()">Recurso de amparo</button>
     </div>
     <select class="select-filtro" id="proy-filtro-ruta" onchange="renderProyectos()">
       <option value="">Todas las rutas</option>
     </select>
     <select class="select-filtro" id="proy-filtro-gestion" onchange="renderProyectos()">
-      <option value="">Todos los tipos de gestión</option>
+      <option value="">Todos los tipos de gestion</option>
       <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
       <option>Baranda de puente</option><option>Baranda de puente, concreto y gaviones</option>
-      <option>Canal revestido</option><option>Concreto</option><option>Demarcación</option>
-      <option>Descuaje</option><option>Diseño muro contención</option><option>Escollera</option>
-      <option>Estudio Departamento Puentes</option><option>Estudio hidrológico</option>
+      <option>Canal revestido</option><option>Concreto</option><option>Demarcacion</option>
+      <option>Descuaje</option><option>Diseno muro contencion</option><option>Escollera</option>
+      <option>Estudio Departamento Puentes</option><option>Estudio hidrologico</option>
       <option>Guardacaminos</option><option>Limpiezas</option>
-      <option>Muro de contención</option><option>Parrilla</option><option>Remoción de arbol</option>
-      <option>Tapa con flanger</option><option>Tubería y canal revestido</option><option>Tubería y concreto</option>
+      <option>Muro de contencion</option><option>Parrilla</option><option>Remocion de arbol</option>
+      <option>Tapa con flanger</option><option>Tuberia y canal revestido</option><option>Tuberia y concreto</option>
     </select>
     <div id="proy-count" class="result-count"></div>
     <div id="proy-list"><div class="loading">Cargando...</div></div>
@@ -215,11 +230,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="page" id="page-nueva-ads">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Nueva ADS</span>
       <div style="width:60px"></div>
     </div>
-    <h1 style="margin-top:6px">Nueva Solicitud de Atención</h1>
+    <h1 style="margin-top:6px">Nueva Solicitud de Atencion</h1>
   </div>
   <div class="content">
     <div class="section">
@@ -227,28 +242,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="card">
         <div class="field"><label>Fecha ingreso</label><input type="date" id="nads-fecha"></div>
         <div class="field"><label>Solicitante</label><input type="text" id="nads-solicitante" placeholder="Nombre del solicitante"></div>
-        <div class="field field-vertical"><label>Solicitud</label><textarea id="nads-solicitud" placeholder="Descripción de la solicitud..."></textarea></div>
+        <div class="field field-vertical"><label>Solicitud</label><textarea id="nads-solicitud" placeholder="Descripcion de la solicitud..."></textarea></div>
         <div class="field"><label>Ruta</label>
           <select id="nads-ruta" onchange="actualizarSeccionesADS()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
           </select>
         </div>
-        <div class="field"><label>Sección de control</label>
+        <div class="field"><label>Seccion de control</label>
           <select id="nads-seccion" onchange="mostrarDescADS()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
           </select>
         </div>
         <div class="field-desc" id="nads-desc-box" style="display:none"><p id="nads-desc-texto"></p></div>
-        <div class="field"><label>Estación</label><input type="text" id="nads-estacion" placeholder="Ej: 1+500"></div>
-        <div class="field"><label>¿Aplica?</label>
+        <div class="field"><label>Estacion</label><input type="text" id="nads-estacion" placeholder="Ej: 1+500"></div>
+        <div class="field"><label>Aplica?</label>
           <select id="nads-aplica" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option>Si</option><option>No</option>
           </select>
         </div>
-        <div class="field field-vertical"><label>Recomendación de solución</label><textarea id="nads-recomendacion" placeholder="Recomendación de solución..."></textarea></div>
+        <div class="field field-vertical"><label>Recomendacion de solucion</label><textarea id="nads-recomendacion" placeholder="Recomendacion de solucion..."></textarea></div>
         <div class="field"><label>Prioridad</label>
           <select id="nads-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
-            <option value="1">1 — Alta</option><option value="2">2 — Media</option><option value="3">3 — Baja</option>
+            <option value="1">1 - Alta</option><option value="2">2 - Media</option><option value="3">3 - Baja</option>
           </select>
         </div>
         <div class="field"><label>Estado inicial</label>
@@ -256,7 +271,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             <option>Pendiente</option><option>Programar</option><option>En ejecucion</option><option>Atendido</option>
           </select>
         </div>
-        <div class="field"><label>Monto estimado (₡)</label><input type="number" id="nads-monto" placeholder="0" style="max-width:60%"></div>
+        <div class="field"><label>Monto estimado</label><input type="number" id="nads-monto" placeholder="0" style="max-width:60%"></div>
         <div class="field field-vertical"><label>Observaciones</label><textarea id="nads-obs" placeholder="Observaciones adicionales..."></textarea></div>
       </div>
     </div>
@@ -267,7 +282,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="page" id="page-nuevo-proy">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Nuevo Proyecto</span>
       <div style="width:60px"></div>
     </div>
@@ -283,37 +298,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             <option value="">Seleccionar...</option>
           </select>
         </div>
-        <div class="field"><label>Sección de control</label>
+        <div class="field"><label>Seccion de control</label>
           <select id="nproy-seccion" onchange="mostrarDescProy()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
           </select>
         </div>
         <div class="field-desc" id="nproy-desc-box" style="display:none"><p id="nproy-desc-texto"></p></div>
-        <div class="field"><label>Estación</label><input type="text" id="nproy-estacion" placeholder="Ej: 1+500"></div>
-        <div class="field"><label>Tipo de gestión</label>
+        <div class="field"><label>Estacion</label><input type="text" id="nproy-estacion" placeholder="Ej: 1+500"></div>
+        <div class="field"><label>Tipo de gestion</label>
           <select id="nproy-gestion" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
             <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
             <option>Baranda de puente</option><option>Baranda de puente, concreto y gaviones</option>
-            <option>Canal revestido</option><option>Concreto</option><option>Demarcación</option>
-            <option>Descuaje</option><option>Diseño muro contención</option><option>Escollera</option>
-            <option>Estudio Departamento Puentes</option><option>Estudio hidrológico</option>
-            <option>Guardacaminos</option><option>Limpieza</option><option>Limpiezas</option>
-            <option>Muro de contención</option><option>Parrilla</option><option>Remoción de arbol</option>
-            <option>Tapa con flanger</option><option>Tubería y canal revestido</option>
-            <option>Tubería y concreto</option><option>Otro</option>
+            <option>Canal revestido</option><option>Concreto</option><option>Demarcacion</option>
+            <option>Descuaje</option><option>Diseno muro contencion</option><option>Escollera</option>
+            <option>Estudio Departamento Puentes</option><option>Estudio hidrologico</option>
+            <option>Guardacaminos</option><option>Limpiezas</option>
+            <option>Muro de contencion</option><option>Parrilla</option><option>Remocion de arbol</option>
+            <option>Tapa con flanger</option><option>Tuberia y canal revestido</option>
+            <option>Tuberia y concreto</option><option>Otro</option>
           </select>
         </div>
-        <div class="field field-vertical"><label>Descripción de la situación</label><textarea id="nproy-descripcion" placeholder="Descripción detallada..."></textarea></div>
+        <div class="field field-vertical"><label>Descripcion de la situacion</label><textarea id="nproy-descripcion" placeholder="Descripcion detallada..."></textarea></div>
         <div class="field"><label>Prioridad</label>
           <select id="nproy-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option>Alta</option><option>Media</option><option>Baja</option>
           </select>
         </div>
-        <div class="field"><label>Costo estimado (₡)</label><input type="number" id="nproy-costo" placeholder="0" style="max-width:60%"></div>
+        <div class="field"><label>Costo estimado</label><input type="number" id="nproy-costo" placeholder="0" style="max-width:60%"></div>
         <div class="field"><label>Estado</label>
           <select id="nproy-estado" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
-            <option>Pendiente</option><option>Ejecución</option><option>Atendido</option>
+            <option>Pendiente</option><option>Ejecucion</option><option>Atendido</option>
           </select>
         </div>
         <div class="field field-vertical"><label>Solicitud / Origen</label><textarea id="nproy-solicitud" placeholder="Expediente, COFEC, reclamo de usuario..."></textarea></div>
@@ -330,35 +345,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- UBICACION - LISTA INSPECTORES -->
 <div class="page" id="page-ubicacion">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
-      <span style="color:#fff;font-size:13px;font-weight:500">Ubicación Inspectores</span>
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Ubicacion Inspectores</span>
       <button class="btn-back" onclick="abrirNuevaUbicacion()">+ Asignar</button>
     </div>
-    <h1 style="margin-top:6px">Ubicación en Campo</h1>
+    <h1 style="margin-top:6px">Ubicacion en Campo</h1>
   </div>
   <div class="content">
     <div class="filtros">
-      <button class="filtro-btn on" onclick="filtrarFechaUbic('hoy',this)">Hoy</button>
-      <button class="filtro-btn" onclick="filtrarFechaUbic('semana',this)">Esta semana</button>
+      <button class="filtro-btn on" onclick="filtrarFechaUbic('semana',this)">Esta semana</button>
+      <button class="filtro-btn" onclick="filtrarFechaUbic('proxima',this)">Proxima semana</button>
       <button class="filtro-btn" onclick="filtrarFechaUbic('todos',this)">Historial</button>
     </div>
-    <input class="search-box" id="ubic-search" placeholder="Buscar inspector, ruta, actividad..." oninput="renderUbicacion()">
     <div id="ubic-count" class="result-count"></div>
-    <div id="ubic-list"><div class="loading">Cargando...</div></div>
+    <div id="ubic-inspectores-list"></div>
   </div>
 </div>
 
+<!-- UBICACION - DETALLE INSPECTOR -->
+<div class="page" id="page-ubicacion-inspector">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-ubicacion')">Inspectores</button>
+      <span style="color:#fff;font-size:13px;font-weight:500" id="ubic-insp-titulo">Inspector</span>
+      <button class="btn-back" onclick="abrirNuevaUbicacionParaInspector()">+ Frente</button>
+    </div>
+    <h1 style="margin-top:6px" id="ubic-insp-nombre-header">Frentes de trabajo</h1>
+  </div>
+  <div class="content" id="ubic-inspector-detail"></div>
+</div>
+
+<!-- NUEVA UBICACION -->
 <div class="page" id="page-nueva-ubic">
   <div class="header">
     <div class="header-actions">
-      <button class="btn-back" onclick="showPage('page-ubicacion')">← Volver</button>
+      <button class="btn-back" onclick="volverDeFormUbic()">Volver</button>
       <span style="color:#fff;font-size:13px;font-weight:500" id="ubic-form-label">Asignar frente</span>
       <div style="width:60px"></div>
     </div>
-    <h1 style="margin-top:6px">Asignación de Frente</h1>
+    <h1 style="margin-top:6px">Asignacion de Frente</h1>
   </div>
   <div class="content">
     <div class="section">
@@ -378,16 +407,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             <option value="">Seleccionar...</option>
           </select>
         </div>
-        <div class="field"><label>Sección de control</label>
+        <div class="field"><label>Seccion de control</label>
           <select id="nubic-seccion" onchange="mostrarDescUbic()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
           </select>
         </div>
         <div class="field-desc" id="nubic-desc-box" style="display:none"><p id="nubic-desc-texto"></p></div>
-        <div class="field"><label>Actividad / Ítem</label>
-          <select id="nubic-actividad" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
+        <div class="field"><label>Actividad / Item</label>
+          <select id="nubic-actividad" onchange="toggleOtraActividad()" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
+            <option value="__otra__">Otra actividad...</option>
           </select>
+        </div>
+        <div class="field-extra" id="nubic-otra-box" style="display:none">
+          <label style="font-size:13px;color:#6D6D72;font-weight:500">Describi la actividad:</label>
+          <input type="text" id="nubic-otra-texto" placeholder="Ej: Inventario alcantarillas, Puente modular...">
         </div>
         <div class="field"><label>Contrato</label>
           <select id="nubic-contrato" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
@@ -403,8 +437,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
       </div>
     </div>
-    <button class="btn-primary" id="btn-guardar-ubic" onclick="guardarUbicacion()">Guardar asignación</button>
-    <button class="btn-danger" id="btn-eliminar-ubic" style="display:none;margin-top:6px" onclick="eliminarUbicacion()">Eliminar asignación</button>
+    <button class="btn-primary" id="btn-guardar-ubic" onclick="guardarUbicacion()">Guardar asignacion</button>
+    <button class="btn-danger" id="btn-eliminar-ubic" style="display:none;margin-top:6px" onclick="eliminarUbicacion()">Eliminar asignacion</button>
   </div>
 </div>
 
@@ -414,10 +448,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
 let adsData=[],proyData=[],rutasData=[],ubicData=[],itemsUbicData=[];
 let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
-let filtroFechaUbic='hoy',editUbicRowIndex=null;
+let filtroFechaUbic='semana',editUbicRowIndex=null,inspectorActual=null;
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
 const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12};
 const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
+const INSPECTORES=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function toast(msg,err=false,ok=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' error':ok?' success':'')+' show';setTimeout(()=>t.className='toast',3500);}
@@ -432,15 +467,15 @@ function jsonp(url){
     setTimeout(()=>{delete window[cb];rej(new Error('Timeout'));},12000);
   });
 }
-function fmt(n){if(!n||n==='')return'—';const num=parseFloat(String(n).replace(/[^\d.]/g,''));if(isNaN(num))return String(n);return'₡'+num.toLocaleString('es-CR');}
-function fmtF(v){if(!v)return'—';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
-function fmtFShort(v){if(!v)return'—';const f=fmtF(v);const parts=f.split('-');if(parts.length===3)return`${parts[2]}/${parts[1]}`;return f;}
-function chipEstado(e){const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};return m[e]||'chip-estado-p';}
+function fmt(n){if(!n||n==='')return'-';const num=parseFloat(String(n).replace(/[^\d.]/g,''));if(isNaN(num))return String(n);return'CRC'+num.toLocaleString('es-CR');}
+function fmtF(v){if(!v)return'-';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
+function fmtFShort(v){if(!v)return'-';const f=fmtF(v);const parts=f.split('-');if(parts.length===3)return parts[2]+'/'+parts[1];return f;}
+function chipEstado(e){const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecucion':'chip-estado-e','Programar':'chip-estado-pr'};return m[e]||'chip-estado-p';}
 function chipPrioridad(p){const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};return m[String(p)]||'chip-prioridad-media';}
-function labelPrioridad(p){const m={'1':'Alta','2':'Media','3':'Baja'};return m[String(p)]||String(p)||'—';}
+function labelPrioridad(p){const m={'1':'Alta','2':'Media','3':'Baja'};return m[String(p)]||String(p)||'-';}
 function cardColor(estado,prioridad){
   if(estado==='Atendido')return'atendido';
-  if(estado==='En ejecucion'||estado==='Ejecución')return'ejecucion';
+  if(estado==='En ejecucion'||estado==='Ejecucion')return'ejecucion';
   if(estado==='Programar')return'programar';
   const p=String(prioridad);
   if(p==='Alta'||p==='1')return'alta';
@@ -451,11 +486,11 @@ function esAmparo(r,cols){return cols.map(c=>String(r[c]||'').toLowerCase()).som
 function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function colorInspector(n){const m={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};return m[n]||'#1F3864';}
 function inicialesInspector(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
-function labelContrato(v){const m={'2022CD-000145-0006000001':'CD-000145','2022CD-000128-0006000001':'CD-000128','2025LD-000022-0006000001':'Lastre','Otro':'Otro'};return m[v]||v||'—';}
+function labelContrato(v){const m={'2022CD-000145-0006000001':'CD-000145','2022CD-000128-0006000001':'CD-000128','2025LD-000022-0006000001':'Lastre','Otro':'Otro'};return m[v]||v||'-';}
 function hoy(){return new Date().toISOString().split('T')[0];}
-function inicioSemana(){const d=new Date();const day=d.getDay();d.setDate(d.getDate()-day+(day===0?-6:1));return d.toISOString().split('T')[0];}
-function rangoIncluyeHoy(fini,ffin){const h=hoy();const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return h>=i&&h<=f;}
-function rangoIncluyeSemana(fini,ffin){const ini=inicioSemana();const h=hoy();const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return i<=h&&f>=ini;}
+function inicioSemana(offset=0){const d=new Date();const day=d.getDay();d.setDate(d.getDate()-day+(day===0?-6:1)+(offset*7));return d.toISOString().split('T')[0];}
+function finSemana(offset=0){const d=new Date();const day=d.getDay();d.setDate(d.getDate()-day+(day===0?0:7)+(offset*7));return d.toISOString().split('T')[0];}
+function rangoEnPeriodo(fini,ffin,ini,fin){const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return i<=fin&&f>=ini;}
 
 async function cargarRutas(){
   try{
@@ -467,7 +502,7 @@ async function cargarRutas(){
       const sel=document.getElementById(id);if(!sel)return;
       rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
     });
-  }catch(e){toast('Error cargando rutas',true);}
+  }catch(e){console.log('Error rutas',e);}
 }
 
 async function cargarItemsUbic(){
@@ -475,8 +510,20 @@ async function cargarItemsUbic(){
     const j=await jsonp(SCRIPT_URL+'?sheet=ITEM&t='+Date.now());
     itemsUbicData=(j.data||[]).slice(1).filter(r=>r[0]||r[1]);
     const sel=document.getElementById('nubic-actividad');if(!sel)return;
-    itemsUbicData.forEach(r=>{const opt=document.createElement('option');opt.value=r[0]+' – '+r[1];opt.textContent=r[0]+' – '+r[1];sel.appendChild(opt);});
+    itemsUbicData.forEach(r=>{
+      const opt=document.createElement('option');
+      opt.value=r[0]+' - '+r[1];
+      opt.textContent=r[0]+' - '+r[1];
+      sel.appendChild(opt);
+    });
   }catch(e){console.log('Error items',e);}
+}
+
+function toggleOtraActividad(){
+  const sel=document.getElementById('nubic-actividad');
+  const box=document.getElementById('nubic-otra-box');
+  box.style.display=sel.value==='__otra__'?'flex':'none';
+  if(sel.value!=='__otra__')document.getElementById('nubic-otra-texto').value='';
 }
 
 function actualizarSeccionesADS(){const ruta=document.getElementById('nads-ruta').value;const sel=document.getElementById('nads-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nads-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
@@ -487,7 +534,7 @@ function actualizarSeccionesUbic(){const ruta=document.getElementById('nubic-rut
 function mostrarDescUbic(){const sel=document.getElementById('nubic-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nubic-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nubic-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
 
 async function cargarDatos(spinner=false){
-  if(spinner){const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ ...';}
+  if(spinner){const b=document.getElementById('btn-refresh-home');if(b)b.textContent='...';}
   try{
     const [j1,j2]=await Promise.all([jsonp(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),jsonp(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())]);
     adsData=(j1.data||[]).slice(1).filter(r=>r[0]||r[1]||r[2]);
@@ -496,8 +543,8 @@ async function cargarDatos(spinner=false){
     document.getElementById('last-update').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CR');
     if(document.getElementById('page-ads').classList.contains('active'))renderADS();
     if(document.getElementById('page-proyectos').classList.contains('active'))renderProyectos();
-  }catch(e){document.getElementById('last-update').textContent='Error de conexión';}
-  const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ Actualizar';
+  }catch(e){document.getElementById('last-update').textContent='Error de conexion';}
+  const b=document.getElementById('btn-refresh-home');if(b)b.textContent='Actualizar';
 }
 function actualizarDatos(){cargarDatos(true);}
 function actualizarStats(){
@@ -521,18 +568,18 @@ function renderADS(){
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=[...rows].reverse().map(r=>{
     const idx=adsData.indexOf(r);const estado=String(r[A.estado]||'Pendiente');const color=cardColor(estado,String(r[A.prior]));const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
-    return`<div class="item-card ${color}" onclick="verADS(${idx})">
-      <div class="item-title">${r[A.solic]||'Sin descripción'}</div>
-      <div style="font-size:12px;color:#6D6D72;margin-top:2px">${r[A.sol]||'—'}</div>
-      <div class="item-meta">
-        ${r[A.ruta]?`<span class="chip chip-ruta">Ruta ${r[A.ruta]}</span>`:''}
-        ${r[A.sec]?`<span class="chip chip-ruta">Sec. ${r[A.sec]}</span>`:''}
-        <span class="chip ${chipEstado(estado)}">${estado}</span>
-        ${r[A.prior]?`<span class="chip ${chipPrioridad(r[A.prior])}">${labelPrioridad(r[A.prior])}</span>`:''}
-        ${amparo?'<span class="chip chip-amparo">⚖️ Amparo</span>':''}
-      </div>
-      <div class="item-fecha">${fmtF(r[A.fecha])}</div>
-    </div>`;
+    return'<div class="item-card '+color+'" onclick="verADS('+idx+')">'+
+      '<div class="item-title">'+( r[A.solic]||'Sin descripcion')+'</div>'+
+      '<div style="font-size:12px;color:#6D6D72;margin-top:2px">'+(r[A.sol]||'-')+'</div>'+
+      '<div class="item-meta">'+
+        (r[A.ruta]?'<span class="chip chip-ruta">Ruta '+r[A.ruta]+'</span>':'')+
+        (r[A.sec]?'<span class="chip chip-ruta">Sec. '+r[A.sec]+'</span>':'')+
+        '<span class="chip '+chipEstado(estado)+'">'+estado+'</span>'+
+        (r[A.prior]?'<span class="chip '+chipPrioridad(r[A.prior])+'">'+labelPrioridad(r[A.prior])+'</span>':'')+
+        (amparo?'<span class="chip chip-amparo">Amparo</span>':'')+
+      '</div>'+
+      '<div class="item-fecha">'+fmtF(r[A.fecha])+'</div>'+
+    '</div>';
   }).join('');
 }
 
@@ -541,35 +588,35 @@ function verADS(idx){
   const estado=String(r[A.estado]||'Pendiente');
   const estados=['Pendiente','Programar','En ejecucion','Atendido'];
   const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
-  document.getElementById('ads-detail-content').innerHTML=`
-    <div class="detail-section">
-      <div class="detail-section-title">Identificación</div>
-      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtF(r[A.fecha])}</span></div>
-      <div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">${r[A.sol]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[A.ruta]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Sección</span><span class="detail-value">${r[A.sec]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Estación</span><span class="detail-value">${r[A.est]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">¿Aplica?</span><span class="detail-value">${r[A.aplica]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">${labelPrioridad(r[A.prior])}</span></div>
-      ${amparo?'<div class="detail-field"><span class="detail-label">Tipo</span><span class="detail-value" style="color:#6B21A8;font-weight:600">⚖️ Recurso de amparo</span></div>':''}
-    </div>
-    <div class="detail-section"><div class="detail-section-title">Solicitud</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[A.solic]||'—'}</div></div>
-    <div class="detail-section"><div class="detail-section-title">Recomendación de solución</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[A.rec]||'—'}</div></div>
-    <div class="detail-section">
-      <div class="detail-section-title">Seguimiento</div>
-      <div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">${fmt(r[A.monto])}</span></div>
-      <div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">${r[A.evid]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtF(r[A.fcierre])}</span></div>
-      <div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">${r[A.obs]||'—'}</span></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Estado actual: <strong>${estado}</strong></div>
-      <div style="font-size:11px;color:#FF9500;margin-bottom:10px;background:#FFF3E0;padding:8px;border-radius:8px">⚠️ Solo Emanuel puede actualizar el estado</div>
-      <select id="estado-ads-sel" style="width:100%;padding:10px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;font-family:inherit;color:#1C1C1E;background:#fff;-webkit-appearance:none">
-        ${estados.map(e=>`<option value="${e}"${e===estado?' selected':''}>${e}</option>`).join('')}
-      </select>
-      <button class="btn-primary" onclick="actualizarEstadoADS(${idx})" style="margin-top:8px">Actualizar estado</button>
-    </div>`;
+  document.getElementById('ads-detail-content').innerHTML=
+    '<div class="detail-section">'+
+      '<div class="detail-section-title">Identificacion</div>'+
+      '<div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">'+fmtF(r[A.fecha])+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">'+(r[A.sol]||'-')+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">'+(r[A.ruta]||'-')+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Seccion</span><span class="detail-value">'+(r[A.sec]||'-')+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Estacion</span><span class="detail-value">'+(r[A.est]||'-')+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Aplica?</span><span class="detail-value">'+(r[A.aplica]||'-')+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">'+labelPrioridad(r[A.prior])+'</span></div>'+
+      (amparo?'<div class="detail-field"><span class="detail-label">Tipo</span><span class="detail-value" style="color:#6B21A8;font-weight:600">Recurso de amparo</span></div>':'')+
+    '</div>'+
+    '<div class="detail-section"><div class="detail-section-title">Solicitud</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">'+(r[A.solic]||'-')+'</div></div>'+
+    '<div class="detail-section"><div class="detail-section-title">Recomendacion de solucion</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">'+(r[A.rec]||'-')+'</div></div>'+
+    '<div class="detail-section">'+
+      '<div class="detail-section-title">Seguimiento</div>'+
+      '<div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">'+fmt(r[A.monto])+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">'+(r[A.evid]||'-')+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">'+fmtF(r[A.fcierre])+'</span></div>'+
+      '<div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">'+(r[A.obs]||'-')+'</span></div>'+
+    '</div>'+
+    '<div class="detail-section">'+
+      '<div class="detail-section-title">Estado actual: <strong>'+estado+'</strong></div>'+
+      '<div style="font-size:11px;color:#FF9500;margin-bottom:10px;background:#FFF3E0;padding:8px;border-radius:8px">Solo Emanuel puede actualizar el estado</div>'+
+      '<select id="estado-ads-sel" style="width:100%;padding:10px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;font-family:inherit;color:#1C1C1E;background:#fff;-webkit-appearance:none">'+
+        estados.map(e=>'<option value="'+e+'"'+(e===estado?' selected':'')+'>'+e+'</option>').join('')+
+      '</select>'+
+      '<button class="btn-primary" onclick="actualizarEstadoADS('+idx+')" style="margin-top:8px">Actualizar estado</button>'+
+    '</div>';
   showPage('page-ads-detail');
 }
 
@@ -578,8 +625,8 @@ async function actualizarEstadoADS(idx){
   const row=[...adsData[idx]];row[A.estado]=nuevoEstado;
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:idx+1,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
-    adsData[idx]=row;actualizarStats();toast('✓ Estado actualizado: '+nuevoEstado,false,true);
-  }catch(e){toast('Error de conexión',true);}
+    adsData[idx]=row;actualizarStats();toast('Estado actualizado: '+nuevoEstado,false,true);
+  }catch(e){toast('Error de conexion',true);}
 }
 
 function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
@@ -602,20 +649,20 @@ function renderProyectos(){
   list.innerHTML=rows.map(r=>{
     const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
     const costo=r[P.costo]&&String(r[P.costo])!==''?fmt(r[P.costo]):'Sin monto estimado';
-    return`<div class="item-card ${color} nocursor">
-      <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[P.gestion]||'—'}</div>
-      <div class="item-title">${r[P.desc]||'Sin descripción'}</div>
-      <div class="item-meta">
-        ${r[P.ruta]?`<span class="chip chip-ruta">Ruta ${r[P.ruta]}</span>`:''}
-        ${r[P.sec]?`<span class="chip chip-ruta">Sec. ${r[P.sec]}</span>`:''}
-        ${r[P.est]?`<span class="chip chip-ruta">${r[P.est]}</span>`:''}
-        <span class="chip ${chipEstado(estado)}">${estado}</span>
-        <span class="chip ${chipPrioridad(prioridad)}">${prioridad}</span>
-      </div>
-      <div style="font-size:11px;color:#6D6D72;margin-top:6px">${costo}</div>
-      ${r[P.solicitud]?`<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">${r[P.solicitud]}</div>`:''}
-      ${r[P.contrato]?`<div style="font-size:10px;color:#C7C7CC;margin-top:4px">${r[P.contrato]}</div>`:''}
-    </div>`;
+    return'<div class="item-card '+color+' nocursor">'+
+      '<div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">'+(r[P.gestion]||'-')+'</div>'+
+      '<div class="item-title">'+(r[P.desc]||'Sin descripcion')+'</div>'+
+      '<div class="item-meta">'+
+        (r[P.ruta]?'<span class="chip chip-ruta">Ruta '+r[P.ruta]+'</span>':'')+
+        (r[P.sec]?'<span class="chip chip-ruta">Sec. '+r[P.sec]+'</span>':'')+
+        (r[P.est]?'<span class="chip chip-ruta">'+r[P.est]+'</span>':'')+
+        '<span class="chip '+chipEstado(estado)+'">'+estado+'</span>'+
+        '<span class="chip '+chipPrioridad(prioridad)+'">'+prioridad+'</span>'+
+      '</div>'+
+      '<div style="font-size:11px;color:#6D6D72;margin-top:6px">'+costo+'</div>'+
+      (r[P.solicitud]?'<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">'+r[P.solicitud]+'</div>':'')+
+      (r[P.contrato]?'<div style="font-size:10px;color:#C7C7CC;margin-top:4px">'+r[P.contrato]+'</div>':'')+
+    '</div>';
   }).join('');
 }
 
@@ -635,10 +682,10 @@ async function guardarADS(){
   const row=[document.getElementById('nads-fecha').value,solicitante,solicitud,document.getElementById('nads-ruta').value,document.getElementById('nads-seccion').value,document.getElementById('nads-estacion').value,document.getElementById('nads-aplica').value,document.getElementById('nads-recomendacion').value,document.getElementById('nads-monto').value||'','','',document.getElementById('nads-obs').value,document.getElementById('nads-estado').value,document.getElementById('nads-prioridad').value];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
-    adsData.push(row);actualizarStats();toast('✓ ADS registrada correctamente',false,true);
+    adsData.push(row);actualizarStats();toast('ADS registrada correctamente',false,true);
     ['nads-solicitante','nads-solicitud','nads-recomendacion','nads-monto','nads-obs','nads-estacion'].forEach(id=>document.getElementById(id).value='');
     setTimeout(()=>showPage('page-home'),1200);
-  }catch(e){toast('Error de conexión',true);}
+  }catch(e){toast('Error de conexion',true);}
   btn.disabled=false;btn.textContent='Guardar solicitud';
 }
 
@@ -652,69 +699,138 @@ function abrirNuevoProyecto(){
 async function guardarProyecto(){
   const ruta=document.getElementById('nproy-ruta').value;
   const desc=document.getElementById('nproy-descripcion').value.trim();
-  if(!ruta||!desc){toast('Ruta y descripción son obligatorios',true);return;}
+  if(!ruta||!desc){toast('Ruta y descripcion son obligatorios',true);return;}
   const btn=document.getElementById('btn-guardar-proy');btn.disabled=true;btn.textContent='Guardando...';
   const row=[document.getElementById('nproy-zona').value,ruta,document.getElementById('nproy-seccion').value,document.getElementById('nproy-estacion').value,document.getElementById('nproy-gestion').value,desc,document.getElementById('nproy-prioridad').value,document.getElementById('nproy-costo').value||'','','',document.getElementById('nproy-solicitud').value,document.getElementById('nproy-estado').value,document.getElementById('nproy-contrato').value];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'PROYECTOS'}),headers:{'Content-Type':'application/json'}});
-    proyData.push(row);actualizarStats();toast('✓ Proyecto registrado correctamente',false,true);
+    proyData.push(row);actualizarStats();toast('Proyecto registrado correctamente',false,true);
     ['nproy-descripcion','nproy-costo','nproy-solicitud','nproy-estacion'].forEach(id=>document.getElementById(id).value='');
     setTimeout(()=>showPage('page-home'),1200);
-  }catch(e){toast('Error de conexión',true);}
+  }catch(e){toast('Error de conexion',true);}
   btn.disabled=false;btn.textContent='Guardar proyecto';
 }
 
-function abrirUbicacion(){showPage('page-ubicacion');cargarUbicacion();}
+// ═══ UBICACION ═══
+function abrirUbicacion(){
+  showPage('page-ubicacion');
+  cargarUbicacion();
+}
+
 async function cargarUbicacion(){
   try{
     const j=await jsonp(SCRIPT_URL+'?sheet=UBICACION&t='+Date.now());
     ubicData=(j.data||[]).slice(1).filter(r=>(r[U.fini]||r[U.inspector])&&r[U.fini]!=='ELIMINADO');
-    renderUbicacion();
-  }catch(e){document.getElementById('ubic-list').innerHTML='<div class="empty-state">Error de conexión</div>';}
+    renderUbicacionInspectores();
+  }catch(e){document.getElementById('ubic-inspectores-list').innerHTML='<div class="empty-state">Error de conexion</div>';}
 }
-function filtrarFechaUbic(f,btn){filtroFechaUbic=f;document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderUbicacion();}
-function renderUbicacion(){
-  const q=(document.getElementById('ubic-search').value||'').toLowerCase();
-  let rows=ubicData;
-  if(filtroFechaUbic==='hoy')rows=rows.filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin]));
-  else if(filtroFechaUbic==='semana')rows=rows.filter(r=>rangoIncluyeSemana(r[U.fini],r[U.ffin]));
-  if(q)rows=rows.filter(r=>[r[U.inspector],r[U.ruta],r[U.sec],r[U.actividad]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes(q)));
-  document.getElementById('ubic-count').textContent=rows.length+' frente'+(rows.length!==1?'s':'')+' de trabajo';
-  const list=document.getElementById('ubic-list');
-  if(!rows.length){list.innerHTML='<div class="empty-state">Sin asignaciones para este período</div>';return;}
-  const porInspector={};
-  rows.forEach(r=>{const idx=ubicData.indexOf(r);const insp=String(r[U.inspector]||'Sin asignar');if(!porInspector[insp])porInspector[insp]=[];porInspector[insp].push({r,idx});});
-  list.innerHTML=Object.entries(porInspector).map(([insp,frentes])=>{
-    const color=colorInspector(insp);
-    const frentesHTML=frentes.map(({r,idx})=>{
-      const fini=String(r[U.fini]).split('T')[0];
-      const ffin=String(r[U.ffin]||r[U.fini]).split('T')[0];
-      const rango=fini===ffin?fmtFShort(fini):`${fmtFShort(fini)} → ${fmtFShort(ffin)}`;
-      return`<div class="ubic-frente" onclick="editarUbicacion(${idx})">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span class="ubic-rango" style="background:${color}">${rango}</span>
-          <span style="font-size:10px;color:#6D6D72;font-weight:600">${labelContrato(r[U.contrato])}</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:3px">${r[U.actividad]||'Sin actividad'}</div>
-        <div style="font-size:12px;color:#6D6D72">${r[U.ruta]?'Ruta '+r[U.ruta]:'—'} ${r[U.sec]?'/ Sec. '+r[U.sec]:''}</div>
-        ${r[U.obs]?`<div style="font-size:11px;color:#6D6D72;margin-top:4px;font-style:italic">${r[U.obs]}</div>`:''}
-        <div style="font-size:10px;color:#C7C7CC;margin-top:4px;text-align:right">Tocar para editar →</div>
-      </div>`;
-    }).join('');
-    return`<div class="ubic-card">
-      <div class="ubic-insp-header">
-        <div class="ubic-avatar" style="background:${color}20;color:${color}">${inicialesInspector(insp)}</div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#1C1C1E">${insp}</div>
-          <div style="font-size:11px;color:#6D6D72">${frentes.length} frente${frentes.length!==1?'s':''} asignado${frentes.length!==1?'s':''}</div>
-        </div>
-      </div>
-      ${frentesHTML}
-    </div>`;
+
+function filtrarFechaUbic(f,btn){
+  filtroFechaUbic=f;
+  document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderUbicacionInspectores();
+  if(inspectorActual)renderDetalleInspector(inspectorActual);
+}
+
+function getPeriodo(){
+  if(filtroFechaUbic==='semana')return{ini:inicioSemana(0),fin:finSemana(0)};
+  if(filtroFechaUbic==='proxima')return{ini:inicioSemana(1),fin:finSemana(1)};
+  return{ini:'2000-01-01',fin:'2099-12-31'};
+}
+
+function getFrentesInspector(nombre){
+  const p=getPeriodo();
+  return ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin));
+}
+
+function renderUbicacionInspectores(){
+  const p=getPeriodo();
+  let label='';
+  if(filtroFechaUbic==='semana')label='Esta semana';
+  else if(filtroFechaUbic==='proxima')label='Proxima semana';
+  else label='Historial';
+  const totalFrentes=ubicData.filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)).length;
+  document.getElementById('ubic-count').textContent=label+' - '+totalFrentes+' frente'+(totalFrentes!==1?'s':'')+' asignados';
+  const list=document.getElementById('ubic-inspectores-list');
+  list.innerHTML=INSPECTORES.map(nombre=>{
+    const frentes=getFrentesInspector(nombre);
+    const color=colorInspector(nombre);
+    const ini=inicialesInspector(nombre);
+    const subtext=frentes.length>0?frentes.length+' frente'+(frentes.length!==1?'s':'')+' asignado'+(frentes.length!==1?'s':''):'Sin asignacion este periodo';
+    const subtextColor=frentes.length>0?'#1C1C1E':'#C7C7CC';
+    return'<div class="insp-card" onclick="verInspector(\''+nombre+'\')">'+
+      '<div class="insp-left">'+
+        '<div class="insp-avatar" style="background:'+color+'20;color:'+color+'">'+ini+'</div>'+
+        '<div>'+
+          '<div class="insp-name">'+nombre+'</div>'+
+          '<div class="insp-sub" style="color:'+subtextColor+'">'+subtext+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="insp-arrow">›</div>'+
+    '</div>';
+  }).join('');
+}
+
+function verInspector(nombre){
+  inspectorActual=nombre;
+  const color=colorInspector(nombre);
+  document.getElementById('ubic-insp-titulo').textContent=nombre.split(' ')[0];
+  document.getElementById('ubic-insp-nombre-header').textContent=nombre;
+  document.getElementById('ubic-insp-nombre-header').style.color='#fff';
+  renderDetalleInspector(nombre);
+  showPage('page-ubicacion-inspector');
+}
+
+function renderDetalleInspector(nombre){
+  const frentes=getFrentesInspector(nombre);
+  const color=colorInspector(nombre);
+  const container=document.getElementById('ubic-inspector-detail');
+  if(!frentes.length){
+    container.innerHTML='<div class="empty-state" style="margin-top:20px">Sin frentes asignados para este periodo</div>'+
+      '<button class="btn-primary" onclick="abrirNuevaUbicacionParaInspector()" style="margin-top:16px">+ Asignar frente</button>';
+    return;
+  }
+  const sorted=[...frentes].sort((a,b)=>String(a[U.fini]).localeCompare(String(b[U.fini])));
+  container.innerHTML=sorted.map(r=>{
+    const idx=ubicData.indexOf(r);
+    const fini=String(r[U.fini]).split('T')[0];
+    const ffin=String(r[U.ffin]||r[U.fini]).split('T')[0];
+    const mismaFecha=fini===ffin;
+    const rango=mismaFecha?fmtFShort(fini):fmtFShort(fini)+' a '+fmtFShort(ffin);
+    const rutaInfo=(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec. '+r[U.sec]:'');
+    return'<div class="frente-card" onclick="editarUbicacion('+idx+')">'+
+      '<div class="frente-header">'+
+        '<span class="frente-rango" style="background:'+color+'">'+rango+'</span>'+
+        '<span class="frente-contrato">'+labelContrato(r[U.contrato])+'</span>'+
+      '</div>'+
+      (rutaInfo?'<div class="frente-ubicacion"><span class="frente-ruta-badge" style="background:'+color+'20;color:'+color+'">'+rutaInfo+'</span></div>':'')+
+      '<div class="frente-actividad">'+(r[U.actividad]||'Sin actividad')+'</div>'+
+      (r[U.obs]?'<div class="frente-obs">'+r[U.obs]+'</div>':'')+
+      '<div class="frente-edit">Tocar para editar</div>'+
+    '</div>';
   }).join('');
 }
 
 function abrirNuevaUbicacion(){
+  inspectorActual=null;
+  resetFormUbic();
+  document.getElementById('ubic-form-label').textContent='Asignar frente';
+  document.getElementById('btn-guardar-ubic').textContent='Guardar asignacion';
+  document.getElementById('btn-eliminar-ubic').style.display='none';
+  showPage('page-nueva-ubic');
+}
+
+function abrirNuevaUbicacionParaInspector(){
+  resetFormUbic();
+  if(inspectorActual)document.getElementById('nubic-inspector').value=inspectorActual;
+  document.getElementById('ubic-form-label').textContent='Asignar frente';
+  document.getElementById('btn-guardar-ubic').textContent='Guardar asignacion';
+  document.getElementById('btn-eliminar-ubic').style.display='none';
+  showPage('page-nueva-ubic');
+}
+
+function resetFormUbic(){
   editUbicRowIndex=null;
   document.getElementById('nubic-fecha-ini').value=hoy();
   document.getElementById('nubic-fecha-fin').value=hoy();
@@ -723,13 +839,17 @@ function abrirNuevaUbicacion(){
   document.getElementById('nubic-seccion').innerHTML='<option value="">Seleccionar...</option>';
   document.getElementById('nubic-desc-box').style.display='none';
   document.getElementById('nubic-actividad').value='';
+  document.getElementById('nubic-otra-box').style.display='none';
+  document.getElementById('nubic-otra-texto').value='';
   document.getElementById('nubic-contrato').value='';
   document.getElementById('nubic-obs').value='';
-  document.getElementById('ubic-form-label').textContent='Asignar frente';
-  document.getElementById('btn-guardar-ubic').textContent='Guardar asignación';
-  document.getElementById('btn-eliminar-ubic').style.display='none';
-  showPage('page-nueva-ubic');
 }
+
+function volverDeFormUbic(){
+  if(inspectorActual)showPage('page-ubicacion-inspector');
+  else showPage('page-ubicacion');
+}
+
 function editarUbicacion(idx){
   const r=ubicData[idx];if(!r)return;
   editUbicRowIndex=idx;
@@ -739,20 +859,26 @@ function editarUbicacion(idx){
   document.getElementById('nubic-ruta').value=r[U.ruta]||'';
   actualizarSeccionesUbic();
   setTimeout(()=>{document.getElementById('nubic-seccion').value=r[U.sec]||'';mostrarDescUbic();},200);
-  document.getElementById('nubic-actividad').value=r[U.actividad]||'';
+  const actVal=r[U.actividad]||'';
+  const sel=document.getElementById('nubic-actividad');
+  let found=false;
+  for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===actVal){sel.value=actVal;found=true;break;}}
+  if(!found&&actVal){sel.value='__otra__';document.getElementById('nubic-otra-box').style.display='flex';document.getElementById('nubic-otra-texto').value=actVal;}
   document.getElementById('nubic-contrato').value=r[U.contrato]||'';
   document.getElementById('nubic-obs').value=r[U.obs]||'';
   document.getElementById('ubic-form-label').textContent='Editar frente';
-  document.getElementById('btn-guardar-ubic').textContent='Actualizar asignación';
+  document.getElementById('btn-guardar-ubic').textContent='Actualizar asignacion';
   document.getElementById('btn-eliminar-ubic').style.display='block';
   showPage('page-nueva-ubic');
 }
+
 async function guardarUbicacion(){
   const inspector=document.getElementById('nubic-inspector').value;
   const ruta=document.getElementById('nubic-ruta').value;
-  const actividad=document.getElementById('nubic-actividad').value;
   const fini=document.getElementById('nubic-fecha-ini').value;
   const ffin=document.getElementById('nubic-fecha-fin').value;
+  const selAct=document.getElementById('nubic-actividad');
+  let actividad=selAct.value==='__otra__'?document.getElementById('nubic-otra-texto').value.trim():selAct.value;
   if(!inspector||!ruta||!actividad||!fini){toast('Inspector, fechas, ruta y actividad son obligatorios',true);return;}
   if(ffin&&ffin<fini){toast('La fecha fin no puede ser anterior a la fecha inicio',true);return;}
   const btn=document.getElementById('btn-guardar-ubic');btn.disabled=true;btn.textContent='Guardando...';
@@ -765,21 +891,34 @@ async function guardarUbicacion(){
       await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
       ubicData.push(row);
     }
-    toast('✓ Asignación guardada',false,true);
-    setTimeout(()=>{showPage('page-ubicacion');renderUbicacion();},800);
-  }catch(e){toast('Error de conexión',true);}
-  btn.disabled=false;btn.textContent=editUbicRowIndex!==null?'Actualizar asignación':'Guardar asignación';
+    toast('Asignacion guardada',false,true);
+    const insp=inspector;
+    setTimeout(()=>{
+      inspectorActual=insp;
+      renderUbicacionInspectores();
+      renderDetalleInspector(insp);
+      showPage('page-ubicacion-inspector');
+    },800);
+  }catch(e){toast('Error de conexion',true);}
+  btn.disabled=false;btn.textContent=editUbicRowIndex!==null?'Actualizar asignacion':'Guardar asignacion';
 }
+
 async function eliminarUbicacion(){
-  if(!confirm('¿Eliminar esta asignación?'))return;
+  if(!confirm('Eliminar esta asignacion?'))return;
   if(editUbicRowIndex===null)return;
+  const insp=ubicData[editUbicRowIndex][U.inspector];
   const row=['ELIMINADO','','','','','','',''];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editUbicRowIndex+1,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
     ubicData[editUbicRowIndex]=row;
-    toast('Asignación eliminada');
-    setTimeout(()=>{showPage('page-ubicacion');renderUbicacion();},800);
-  }catch(e){toast('Error de conexión',true);}
+    toast('Asignacion eliminada');
+    setTimeout(()=>{
+      inspectorActual=insp;
+      renderUbicacionInspectores();
+      renderDetalleInspector(insp);
+      showPage('page-ubicacion-inspector');
+    },800);
+  }catch(e){toast('Error de conexion',true);}
 }
 
 cargarDatos(false);
