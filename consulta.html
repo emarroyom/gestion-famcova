@@ -235,7 +235,7 @@ let adsData=[],proyData=[],rutasData=[],ubicData=[];
 let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
 let filtroFechaUbic='semana',inspectorActual=null;
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
-const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12};
+const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12,obs:13};
 const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
 const INSPECTORES=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
 
@@ -403,6 +403,7 @@ function renderProyectos(){
       '<div style="font-size:11px;color:#6D6D72;margin-top:6px">'+costo+'</div>'+
       (r[P.solicitud]?'<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">'+r[P.solicitud]+'</div>':'')+
       (r[P.contrato]?'<div style="font-size:10px;color:#C7C7CC;margin-top:4px">'+r[P.contrato]+'</div>':'')+
+      (r[P.obs]?'<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4;font-style:italic">'+r[P.obs]+'</div>':'')+
     '</div>';
   }).join('');
 }
