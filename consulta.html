@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Consulta FAMCOVA">
+<title>Consulta FAMCOVA</title>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="shortcut icon" href="icon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F2F2F7;color:#1C1C1E;min-height:100vh}
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+.header{background:#1F3864;padding:14px 16px;padding-top:max(14px,env(safe-area-inset-top));position:sticky;top:0;z-index:10}
+.header h1{color:#fff;font-size:17px;font-weight:600;text-align:center}
+.header p{color:rgba(255,255,255,0.7);font-size:12px;text-align:center;margin-top:2px}
+.header-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.btn-back{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.content{padding:16px;padding-bottom:max(40px,env(safe-area-inset-bottom))}
+.home-btn{display:flex;align-items:center;gap:14px;background:#fff;border-radius:12px;padding:16px;margin-bottom:8px;cursor:pointer;border:none;width:100%;text-align:left;font-family:inherit}
+.home-btn-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.home-btn-title{font-size:15px;font-weight:600;color:#1C1C1E}
+.home-btn-sub{font-size:12px;color:#6D6D72;margin-top:2px}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.stat-card{background:#fff;border-radius:12px;padding:14px;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:#1F3864;line-height:1}
+.stat-label{font-size:11px;color:#6D6D72;margin-top:4px}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.filtro-btn{padding:5px 12px;font-size:12px;border:0.5px solid #C7C7CC;border-radius:20px;background:#fff;color:#6D6D72;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
+.filtro-btn.on{background:#1F3864;color:#fff;border-color:#1F3864}
+.filtro-amparo{padding:5px 12px;font-size:12px;border:0.5px solid #C7C7CC;border-radius:20px;background:#fff;color:#6D6D72;cursor:pointer;white-space:nowrap;font-family:inherit}
+.filtro-amparo.on{background:#8B1A1A;color:#fff;border-color:#8B1A1A}
+.search-box{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;color:#1C1C1E}
+.select-filtro{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;color:#1C1C1E;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236D6D72' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.item-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;border-left:4px solid #E5E5EA}
+.item-card.alta{border-left-color:#FF3B30}
+.item-card.media{border-left-color:#FF9500}
+.item-card.baja{border-left-color:#34C759}
+.item-card.atendido{border-left-color:#34C759}
+.item-card.pendiente{border-left-color:#FF9500}
+.item-card.ejecucion{border-left-color:#007AFF}
+.item-card.programar{border-left-color:#FF9500}
+.item-card.clickable{cursor:pointer}
+.item-title{font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:5px;line-height:1.4}
+.item-meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600}
+.chip-ruta{background:#EBF3FB;color:#1F3864}
+.chip-estado-a{background:#E8F8EE;color:#1A5C2E}
+.chip-estado-p{background:#FFF3E0;color:#7A4500}
+.chip-estado-e{background:#EBF3FB;color:#1F3864}
+.chip-estado-pr{background:#FFF3E0;color:#7A4500}
+.chip-prioridad-alta{background:#FFEBEE;color:#8B1A1A}
+.chip-prioridad-media{background:#FFF3E0;color:#7A4500}
+.chip-prioridad-baja{background:#E8F8EE;color:#1A5C2E}
+.chip-amparo{background:#F3E8FF;color:#6B21A8}
+.item-fecha{font-size:11px;color:#6D6D72;margin-top:4px}
+.empty-state{text-align:center;padding:40px 20px;color:#6D6D72;font-size:14px;line-height:1.6}
+.detail-field{padding:10px 0;border-bottom:0.5px solid #E5E5EA;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.detail-field:last-child{border-bottom:none}
+.detail-label{font-size:12px;color:#6D6D72;font-weight:500;flex-shrink:0;min-width:120px}
+.detail-value{font-size:13px;color:#1C1C1E;text-align:right;line-height:1.4}
+.detail-section{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+.loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
+.result-count{font-size:11px;color:#6D6D72;margin-bottom:8px;padding-left:4px}
+.readonly-badge{background:#EBF3FB;color:#1F3864;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;text-align:center;margin-bottom:12px}
+.ubic-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.ubic-insp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ubic-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.ubic-frente{border:0.5px solid #E5E5EA;border-radius:10px;padding:10px 12px;margin-bottom:8px;background:#FAFAFA}
+.ubic-frente:last-child{margin-bottom:0}
+.ubic-rango{display:inline-block;font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:12px;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="header">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="width:80px"></div>
+      <div style="text-align:center"><h1>Sistema de Gestión</h1><p>FAMCOVA – Zona 1-4 Región Central</p></div>
+      <button class="btn-back" id="btn-refresh-home" onclick="actualizarDatos()">↻ Actualizar</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="readonly-badge">👁 Modo consulta — solo lectura</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-ads-total">—</div><div class="stat-label">ADS totales</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">—</div><div class="stat-label">ADS pendientes</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-total">—</div><div class="stat-label">Proyectos</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">—</div><div class="stat-label">En ejecución</div></div>
+    </div>
+    <div>
+      <button class="home-btn" onclick="abrirADS()">
+        <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
+        <div><div class="home-btn-title">Solicitudes de Atención (ADS)</div><div class="home-btn-sub">Ver todas las solicitudes</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirProyectos()">
+        <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
+        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestión de proyectos</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirUbicacion()">
+        <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
+        <div><div class="home-btn-title">Ubicación de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
+      </button>
+    </div>
+    <div style="text-align:center;font-size:11px;color:#C7C7CC;margin-top:12px" id="last-update">Actualizando...</div>
+  </div>
+</div>
+
+<!-- ADS LIST -->
+<div class="page" id="page-ads">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Solicitudes ADS</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Solicitudes de Atención</h1>
+  </div>
+  <div class="content">
+    <input class="search-box" id="ads-search" placeholder="Buscar por solicitante, solicitud, ruta..." oninput="renderADS()">
+    <div class="filtros">
+      <button class="filtro-btn on" onclick="filtrarADS('Todos',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarADS('Atendido',this)">Atendido</button>
+      <button class="filtro-btn" onclick="filtrarADS('Pendiente',this)">Pendiente</button>
+      <button class="filtro-btn" onclick="filtrarADS('En ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarADS('Programar',this)">Programar</button>
+      <button class="filtro-amparo" id="btn-amparo" onclick="toggleAmparo()">⚖️ Recurso de amparo</button>
+    </div>
+    <div id="ads-count" class="result-count"></div>
+    <div id="ads-list"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- ADS DETAIL -->
+<div class="page" id="page-ads-detail">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-ads')">← ADS</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Detalle ADS</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Solicitud de Atención</h1>
+  </div>
+  <div class="content" id="ads-detail-content"></div>
+</div>
+
+<!-- PROYECTOS LIST -->
+<div class="page" id="page-proyectos">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Banco de Proyectos</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Banco de Proyectos</h1>
+  </div>
+  <div class="content">
+    <input class="search-box" id="proy-search" placeholder="Buscar por ruta, gestión, descripción..." oninput="renderProyectos()">
+    <div class="filtros">
+      <button class="filtro-btn on" onclick="filtrarProyEstado('Todos',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Pendiente',this)">Pendiente</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Ejecucion',this)">En ejecución</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Atendido',this)">Atendido</button>
+      <button class="filtro-btn" onclick="filtrarProyEstado('Alta',this)">Prioridad Alta</button>
+      <button class="filtro-amparo" id="btn-amparo-proy" onclick="toggleAmparoProy()">⚖️ Recurso de amparo</button>
+    </div>
+    <select class="select-filtro" id="proy-filtro-ruta" onchange="renderProyectos()">
+      <option value="">Todas las rutas</option>
+    </select>
+    <select class="select-filtro" id="proy-filtro-gestion" onchange="renderProyectos()">
+      <option value="">Todos los tipos de gestión</option>
+      <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
+      <option>Baranda de puente</option><option>Baranda de puente, concreto y gaviones</option>
+      <option>Canal revestido</option><option>Concreto</option><option>Demarcación</option>
+      <option>Descuaje</option><option>Diseño muro contención</option><option>Escollera</option>
+      <option>Estudio Departamento Puentes</option><option>Estudio hidrológico</option>
+      <option>Guardacaminos</option><option>Limpieza</option><option>Limpiezas</option>
+      <option>Muro de contención</option><option>Parrilla</option><option>Remoción de arbol</option>
+      <option>Tapa con flanger</option><option>Tubería y canal revestido</option><option>Tubería y concreto</option>
+    </select>
+    <div id="proy-count" class="result-count"></div>
+    <div id="proy-list"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- UBICACIÓN -->
+<div class="page" id="page-ubicacion">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">← Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Ubicación Inspectores</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Ubicación en Campo</h1>
+  </div>
+  <div class="content">
+    <div class="filtros">
+      <button class="filtro-btn on" onclick="filtrarFechaUbic('hoy',this)">Hoy</button>
+      <button class="filtro-btn" onclick="filtrarFechaUbic('semana',this)">Esta semana</button>
+      <button class="filtro-btn" onclick="filtrarFechaUbic('todos',this)">Historial</button>
+    </div>
+    <input class="search-box" id="ubic-search" placeholder="Buscar inspector, ruta, actividad..." oninput="renderUbicacion()">
+    <div id="ubic-count" class="result-count"></div>
+    <div id="ubic-list"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
+let adsData=[],proyData=[],rutasData=[],ubicData=[];
+let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
+let filtroFechaUbic='hoy';
+const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
+const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12};
+const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
+
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
+function jsonp(url){
+  return new Promise((res,rej)=>{
+    const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const s=document.createElement('script');
+    window[cb]=data=>{res(data);delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);};
+    s.src=url+'&callback='+cb;
+    s.onerror=()=>{delete window[cb];rej(new Error('error'));};
+    document.head.appendChild(s);
+    setTimeout(()=>{delete window[cb];rej(new Error('timeout'));},12000);
+  });
+}
+function fmt(n){if(!n||n==='')return'—';const num=parseFloat(String(n).replace(/[^\d.]/g,''));if(isNaN(num))return String(n);return'₡'+num.toLocaleString('es-CR');}
+function fmtF(v){if(!v)return'—';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
+function fmtFShort(v){if(!v)return'—';const f=fmtF(v);const parts=f.split('-');if(parts.length===3)return`${parts[2]}/${parts[1]}`;return f;}
+function chipEstado(e){const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};return m[e]||'chip-estado-p';}
+function chipPrioridad(p){const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};return m[String(p)]||'chip-prioridad-media';}
+function labelPrioridad(p){const m={'1':'Alta','2':'Media','3':'Baja'};return m[String(p)]||String(p)||'—';}
+function cardColor(estado,prioridad){
+  if(estado==='Atendido')return'atendido';
+  if(estado==='En ejecucion'||estado==='Ejecución')return'ejecucion';
+  if(estado==='Programar')return'programar';
+  const p=String(prioridad);
+  if(p==='Alta'||p==='1')return'alta';
+  if(p==='Media'||p==='2')return'media';
+  return'baja';
+}
+function esAmparo(r,cols){return cols.map(c=>String(r[c]||'').toLowerCase()).some(s=>s.includes('amparo'));}
+function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function colorInspector(n){const m={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};return m[n]||'#1F3864';}
+function inicialesInspector(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function labelContrato(v){const m={'2022CD-000145-0006000001':'CD-000145','2022CD-000128-0006000001':'CD-000128','2025LD-000022-0006000001':'Lastre','Otro':'Otro'};return m[v]||v||'—';}
+function hoy(){return new Date().toISOString().split('T')[0];}
+function inicioSemana(){const d=new Date();const day=d.getDay();d.setDate(d.getDate()-day+(day===0?-6:1));return d.toISOString().split('T')[0];}
+function rangoIncluyeHoy(fini,ffin){const h=hoy();const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return h>=i&&h<=f;}
+function rangoIncluyeSemana(fini,ffin){const ini=inicioSemana();const h=hoy();const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return i<=h&&f>=ini;}
+
+async function cargarRutas(){
+  try{
+    const j=await jsonp(SCRIPT_URL+'?sheet=RUTAS&t='+Date.now());
+    const rows=(j.data||[]).slice(1).filter(r=>r[0]&&String(r[0]).trim()!=='');
+    rutasData=rows.map(r=>({ruta:String(r[0]).trim(),seccion:String(r[1]).trim(),desc:String(r[2]||'').trim()}));
+    const rutas=[...new Set(rutasData.map(r=>r.ruta))];
+    const sel=document.getElementById('proy-filtro-ruta');if(!sel)return;
+    rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
+  }catch(e){console.log('Error rutas',e);}
+}
+
+async function cargarDatos(spinner=false){
+  if(spinner){const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ ...';}
+  try{
+    const [j1,j2]=await Promise.all([
+      jsonp(SCRIPT_URL+'?sheet=ADS&t='+Date.now()),
+      jsonp(SCRIPT_URL+'?sheet=PROYECTOS&t='+Date.now())
+    ]);
+    adsData=(j1.data||[]).slice(1).filter(r=>r[0]||r[1]||r[2]);
+    proyData=(j2.data||[]).slice(1).filter(r=>r[0]||r[P.desc]||r[P.gestion]);
+    actualizarStats();
+    document.getElementById('last-update').textContent='Actualizado: '+new Date().toLocaleTimeString('es-CR');
+    if(document.getElementById('page-ads').classList.contains('active'))renderADS();
+    if(document.getElementById('page-proyectos').classList.contains('active'))renderProyectos();
+  }catch(e){document.getElementById('last-update').textContent='Error de conexión';}
+  const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ Actualizar';
+}
+function actualizarDatos(){cargarDatos(true);}
+function actualizarStats(){
+  document.getElementById('stat-ads-total').textContent=adsData.length;
+  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]!=='Atendido').length;
+  document.getElementById('stat-proy-total').textContent=proyData.length;
+  document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>norm(r[P.estado]).includes('ejecuc')).length;
+}
+
+// ── ADS ──
+function abrirADS(){showPage('page-ads');if(!adsData.length)cargarDatos().then(renderADS);else renderADS();}
+function filtrarADS(f,btn){filtroADS=f;document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderADS();}
+function toggleAmparo(){soloAmparo=!soloAmparo;document.getElementById('btn-amparo').classList.toggle('on',soloAmparo);renderADS();}
+function renderADS(){
+  const q=(document.getElementById('ads-search').value||'').toLowerCase();
+  let rows=adsData;
+  if(filtroADS!=='Todos')rows=rows.filter(r=>String(r[A.estado]).toLowerCase().includes(filtroADS.toLowerCase()));
+  if(soloAmparo)rows=rows.filter(r=>esAmparo(r,[A.solic,A.rec,A.obs]));
+  if(q)rows=rows.filter(r=>[r[A.sol],r[A.solic],r[A.ruta],r[A.obs]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
+  const list=document.getElementById('ads-list');
+  if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
+  list.innerHTML=[...rows].reverse().map(r=>{
+    const idx=adsData.indexOf(r);
+    const estado=String(r[A.estado]||'Pendiente');
+    const color=cardColor(estado,String(r[A.prior]));
+    const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
+    return`<div class="item-card ${color} clickable" onclick="verADS(${idx})">
+      <div class="item-title">${r[A.solic]||'Sin descripción'}</div>
+      <div style="font-size:12px;color:#6D6D72;margin-top:2px">${r[A.sol]||'—'}</div>
+      <div class="item-meta">
+        ${r[A.ruta]?`<span class="chip chip-ruta">Ruta ${r[A.ruta]}</span>`:''}
+        ${r[A.sec]?`<span class="chip chip-ruta">Sec. ${r[A.sec]}</span>`:''}
+        <span class="chip ${chipEstado(estado)}">${estado}</span>
+        ${r[A.prior]?`<span class="chip ${chipPrioridad(r[A.prior])}">${labelPrioridad(r[A.prior])}</span>`:''}
+        ${amparo?'<span class="chip chip-amparo">⚖️ Amparo</span>':''}
+      </div>
+      <div class="item-fecha">${fmtF(r[A.fecha])}</div>
+    </div>`;
+  }).join('');
+}
+function verADS(idx){
+  const r=adsData[idx];if(!r)return;
+  const estado=String(r[A.estado]||'Pendiente');
+  const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
+  document.getElementById('ads-detail-content').innerHTML=`
+    <div class="detail-section">
+      <div class="detail-section-title">Identificación</div>
+      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtF(r[A.fecha])}</span></div>
+      <div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">${r[A.sol]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[A.ruta]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Sección</span><span class="detail-value">${r[A.sec]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Estación</span><span class="detail-value">${r[A.est]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">¿Aplica?</span><span class="detail-value">${r[A.aplica]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">${labelPrioridad(r[A.prior])}</span></div>
+      <div class="detail-field"><span class="detail-label">Estado</span><span class="detail-value"><strong>${estado}</strong></span></div>
+      ${amparo?'<div class="detail-field"><span class="detail-label">Tipo</span><span class="detail-value" style="color:#6B21A8;font-weight:600">⚖️ Recurso de amparo</span></div>':''}
+    </div>
+    <div class="detail-section"><div class="detail-section-title">Solicitud</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[A.solic]||'—'}</div></div>
+    <div class="detail-section"><div class="detail-section-title">Recomendación de solución</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">${r[A.rec]||'—'}</div></div>
+    <div class="detail-section">
+      <div class="detail-section-title">Seguimiento</div>
+      <div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">${fmt(r[A.monto])}</span></div>
+      <div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">${r[A.evid]||'—'}</span></div>
+      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtF(r[A.fcierre])}</span></div>
+      <div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">${r[A.obs]||'—'}</span></div>
+    </div>`;
+  showPage('page-ads-detail');
+}
+
+// ── PROYECTOS ──
+function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
+function filtrarProyEstado(f,btn){filtroProyEstado=f;document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderProyectos();}
+function toggleAmparoProy(){soloAmparoProy=!soloAmparoProy;document.getElementById('btn-amparo-proy').classList.toggle('on',soloAmparoProy);renderProyectos();}
+function renderProyectos(){
+  const q=(document.getElementById('proy-search').value||'').toLowerCase();
+  const gestion=document.getElementById('proy-filtro-gestion').value;
+  const rutaFiltro=document.getElementById('proy-filtro-ruta').value;
+  let rows=proyData;
+  if(filtroProyEstado==='Alta')rows=rows.filter(r=>norm(r[P.prior])==='alta');
+  else if(filtroProyEstado!=='Todos'){const f=norm(filtroProyEstado);rows=rows.filter(r=>norm(r[P.estado]).includes(f));}
+  if(rutaFiltro)rows=rows.filter(r=>String(r[P.ruta]||'')===rutaFiltro);
+  if(gestion)rows=rows.filter(r=>norm(r[P.gestion])===norm(gestion));
+  if(soloAmparoProy)rows=rows.filter(r=>esAmparo(r,[P.desc,P.solicitud]));
+  if(q)rows=rows.filter(r=>[r[P.ruta],r[P.gestion],r[P.desc],r[P.solicitud]].map(x=>String(x).toLowerCase()).some(s=>s.includes(q)));
+  document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
+  const list=document.getElementById('proy-list');
+  if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
+  list.innerHTML=rows.map(r=>{
+    const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
+    const costo=r[P.costo]&&String(r[P.costo])!==''?fmt(r[P.costo]):'Sin monto estimado';
+    return`<div class="item-card ${color}">
+      <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[P.gestion]||'—'}</div>
+      <div class="item-title">${r[P.desc]||'Sin descripción'}</div>
+      <div class="item-meta">
+        ${r[P.ruta]?`<span class="chip chip-ruta">Ruta ${r[P.ruta]}</span>`:''}
+        ${r[P.sec]?`<span class="chip chip-ruta">Sec. ${r[P.sec]}</span>`:''}
+        ${r[P.est]?`<span class="chip chip-ruta">${r[P.est]}</span>`:''}
+        <span class="chip ${chipEstado(estado)}">${estado}</span>
+        <span class="chip ${chipPrioridad(prioridad)}">${prioridad}</span>
+      </div>
+      <div style="font-size:11px;color:#6D6D72;margin-top:6px">${costo}</div>
+      ${r[P.solicitud]?`<div style="font-size:11px;color:#6D6D72;margin-top:3px;line-height:1.4">${r[P.solicitud]}</div>`:''}
+      ${r[P.contrato]?`<div style="font-size:10px;color:#C7C7CC;margin-top:4px">${r[P.contrato]}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── UBICACIÓN ──
+function abrirUbicacion(){showPage('page-ubicacion');cargarUbicacion();}
+async function cargarUbicacion(){
+  try{
+    const j=await jsonp(SCRIPT_URL+'?sheet=UBICACION&t='+Date.now());
+    ubicData=(j.data||[]).slice(1).filter(r=>(r[U.fini]||r[U.inspector])&&r[U.fini]!=='ELIMINADO');
+    renderUbicacion();
+  }catch(e){document.getElementById('ubic-list').innerHTML='<div class="empty-state">Error de conexión</div>';}
+}
+function filtrarFechaUbic(f,btn){filtroFechaUbic=f;document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderUbicacion();}
+function renderUbicacion(){
+  const q=(document.getElementById('ubic-search').value||'').toLowerCase();
+  let rows=ubicData;
+  if(filtroFechaUbic==='hoy')rows=rows.filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin]));
+  else if(filtroFechaUbic==='semana')rows=rows.filter(r=>rangoIncluyeSemana(r[U.fini],r[U.ffin]));
+  if(q)rows=rows.filter(r=>[r[U.inspector],r[U.ruta],r[U.sec],r[U.actividad]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes(q)));
+  document.getElementById('ubic-count').textContent=rows.length+' frente'+(rows.length!==1?'s':'')+' de trabajo';
+  const list=document.getElementById('ubic-list');
+  if(!rows.length){list.innerHTML='<div class="empty-state">Sin asignaciones para este período</div>';return;}
+  const porInspector={};
+  rows.forEach(r=>{const insp=String(r[U.inspector]||'Sin asignar');if(!porInspector[insp])porInspector[insp]=[];porInspector[insp].push(r);});
+  list.innerHTML=Object.entries(porInspector).map(([insp,frentes])=>{
+    const color=colorInspector(insp);
+    const frentesHTML=frentes.map(r=>{
+      const fini=String(r[U.fini]).split('T')[0];
+      const ffin=String(r[U.ffin]||r[U.fini]).split('T')[0];
+      const rango=fini===ffin?fmtFShort(fini):`${fmtFShort(fini)} → ${fmtFShort(ffin)}`;
+      return`<div class="ubic-frente">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span class="ubic-rango" style="background:${color}">${rango}</span>
+          <span style="font-size:10px;color:#6D6D72;font-weight:600">${labelContrato(r[U.contrato])}</span>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:3px">${r[U.actividad]||'Sin actividad'}</div>
+        <div style="font-size:12px;color:#6D6D72">${r[U.ruta]?'Ruta '+r[U.ruta]:'—'} ${r[U.sec]?'/ Sec. '+r[U.sec]:''}</div>
+        ${r[U.obs]?`<div style="font-size:11px;color:#6D6D72;margin-top:4px;font-style:italic">${r[U.obs]}</div>`:''}
+      </div>`;
+    }).join('');
+    return`<div class="ubic-card">
+      <div class="ubic-insp-header">
+        <div class="ubic-avatar" style="background:${color}20;color:${color}">${inicialesInspector(insp)}</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#1C1C1E">${insp}</div>
+          <div style="font-size:11px;color:#6D6D72">${frentes.length} frente${frentes.length!==1?'s':''} asignado${frentes.length!==1?'s':''}</div>
+        </div>
+      </div>
+      ${frentesHTML}
+    </div>`;
+  }).join('');
+}
+
+cargarDatos(false);
+cargarRutas();
+setInterval(()=>cargarDatos(false),5*60*1000);
+</script>
+</body>
+</html>
