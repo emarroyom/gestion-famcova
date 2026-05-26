@@ -540,7 +540,10 @@ function renderProyectos(){
   const gestion=(document.getElementById('proy-filtro-gestion').value||'').toLowerCase();
   let rows=proyData;
   if(filtroProyEstado==='Alta')rows=rows.filter(r=>String(r[P.prior]).toLowerCase()==='alta');
-  else if(filtroProyEstado!=='Todos')rows=rows.filter(r=>String(r[P.estado]).toLowerCase().includes(filtroProyEstado.toLowerCase()));
+  else if(filtroProyEstado!=='Todos'){
+    const f=filtroProyEstado.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    rows=rows.filter(r=>String(r[P.estado]).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').includes(f));
+}
   const rutaFiltro=document.getElementById('proy-filtro-ruta').value;
   if(rutaFiltro)rows=rows.filter(r=>String(r[P.ruta]||'')===rutaFiltro);
   if(gestion)rows=rows.filter(r=>String(r[P.gestion]||'').toLowerCase()===gestion);
