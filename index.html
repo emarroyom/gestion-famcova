@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Gestión FAMCOVA">
 <title>Sistema de Gestión FAMCOVA</title>
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="shortcut icon" href="icon.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F2F2F7;color:#1C1C1E;min-height:100vh}
@@ -85,6 +87,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
 .result-count{font-size:11px;color:#6D6D72;margin-bottom:8px;padding-left:4px}
+.ubic-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.ubic-insp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ubic-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.ubic-frente{border:0.5px solid #E5E5EA;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:#FAFAFA}
+.ubic-frente:last-child{margin-bottom:0}
+.ubic-rango{display:inline-block;font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:12px;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -122,7 +130,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div><div class="home-btn-title">Nuevo Proyecto</div><div class="home-btn-sub">Agregar proyecto al banco</div></div>
       </button>
       <button class="home-btn" onclick="abrirUbicacion()">
-        <div class="home-btn-icon" style="background:#E8F8EE">📍</div>
+        <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
         <div><div class="home-btn-title">Ubicación de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
       </button>
     </div>
@@ -334,7 +342,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="content">
     <div class="filtros">
       <button class="filtro-btn on" onclick="filtrarFechaUbic('hoy',this)">Hoy</button>
-      <button class="filtro-btn" onclick="filtrarFechaUbic('ayer',this)">Ayer</button>
       <button class="filtro-btn" onclick="filtrarFechaUbic('semana',this)">Esta semana</button>
       <button class="filtro-btn" onclick="filtrarFechaUbic('todos',this)">Historial</button>
     </div>
@@ -357,7 +364,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="section">
       <div class="section-title">Datos del frente</div>
       <div class="card">
-        <div class="field"><label>Fecha</label><input type="date" id="nubic-fecha"></div>
         <div class="field"><label>Inspector</label>
           <select id="nubic-inspector" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
@@ -365,6 +371,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             <option>Jairo Mendez</option><option>Robnel Ugalde</option><option>Jose A. Madriz</option>
           </select>
         </div>
+        <div class="field"><label>Fecha inicio</label><input type="date" id="nubic-fecha-ini"></div>
+        <div class="field"><label>Fecha fin</label><input type="date" id="nubic-fecha-fin"></div>
         <div class="field"><label>Ruta</label>
           <select id="nubic-ruta" onchange="actualizarSeccionesUbic()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
@@ -407,16 +415,12 @@ const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZY
 let adsData=[],proyData=[],rutasData=[],ubicData=[],itemsUbicData=[];
 let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
 let filtroFechaUbic='hoy',editUbicRowIndex=null;
-
-// Índices ADS
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
-// Índices PROYECTOS
 const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12};
+const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-
 function toast(msg,err=false,ok=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' error':ok?' success':'')+' show';setTimeout(()=>t.className='toast',3500);}
-
 function jsonp(url){
   return new Promise((res,rej)=>{
     const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
@@ -428,9 +432,9 @@ function jsonp(url){
     setTimeout(()=>{delete window[cb];rej(new Error('Timeout'));},12000);
   });
 }
-
 function fmt(n){if(!n||n==='')return'—';const num=parseFloat(String(n).replace(/[^\d.]/g,''));if(isNaN(num))return String(n);return'₡'+num.toLocaleString('es-CR');}
-function fmtFecha(v){if(!v)return'—';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
+function fmtF(v){if(!v)return'—';const s=String(v);if(s.includes('T'))return s.split('T')[0];if(s.includes('-'))return s;const n=parseFloat(s);if(!isNaN(n)&&n>40000){const d=new Date((n-25569)*86400*1000);return d.toLocaleDateString('es-CR');}return s;}
+function fmtFShort(v){if(!v)return'—';const f=fmtF(v);const parts=f.split('-');if(parts.length===3)return`${parts[2]}/${parts[1]}`;return f;}
 function chipEstado(e){const m={'Atendido':'chip-estado-a','Pendiente':'chip-estado-p','En ejecucion':'chip-estado-e','Ejecución':'chip-estado-e','Programar':'chip-estado-pr'};return m[e]||'chip-estado-p';}
 function chipPrioridad(p){const m={'Alta':'chip-prioridad-alta','Media':'chip-prioridad-media','Baja':'chip-prioridad-baja','1':'chip-prioridad-alta','2':'chip-prioridad-media','3':'chip-prioridad-baja'};return m[String(p)]||'chip-prioridad-media';}
 function labelPrioridad(p){const m={'1':'Alta','2':'Media','3':'Baja'};return m[String(p)]||String(p)||'—';}
@@ -445,10 +449,13 @@ function cardColor(estado,prioridad){
 }
 function esAmparo(r,cols){return cols.map(c=>String(r[c]||'').toLowerCase()).some(s=>s.includes('amparo'));}
 function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
-
 function colorInspector(n){const m={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};return m[n]||'#1F3864';}
 function inicialesInspector(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
 function labelContrato(v){const m={'2022CD-000145-0006000001':'CD-000145','2022CD-000128-0006000001':'CD-000128','2025LD-000022-0006000001':'Lastre','Otro':'Otro'};return m[v]||v||'—';}
+function hoy(){return new Date().toISOString().split('T')[0];}
+function inicioSemana(){const d=new Date();const day=d.getDay();d.setDate(d.getDate()-day+(day===0?-6:1));return d.toISOString().split('T')[0];}
+function rangoIncluyeHoy(fini,ffin){const h=hoy();const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return h>=i&&h<=f;}
+function rangoIncluyeSemana(fini,ffin){const ini=inicioSemana();const h=hoy();const i=String(fini).split('T')[0];const f=String(ffin||fini).split('T')[0];return i<=h&&f>=ini;}
 
 async function cargarRutas(){
   try{
@@ -472,34 +479,11 @@ async function cargarItemsUbic(){
   }catch(e){console.log('Error items',e);}
 }
 
-function actualizarSeccionesADS(){
-  const ruta=document.getElementById('nads-ruta').value;
-  const sel=document.getElementById('nads-seccion');
-  sel.innerHTML='<option value="">Seleccionar...</option>';
-  document.getElementById('nads-desc-box').style.display='none';
-  if(!ruta)return;
-  rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});
-}
+function actualizarSeccionesADS(){const ruta=document.getElementById('nads-ruta').value;const sel=document.getElementById('nads-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nads-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
 function mostrarDescADS(){const sel=document.getElementById('nads-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nads-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nads-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
-
-function actualizarSeccionesProy(){
-  const ruta=document.getElementById('nproy-ruta').value;
-  const sel=document.getElementById('nproy-seccion');
-  sel.innerHTML='<option value="">Seleccionar...</option>';
-  document.getElementById('nproy-desc-box').style.display='none';
-  if(!ruta)return;
-  rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});
-}
+function actualizarSeccionesProy(){const ruta=document.getElementById('nproy-ruta').value;const sel=document.getElementById('nproy-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nproy-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
 function mostrarDescProy(){const sel=document.getElementById('nproy-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nproy-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nproy-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
-
-function actualizarSeccionesUbic(){
-  const ruta=document.getElementById('nubic-ruta').value;
-  const sel=document.getElementById('nubic-seccion');
-  sel.innerHTML='<option value="">Seleccionar...</option>';
-  document.getElementById('nubic-desc-box').style.display='none';
-  if(!ruta)return;
-  rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});
-}
+function actualizarSeccionesUbic(){const ruta=document.getElementById('nubic-ruta').value;const sel=document.getElementById('nubic-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nubic-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
 function mostrarDescUbic(){const sel=document.getElementById('nubic-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nubic-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nubic-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
 
 async function cargarDatos(spinner=false){
@@ -515,9 +499,7 @@ async function cargarDatos(spinner=false){
   }catch(e){document.getElementById('last-update').textContent='Error de conexión';}
   const b=document.getElementById('btn-refresh-home');if(b)b.textContent='↻ Actualizar';
 }
-
 function actualizarDatos(){cargarDatos(true);}
-
 function actualizarStats(){
   document.getElementById('stat-ads-total').textContent=adsData.length;
   document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]!=='Atendido').length;
@@ -528,7 +510,6 @@ function actualizarStats(){
 function abrirADS(){showPage('page-ads');if(!adsData.length)cargarDatos().then(renderADS);else renderADS();}
 function filtrarADS(f,btn){filtroADS=f;document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderADS();}
 function toggleAmparo(){soloAmparo=!soloAmparo;document.getElementById('btn-amparo').classList.toggle('on',soloAmparo);renderADS();}
-
 function renderADS(){
   const q=(document.getElementById('ads-search').value||'').toLowerCase();
   let rows=adsData;
@@ -550,7 +531,7 @@ function renderADS(){
         ${r[A.prior]?`<span class="chip ${chipPrioridad(r[A.prior])}">${labelPrioridad(r[A.prior])}</span>`:''}
         ${amparo?'<span class="chip chip-amparo">⚖️ Amparo</span>':''}
       </div>
-      <div class="item-fecha">${fmtFecha(r[A.fecha])}</div>
+      <div class="item-fecha">${fmtF(r[A.fecha])}</div>
     </div>`;
   }).join('');
 }
@@ -563,7 +544,7 @@ function verADS(idx){
   document.getElementById('ads-detail-content').innerHTML=`
     <div class="detail-section">
       <div class="detail-section-title">Identificación</div>
-      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtFecha(r[A.fecha])}</span></div>
+      <div class="detail-field"><span class="detail-label">Fecha ingreso</span><span class="detail-value">${fmtF(r[A.fecha])}</span></div>
       <div class="detail-field"><span class="detail-label">Solicitante</span><span class="detail-value">${r[A.sol]||'—'}</span></div>
       <div class="detail-field"><span class="detail-label">Ruta</span><span class="detail-value">${r[A.ruta]||'—'}</span></div>
       <div class="detail-field"><span class="detail-label">Sección</span><span class="detail-value">${r[A.sec]||'—'}</span></div>
@@ -578,7 +559,7 @@ function verADS(idx){
       <div class="detail-section-title">Seguimiento</div>
       <div class="detail-field"><span class="detail-label">Monto estimado</span><span class="detail-value">${fmt(r[A.monto])}</span></div>
       <div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">${r[A.evid]||'—'}</span></div>
-      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtFecha(r[A.fcierre])}</span></div>
+      <div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">${fmtF(r[A.fcierre])}</span></div>
       <div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">${r[A.obs]||'—'}</span></div>
     </div>
     <div class="detail-section">
@@ -604,10 +585,9 @@ async function actualizarEstadoADS(idx){
 function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
 function filtrarProyEstado(f,btn){filtroProyEstado=f;document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderProyectos();}
 function toggleAmparoProy(){soloAmparoProy=!soloAmparoProy;document.getElementById('btn-amparo-proy').classList.toggle('on',soloAmparoProy);renderProyectos();}
-
 function renderProyectos(){
   const q=(document.getElementById('proy-search').value||'').toLowerCase();
-  const gestion=(document.getElementById('proy-filtro-gestion').value||'').toLowerCase();
+  const gestion=document.getElementById('proy-filtro-gestion').value;
   const rutaFiltro=document.getElementById('proy-filtro-ruta').value;
   let rows=proyData;
   if(filtroProyEstado==='Alta')rows=rows.filter(r=>norm(r[P.prior])==='alta');
@@ -621,7 +601,7 @@ function renderProyectos(){
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
   list.innerHTML=rows.map(r=>{
     const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
-    const costo=r[P.costo]&&String(r[P.costo])!==''&&String(r[P.costo])!=='Sin monto estimado'?fmt(r[P.costo]):'Sin monto estimado';
+    const costo=r[P.costo]&&String(r[P.costo])!==''?fmt(r[P.costo]):'Sin monto estimado';
     return`<div class="item-card ${color} nocursor">
       <div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">${r[P.gestion]||'—'}</div>
       <div class="item-title">${r[P.desc]||'Sin descripción'}</div>
@@ -640,31 +620,19 @@ function renderProyectos(){
 }
 
 function abrirNuevaADS(){
-  document.getElementById('nads-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('nads-fecha').value=hoy();
   document.getElementById('nads-ruta').value='';
   document.getElementById('nads-seccion').innerHTML='<option value="">Seleccionar...</option>';
   document.getElementById('nads-desc-box').style.display='none';
   document.getElementById('nads-estacion').value='';
   showPage('page-nueva-ads');
 }
-
 async function guardarADS(){
   const solicitante=document.getElementById('nads-solicitante').value.trim();
   const solicitud=document.getElementById('nads-solicitud').value.trim();
   if(!solicitante||!solicitud){toast('Solicitante y solicitud son obligatorios',true);return;}
   const btn=document.getElementById('btn-guardar-ads');btn.disabled=true;btn.textContent='Guardando...';
-  const row=[
-    document.getElementById('nads-fecha').value,solicitante,solicitud,
-    document.getElementById('nads-ruta').value,
-    document.getElementById('nads-seccion').value,
-    document.getElementById('nads-estacion').value,
-    document.getElementById('nads-aplica').value,
-    document.getElementById('nads-recomendacion').value,
-    document.getElementById('nads-monto').value||'','','',
-    document.getElementById('nads-obs').value,
-    document.getElementById('nads-estado').value,
-    document.getElementById('nads-prioridad').value
-  ];
+  const row=[document.getElementById('nads-fecha').value,solicitante,solicitud,document.getElementById('nads-ruta').value,document.getElementById('nads-seccion').value,document.getElementById('nads-estacion').value,document.getElementById('nads-aplica').value,document.getElementById('nads-recomendacion').value,document.getElementById('nads-monto').value||'','','',document.getElementById('nads-obs').value,document.getElementById('nads-estado').value,document.getElementById('nads-prioridad').value];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
     adsData.push(row);actualizarStats();toast('✓ ADS registrada correctamente',false,true);
@@ -681,23 +649,12 @@ function abrirNuevoProyecto(){
   document.getElementById('nproy-estacion').value='';
   showPage('page-nuevo-proy');
 }
-
 async function guardarProyecto(){
   const ruta=document.getElementById('nproy-ruta').value;
   const desc=document.getElementById('nproy-descripcion').value.trim();
   if(!ruta||!desc){toast('Ruta y descripción son obligatorios',true);return;}
   const btn=document.getElementById('btn-guardar-proy');btn.disabled=true;btn.textContent='Guardando...';
-  const row=[
-    document.getElementById('nproy-zona').value,ruta,
-    document.getElementById('nproy-seccion').value,
-    document.getElementById('nproy-estacion').value,
-    document.getElementById('nproy-gestion').value,desc,
-    document.getElementById('nproy-prioridad').value,
-    document.getElementById('nproy-costo').value||'','','',
-    document.getElementById('nproy-solicitud').value,
-    document.getElementById('nproy-estado').value,
-    document.getElementById('nproy-contrato').value
-  ];
+  const row=[document.getElementById('nproy-zona').value,ruta,document.getElementById('nproy-seccion').value,document.getElementById('nproy-estacion').value,document.getElementById('nproy-gestion').value,desc,document.getElementById('nproy-prioridad').value,document.getElementById('nproy-costo').value||'','','',document.getElementById('nproy-solicitud').value,document.getElementById('nproy-estado').value,document.getElementById('nproy-contrato').value];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'PROYECTOS'}),headers:{'Content-Type':'application/json'}});
     proyData.push(row);actualizarStats();toast('✓ Proyecto registrado correctamente',false,true);
@@ -708,57 +665,48 @@ async function guardarProyecto(){
 }
 
 function abrirUbicacion(){showPage('page-ubicacion');cargarUbicacion();}
-
 async function cargarUbicacion(){
   try{
     const j=await jsonp(SCRIPT_URL+'?sheet=UBICACION&t='+Date.now());
-    ubicData=(j.data||[]).slice(1).filter(r=>(r[0]||r[1])&&r[0]!=='ELIMINADO');
+    ubicData=(j.data||[]).slice(1).filter(r=>(r[U.fini]||r[U.inspector])&&r[U.fini]!=='ELIMINADO');
     renderUbicacion();
   }catch(e){document.getElementById('ubic-list').innerHTML='<div class="empty-state">Error de conexión</div>';}
 }
-
-function hoy(){return new Date().toISOString().split('T')[0];}
-function ayer(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().split('T')[0];}
-function inicioSemana(){const d=new Date();const day=d.getDay();const diff=d.getDate()-day+(day===0?-6:1);d.setDate(diff);return d.toISOString().split('T')[0];}
-
 function filtrarFechaUbic(f,btn){filtroFechaUbic=f;document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderUbicacion();}
-
 function renderUbicacion(){
   const q=(document.getElementById('ubic-search').value||'').toLowerCase();
   let rows=ubicData;
-  if(filtroFechaUbic==='hoy'){const h=hoy();rows=rows.filter(r=>String(r[0]).split('T')[0]===h);}
-  else if(filtroFechaUbic==='ayer'){const a=ayer();rows=rows.filter(r=>String(r[0]).split('T')[0]===a);}
-  else if(filtroFechaUbic==='semana'){const ini=inicioSemana();const h=hoy();rows=rows.filter(r=>{const f=String(r[0]).split('T')[0];return f>=ini&&f<=h;});}
-  if(q)rows=rows.filter(r=>[r[1],r[2],r[3],r[4]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes(q)));
+  if(filtroFechaUbic==='hoy')rows=rows.filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin]));
+  else if(filtroFechaUbic==='semana')rows=rows.filter(r=>rangoIncluyeSemana(r[U.fini],r[U.ffin]));
+  if(q)rows=rows.filter(r=>[r[U.inspector],r[U.ruta],r[U.sec],r[U.actividad]].map(x=>String(x||'').toLowerCase()).some(s=>s.includes(q)));
   document.getElementById('ubic-count').textContent=rows.length+' frente'+(rows.length!==1?'s':'')+' de trabajo';
   const list=document.getElementById('ubic-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin asignaciones para este período</div>';return;}
   const porInspector={};
-  [...rows].reverse().forEach(r=>{
-    const idx=ubicData.indexOf(r);
-    const insp=String(r[1]||'Sin asignar');
-    if(!porInspector[insp])porInspector[insp]=[];
-    porInspector[insp].push({r,idx});
-  });
+  rows.forEach(r=>{const idx=ubicData.indexOf(r);const insp=String(r[U.inspector]||'Sin asignar');if(!porInspector[insp])porInspector[insp]=[];porInspector[insp].push({r,idx});});
   list.innerHTML=Object.entries(porInspector).map(([insp,frentes])=>{
     const color=colorInspector(insp);
-    const frentesHTML=frentes.map(({r,idx})=>`
-      <div style="border:0.5px solid #E5E5EA;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:#FAFAFA" onclick="editarUbicacion(${idx})">
+    const frentesHTML=frentes.map(({r,idx})=>{
+      const fini=String(r[U.fini]).split('T')[0];
+      const ffin=String(r[U.ffin]||r[U.fini]).split('T')[0];
+      const rango=fini===ffin?fmtFShort(fini):`${fmtFShort(fini)} → ${fmtFShort(ffin)}`;
+      return`<div class="ubic-frente" onclick="editarUbicacion(${idx})">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:11px;font-weight:600;color:#6D6D72">${String(r[0]).split('T')[0]}</span>
-          <span style="font-size:10px;color:#fff;background:${color};padding:2px 8px;border-radius:12px;font-weight:600">${labelContrato(r[5])}</span>
+          <span class="ubic-rango" style="background:${color}">${rango}</span>
+          <span style="font-size:10px;color:#6D6D72;font-weight:600">${labelContrato(r[U.contrato])}</span>
         </div>
-        <div style="font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:3px">${r[4]||'Sin actividad'}</div>
-        <div style="font-size:12px;color:#6D6D72">${r[2]?'Ruta '+r[2]:'—'} ${r[3]?'/ Sec. '+r[3]:''}</div>
-        ${r[6]?`<div style="font-size:11px;color:#6D6D72;margin-top:4px;font-style:italic">${r[6]}</div>`:''}
+        <div style="font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:3px">${r[U.actividad]||'Sin actividad'}</div>
+        <div style="font-size:12px;color:#6D6D72">${r[U.ruta]?'Ruta '+r[U.ruta]:'—'} ${r[U.sec]?'/ Sec. '+r[U.sec]:''}</div>
+        ${r[U.obs]?`<div style="font-size:11px;color:#6D6D72;margin-top:4px;font-style:italic">${r[U.obs]}</div>`:''}
         <div style="font-size:10px;color:#C7C7CC;margin-top:4px;text-align:right">Tocar para editar →</div>
-      </div>`).join('');
-    return`<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="width:40px;height:40px;border-radius:50%;background:${color}20;color:${color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${inicialesInspector(insp)}</div>
+      </div>`;
+    }).join('');
+    return`<div class="ubic-card">
+      <div class="ubic-insp-header">
+        <div class="ubic-avatar" style="background:${color}20;color:${color}">${inicialesInspector(insp)}</div>
         <div>
           <div style="font-size:14px;font-weight:700;color:#1C1C1E">${insp}</div>
-          <div style="font-size:11px;color:#6D6D72">${frentes.length} frente${frentes.length!==1?'s':''} de trabajo</div>
+          <div style="font-size:11px;color:#6D6D72">${frentes.length} frente${frentes.length!==1?'s':''} asignado${frentes.length!==1?'s':''}</div>
         </div>
       </div>
       ${frentesHTML}
@@ -768,7 +716,8 @@ function renderUbicacion(){
 
 function abrirNuevaUbicacion(){
   editUbicRowIndex=null;
-  document.getElementById('nubic-fecha').value=hoy();
+  document.getElementById('nubic-fecha-ini').value=hoy();
+  document.getElementById('nubic-fecha-fin').value=hoy();
   document.getElementById('nubic-inspector').value='';
   document.getElementById('nubic-ruta').value='';
   document.getElementById('nubic-seccion').innerHTML='<option value="">Seleccionar...</option>';
@@ -781,31 +730,33 @@ function abrirNuevaUbicacion(){
   document.getElementById('btn-eliminar-ubic').style.display='none';
   showPage('page-nueva-ubic');
 }
-
 function editarUbicacion(idx){
   const r=ubicData[idx];if(!r)return;
   editUbicRowIndex=idx;
-  document.getElementById('nubic-fecha').value=String(r[0]).split('T')[0];
-  document.getElementById('nubic-inspector').value=r[1]||'';
-  document.getElementById('nubic-ruta').value=r[2]||'';
+  document.getElementById('nubic-fecha-ini').value=String(r[U.fini]).split('T')[0];
+  document.getElementById('nubic-fecha-fin').value=String(r[U.ffin]||r[U.fini]).split('T')[0];
+  document.getElementById('nubic-inspector').value=r[U.inspector]||'';
+  document.getElementById('nubic-ruta').value=r[U.ruta]||'';
   actualizarSeccionesUbic();
-  setTimeout(()=>{document.getElementById('nubic-seccion').value=r[3]||'';mostrarDescUbic();},200);
-  document.getElementById('nubic-actividad').value=r[4]||'';
-  document.getElementById('nubic-contrato').value=r[5]||'';
-  document.getElementById('nubic-obs').value=r[6]||'';
+  setTimeout(()=>{document.getElementById('nubic-seccion').value=r[U.sec]||'';mostrarDescUbic();},200);
+  document.getElementById('nubic-actividad').value=r[U.actividad]||'';
+  document.getElementById('nubic-contrato').value=r[U.contrato]||'';
+  document.getElementById('nubic-obs').value=r[U.obs]||'';
   document.getElementById('ubic-form-label').textContent='Editar frente';
   document.getElementById('btn-guardar-ubic').textContent='Actualizar asignación';
   document.getElementById('btn-eliminar-ubic').style.display='block';
   showPage('page-nueva-ubic');
 }
-
 async function guardarUbicacion(){
   const inspector=document.getElementById('nubic-inspector').value;
   const ruta=document.getElementById('nubic-ruta').value;
   const actividad=document.getElementById('nubic-actividad').value;
-  if(!inspector||!ruta||!actividad){toast('Inspector, ruta y actividad son obligatorios',true);return;}
+  const fini=document.getElementById('nubic-fecha-ini').value;
+  const ffin=document.getElementById('nubic-fecha-fin').value;
+  if(!inspector||!ruta||!actividad||!fini){toast('Inspector, fechas, ruta y actividad son obligatorios',true);return;}
+  if(ffin&&ffin<fini){toast('La fecha fin no puede ser anterior a la fecha inicio',true);return;}
   const btn=document.getElementById('btn-guardar-ubic');btn.disabled=true;btn.textContent='Guardando...';
-  const row=[document.getElementById('nubic-fecha').value,inspector,ruta,document.getElementById('nubic-seccion').value,actividad,document.getElementById('nubic-contrato').value,document.getElementById('nubic-obs').value];
+  const row=[fini,ffin||fini,inspector,ruta,document.getElementById('nubic-seccion').value,actividad,document.getElementById('nubic-contrato').value,document.getElementById('nubic-obs').value];
   try{
     if(editUbicRowIndex!==null){
       await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editUbicRowIndex+1,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
@@ -819,11 +770,10 @@ async function guardarUbicacion(){
   }catch(e){toast('Error de conexión',true);}
   btn.disabled=false;btn.textContent=editUbicRowIndex!==null?'Actualizar asignación':'Guardar asignación';
 }
-
 async function eliminarUbicacion(){
   if(!confirm('¿Eliminar esta asignación?'))return;
   if(editUbicRowIndex===null)return;
-  const row=['ELIMINADO','','','','','',''];
+  const row=['ELIMINADO','','','','','','',''];
   try{
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editUbicRowIndex+1,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
     ubicData[editUbicRowIndex]=row;
