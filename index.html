@@ -562,7 +562,7 @@ async function cargarDatos(spinner=false){
 function actualizarDatos(){cargarDatos(true);}
 function actualizarStats(){
   document.getElementById('stat-ads-total').textContent=adsData.length;
-  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]!=='Atendido').length;
+  document.getElementById('stat-ads-pend').textContent=adsData.filter(r=>r[A.estado]==='Pendiente').length;
   document.getElementById('stat-proy-total').textContent=proyData.length;
   document.getElementById('stat-proy-ejec').textContent=proyData.filter(r=>norm(r[P.estado]).includes('ejecuc')).length;
 }
@@ -946,6 +946,29 @@ async function eliminarUbicacion(){
       showPage('page-ubicacion-inspector');
     },800);
   }catch(e){toast('Error de conexion',true);}
+}
+
+
+function abrirADSFiltrado(filtro){
+  abrirADS();
+  filtroADS=filtro;
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{
+    b.classList.remove('on');
+    if(filtro==='Todos'&&b.textContent.trim()==='Todos')b.classList.add('on');
+    else if(filtro!=='Todos'&&norm(b.textContent).includes(norm(filtro)))b.classList.add('on');
+  });
+  renderADS();
+}
+
+function abrirProyectosFiltrado(filtro){
+  abrirProyectos();
+  filtroProyEstado=filtro;
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{
+    b.classList.remove('on');
+    if(filtro==='Todos'&&b.textContent.trim()==='Todos')b.classList.add('on');
+    else if(filtro!=='Todos'&&norm(b.textContent).includes(norm(filtro)))b.classList.add('on');
+  });
+  renderProyectos();
 }
 
 cargarDatos(false);
