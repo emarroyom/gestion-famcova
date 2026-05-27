@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Consulta FAMCOVA">
-<title>Consulta FAMCOVA</title>
+<meta name="apple-mobile-web-app-title" content="Gestion de Zona">
+<title>Gestion de Zona</title>
+<meta property="og:title" content="Gestion de Zona">
+<meta property="og:description" content="Sistema de consulta FAMCOVA - Zona 1-4">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="shortcut icon" href="icon.png">
 <style>
@@ -123,7 +125,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
 
     <!-- ANALISIS -->
-    <button class="home-btn" onclick="window.location.href='analisis.html?from=consulta'" style="margin-bottom:0">
+    <button class="home-btn" onclick="window.location.href='analisis.html?from=consulta&u='+(new URLSearchParams(location.search).get('u')||'')" style="margin-bottom:0">
       <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
       <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
     </button>
@@ -547,7 +549,11 @@ async function registrarAcceso(){
     const ahora=new Date();
     const fecha=ahora.toISOString().split('T')[0];
     const hora=ahora.toLocaleTimeString('es-CR');
-    const row=[fecha,hora,'Consulta','Eric/Alexander','Acceso a consulta.html'];
+    const params=new URLSearchParams(location.search);
+    const u=params.get('u')||'desconocido';
+    const usuarios={'eric':'Eric Orozco','alex':'Alexander Mora'};
+    const nombre=usuarios[u.toLowerCase()]||'Otro ('+u+')';
+    const row=[fecha,hora,'Consulta',nombre,'Acceso a consulta.html'];
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
       body:JSON.stringify({row,sheet:'ACCESOS'}),
       headers:{'Content-Type':'application/json'}});
