@@ -922,6 +922,21 @@ async function eliminarUbicacion(){
   }catch(e){toast('Error de conexion',true);}
 }
 
+function abrirADSFiltrado(filtro){
+  abrirADS();
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));
+  filtroADS=filtro;
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(filtro.toLowerCase()))b.classList.add('on');});
+  renderADS();
+}
+
+function abrirProyectosFiltrado(filtro){
+  abrirProyectos();
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));
+  filtroProyEstado=filtro;
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{if(norm(b.textContent).includes(norm(filtro)))b.classList.add('on');});
+  renderProyectos();
+}  
 cargarDatos(false);
 cargarRutas();
 cargarItemsUbic();
