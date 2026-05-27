@@ -99,9 +99,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="readonly-badge">Modo consulta - solo lectura</div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
-      <div class="stat-card" onclick="abrirADSFiltrado('Pendiente')" style="cursor:pointer"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
-      <div class="stat-card" onclick="abrirProyectosFiltrado('Ejecucion')" style="cursor:pointer"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
     <div>
       <button class="home-btn" onclick="abrirADS()">
@@ -115,6 +115,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="home-btn" onclick="abrirUbicacion()">
         <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
         <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
+      </button>
+      <button class="home-btn" onclick="window.location.href='analisis.html'">
+        <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
+        <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
       </button>
     </div>
     <div style="text-align:center;font-size:11px;color:#C7C7CC;margin-top:12px" id="last-update">Actualizando...</div>
@@ -312,6 +316,19 @@ function actualizarStats(){
 function abrirADS(){showPage('page-ads');if(!adsData.length)cargarDatos().then(renderADS);else renderADS();}
 function filtrarADS(f,btn){filtroADS=f;document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderADS();}
 function toggleAmparo(){soloAmparo=!soloAmparo;document.getElementById('btn-amparo').classList.toggle('on',soloAmparo);renderADS();}
+function parseFecha(v){
+  if(!v)return 0;
+  const s=String(v).trim();
+  const meses={'ene':0,'feb':1,'mar':2,'abr':3,'may':4,'jun':5,'jul':6,'ago':7,'set':8,'sep':8,'oct':9,'nov':10,'dic':11};
+  const m1=s.match(/^(\d{1,2})-([a-z]{3,4})-(\d{2,4})$/i);
+  if(m1){const d=parseInt(m1[1]);const mes=meses[m1[2].toLowerCase().slice(0,3)]??0;const anio=parseInt(m1[3])<100?2000+parseInt(m1[3]):parseInt(m1[3]);return new Date(anio,mes,d).getTime();}
+  const m2=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m2)return new Date(parseInt(m2[1]),parseInt(m2[2])-1,parseInt(m2[3])).getTime();
+  if(s.includes('T'))return new Date(s).getTime();
+  const m3=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(m3){const anio=parseInt(m3[3])<100?2000+parseInt(m3[3]):parseInt(m3[3]);return new Date(anio,parseInt(m3[2])-1,parseInt(m3[1])).getTime();}
+  return 0;
+}
 function renderADS(){
   const q=(document.getElementById('ads-search').value||'').toLowerCase();
   let rows=adsData;
@@ -321,7 +338,7 @@ function renderADS(){
   document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  list.innerHTML=[...rows].sort((a,b)=>String(b[A.fecha]).localeCompare(String(a[A.fecha]))).map(r=>{
+  list.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
     const idx=adsData.indexOf(r);
     const estado=String(r[A.estado]||'Pendiente');
     const color=cardColor(estado,String(r[A.prior]));
@@ -495,21 +512,6 @@ function renderDetalleInspector(nombre){
   }).join('');
 }
 
-function abrirADSFiltrado(filtro){
-  abrirADS();
-  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));
-  filtroADS=filtro;
-  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(filtro.toLowerCase()))b.classList.add('on');});
-  renderADS();
-}
-
-function abrirProyectosFiltrado(filtro){
-  abrirProyectos();
-  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));
-  filtroProyEstado=filtro;
-  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{if(norm(b.textContent).includes(norm(filtro)))b.classList.add('on');});
-  renderProyectos();
-}  
 cargarDatos(false);
 cargarRutas();
 cargarUbicacion();
