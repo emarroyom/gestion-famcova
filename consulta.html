@@ -98,12 +98,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="content">
     <div class="readonly-badge">Modo consulta - solo lectura</div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
+      <div class="stat-card" onclick="abrirADSFiltrado('Todos')" style="cursor:pointer"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
+      <div class="stat-card" onclick="abrirADSFiltrado('Pendiente')" style="cursor:pointer"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
+      <div class="stat-card" onclick="abrirProyectosFiltrado('Ejecucion')" style="cursor:pointer"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
-    <div>
+
+    <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Consulta</div>
+    <div style="margin-bottom:12px">
       <button class="home-btn" onclick="abrirADS()">
         <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
         <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver todas las solicitudes</div></div>
@@ -121,7 +123,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
       </button>
     </div>
-    <div style="text-align:center;font-size:11px;color:#C7C7CC;margin-top:12px" id="last-update">Actualizando...</div>
+
+    <div style="text-align:center;font-size:11px;color:#C7C7CC" id="last-update">Actualizando...</div>
   </div>
 </div>
 
@@ -512,6 +515,18 @@ function renderDetalleInspector(nombre){
   }).join('');
 }
 
+function abrirADSFiltrado(filtro){
+  abrirADS();
+  filtroADS=filtro;
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{b.classList.remove('on');if(norm(b.textContent)===norm(filtro)||filtro==='Todos'&&b.textContent==='Todos')b.classList.add('on');});
+  renderADS();
+}
+function abrirProyectosFiltrado(filtro){
+  abrirProyectos();
+  filtroProyEstado=filtro;
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{b.classList.remove('on');if(norm(b.textContent).includes(norm(filtro)))b.classList.add('on');});
+  renderProyectos();
+}
 cargarDatos(false);
 cargarRutas();
 cargarUbicacion();
