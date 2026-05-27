@@ -566,7 +566,7 @@ function renderADS(){
   document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  list.innerHTML=[...rows].reverse().map(r=>{
+  list.innerHTML=[...rows].sort((a,b)=>String(b[A.fecha]).localeCompare(String(a[A.fecha]))).map(r=>{
     const idx=adsData.indexOf(r);const estado=String(r[A.estado]||'Pendiente');const color=cardColor(estado,String(r[A.prior]));const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
     return'<div class="item-card '+color+'" onclick="verADS('+idx+')">'+
       '<div class="item-title">'+( r[A.solic]||'Sin descripcion')+'</div>'+
