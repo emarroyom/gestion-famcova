@@ -99,9 +99,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="readonly-badge">Modo consulta - solo lectura</div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
+      <div class="stat-card" onclick="abrirADSFiltrado('Pendiente')" style="cursor:pointer"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
       <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
+      <div class="stat-card" onclick="abrirProyectosFiltrado('Ejecucion')" style="cursor:pointer"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
     <div>
       <button class="home-btn" onclick="abrirADS()">
@@ -495,6 +495,21 @@ function renderDetalleInspector(nombre){
   }).join('');
 }
 
+function abrirADSFiltrado(filtro){
+  abrirADS();
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));
+  filtroADS=filtro;
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(filtro.toLowerCase()))b.classList.add('on');});
+  renderADS();
+}
+
+function abrirProyectosFiltrado(filtro){
+  abrirProyectos();
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>b.classList.remove('on'));
+  filtroProyEstado=filtro;
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{if(norm(b.textContent).includes(norm(filtro)))b.classList.add('on');});
+  renderProyectos();
+}  
 cargarDatos(false);
 cargarRutas();
 cargarUbicacion();
