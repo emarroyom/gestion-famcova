@@ -121,35 +121,50 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
   <div class="content">
+
+    <!-- ADS SECTION -->
     <div class="stats-grid">
       <div class="stat-card" onclick="abrirADSFiltrado('Todos')" style="cursor:pointer"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
       <div class="stat-card" onclick="abrirADSFiltrado('Pendiente')" style="cursor:pointer"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
+    </div>
+    <button class="home-btn" onclick="abrirADS()" style="margin-bottom:0">
+      <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
+      <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
+    </button>
+
+    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
+
+    <!-- PROYECTOS SECTION -->
+    <div class="stats-grid">
       <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
       <div class="stat-card" onclick="abrirProyectosFiltrado('Ejecucion')" style="cursor:pointer"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
+    <button class="home-btn" onclick="abrirProyectos()" style="margin-bottom:0">
+      <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
+      <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
+    </button>
 
-    <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Consulta</div>
-    <div style="margin-bottom:12px">
-      <button class="home-btn" onclick="abrirADS()">
-        <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
-        <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
-      </button>
-      <button class="home-btn" onclick="abrirProyectos()">
-        <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
-        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
-      </button>
-      <button class="home-btn" onclick="abrirUbicacion()">
-        <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
-        <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
-      </button>
-      <button class="home-btn" onclick="window.location.href='analisis.html'">
-        <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
-        <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
-      </button>
-    </div>
+    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
 
+    <!-- ANALISIS -->
+    <button class="home-btn" onclick="window.location.href='analisis.html'" style="margin-bottom:0">
+      <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
+      <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
+    </button>
+
+    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
+
+    <!-- UBICACION -->
+    <button class="home-btn" onclick="abrirUbicacion()" style="margin-bottom:0">
+      <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
+      <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
+    </button>
+
+    <div style="text-align:center;font-size:11px;color:#C7C7CC;margin:12px 0" id="last-update">Actualizando...</div>
+
+    <!-- AGREGAR -->
     <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Agregar</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <button onclick="abrirNuevaADS()" style="background:#1F3864;border:none;border-radius:12px;padding:14px 12px;cursor:pointer;text-align:left;font-family:inherit">
         <div style="font-size:20px;margin-bottom:6px">➕</div>
         <div style="color:#fff;font-size:13px;font-weight:600">Nueva ADS</div>
@@ -162,7 +177,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </button>
     </div>
 
-    <div style="text-align:center;font-size:11px;color:#C7C7CC" id="last-update">Actualizando...</div>
   </div>
 </div>
 
