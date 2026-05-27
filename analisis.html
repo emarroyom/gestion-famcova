@@ -49,7 +49,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <body>
 <div class="header">
   <div class="header-actions">
-    <button class="btn-back" onclick="window.location.href=new URLSearchParams(location.search).get('from')==='consulta'?'consulta.html':'index.html'">Inicio</button>
+    <button class="btn-back" onclick="(function(){const p=new URLSearchParams(location.search);const from=p.get('from');const u=p.get('u')||'';window.location.href=from==='consulta'?'consulta.html?u='+u:'index.html';})()">Inicio</button>
     <span style="color:#fff;font-size:13px;font-weight:500">Dashboard</span>
     <button class="btn-back" id="btn-refresh" onclick="cargarYRenderizar()">Actualizar</button>
   </div>
@@ -127,6 +127,9 @@ function acortarSolicitante(nombre){
     'direccion general de ingenieria de transito':'DGIT',
     'direccion general ingenieria transito':'DGIT',
     'dgit':'DGIT',
+    'ministerio de obras publicas':'MOPT',
+    'mopt':'MOPT',
+    'conavi':'CONAVI',
   };
   const key=norm(s);
   for(const [k,v] of Object.entries(muniMap)){
