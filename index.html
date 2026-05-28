@@ -121,50 +121,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
   <div class="content">
-
-    <!-- ADS SECTION -->
     <div class="stats-grid">
       <div class="stat-card" onclick="abrirADSFiltrado('Todos')" style="cursor:pointer"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
       <div class="stat-card" onclick="abrirADSFiltrado('Pendiente')" style="cursor:pointer"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
-    </div>
-    <button class="home-btn" onclick="abrirADS()" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
-      <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
-    </button>
-
-    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
-
-    <!-- PROYECTOS SECTION -->
-    <div class="stats-grid">
       <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
       <div class="stat-card" onclick="abrirProyectosFiltrado('Ejecucion')" style="cursor:pointer"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
-    <button class="home-btn" onclick="abrirProyectos()" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
-      <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
-    </button>
 
-    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
+    <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Consulta</div>
+    <div style="margin-bottom:12px">
+      <button class="home-btn" onclick="abrirADS()">
+        <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
+        <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirProyectos()">
+        <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
+        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirUbicacion()">
+        <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
+        <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
+      </button>
+      <button class="home-btn" onclick="window.location.href='analisis.html'">
+        <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
+        <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
+      </button>
+    </div>
 
-    <!-- ANALISIS -->
-    <button class="home-btn" onclick="window.location.href='analisis.html'" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
-      <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
-    </button>
-
-    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
-
-    <!-- UBICACION -->
-    <button class="home-btn" onclick="abrirUbicacion()" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
-      <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
-    </button>
-
-    <div style="text-align:center;font-size:11px;color:#C7C7CC;margin:12px 0" id="last-update">Actualizando...</div>
-
-    <!-- AGREGAR -->
     <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Agregar</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
       <button onclick="abrirNuevaADS()" style="background:#1F3864;border:none;border-radius:12px;padding:14px 12px;cursor:pointer;text-align:left;font-family:inherit">
         <div style="font-size:20px;margin-bottom:6px">➕</div>
         <div style="color:#fff;font-size:13px;font-weight:600">Nueva ADS</div>
@@ -177,6 +162,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </button>
     </div>
 
+    <div style="text-align:center;font-size:11px;color:#C7C7CC" id="last-update">Actualizando...</div>
   </div>
 </div>
 
@@ -264,6 +250,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <h1 style="margin-top:6px">Nueva Solicitud de Atencion</h1>
   </div>
   <div class="content">
+    <div id="ads-form-banner" style="display:none;background:#EBF3FB;border-radius:12px;padding:10px 16px;margin-bottom:8px;font-size:12px;color:#1F3864;font-weight:500;text-align:center">Modo edicion — actualizando solicitud existente</div>
     <div class="section">
       <div class="section-title">Datos de la solicitud</div>
       <div class="card">
@@ -474,7 +461,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
 let adsData=[],proyData=[],rutasData=[],ubicData=[],itemsUbicData=[];
-let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
+let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false,editADSIdx=null;
 let filtroFechaUbic='semana',editUbicRowIndex=null,inspectorActual=null;
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
 const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12,obs:13};
@@ -656,7 +643,8 @@ function verADS(idx){
         estados.map(e=>'<option value="'+e+'"'+(e===estado?' selected':'')+'>'+e+'</option>').join('')+
       '</select>'+
       '<button class="btn-primary" onclick="actualizarEstadoADS('+idx+')" style="margin-top:8px">Actualizar estado</button>'+
-    '</div>';
+    '</div>'+
+    '<button class="btn-primary" onclick="abrirEditarADS('+idx+')" style="margin-top:6px;background:#534AB7">Editar solicitud completa</button>';
   showPage('page-ads-detail');
 }
 
@@ -707,7 +695,32 @@ function renderProyectos(){
   }).join('');
 }
 
+
+function abrirEditarADS(idx){
+  const r=adsData[idx];if(!r)return;
+  editADSIdx=idx;
+  document.getElementById('nads-fecha').value=fmtF(r[A.fecha]);
+  document.getElementById('nads-solicitante').value=r[A.sol]||'';
+  document.getElementById('nads-solicitud').value=r[A.solic]||'';
+  document.getElementById('nads-ruta').value=r[A.ruta]||'';
+  actualizarSeccionesADS();
+  setTimeout(()=>{document.getElementById('nads-seccion').value=r[A.sec]||'';mostrarDescADS();},200);
+  document.getElementById('nads-estacion').value=r[A.est]||'';
+  document.getElementById('nads-aplica').value=r[A.aplica]||'Si';
+  document.getElementById('nads-recomendacion').value=r[A.rec]||'';
+  document.getElementById('nads-monto').value=r[A.monto]||'';
+  document.getElementById('nads-obs').value=r[A.obs]||'';
+  document.getElementById('nads-estado').value=r[A.estado]||'Pendiente';
+  document.getElementById('nads-prioridad').value=r[A.prior]||'2';
+  document.getElementById('btn-guardar-ads').textContent='Actualizar solicitud';
+  document.getElementById('ads-form-banner').style.display='block';
+  showPage('page-nueva-ads');
+}
+
 function abrirNuevaADS(){
+  editADSIdx=null;
+  document.getElementById('btn-guardar-ads').textContent='Guardar solicitud';
+  document.getElementById('ads-form-banner').style.display='none';
   document.getElementById('nads-fecha').value=hoy();
   document.getElementById('nads-ruta').value='';
   document.getElementById('nads-seccion').innerHTML='<option value="">Seleccionar...</option>';
@@ -722,12 +735,18 @@ async function guardarADS(){
   const btn=document.getElementById('btn-guardar-ads');btn.disabled=true;btn.textContent='Guardando...';
   const row=[document.getElementById('nads-fecha').value,solicitante,solicitud,document.getElementById('nads-ruta').value,document.getElementById('nads-seccion').value,document.getElementById('nads-estacion').value,document.getElementById('nads-aplica').value,document.getElementById('nads-recomendacion').value,document.getElementById('nads-monto').value||'','','',document.getElementById('nads-obs').value,document.getElementById('nads-estado').value,document.getElementById('nads-prioridad').value];
   try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
-    adsData.push(row);actualizarStats();toast('ADS registrada correctamente',false,true);
+    if(editADSIdx!==null){
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editADSIdx+1,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+      adsData[editADSIdx]=row;actualizarStats();toast('ADS actualizada correctamente',false,true);
+    }else{
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+      adsData.push(row);actualizarStats();toast('ADS registrada correctamente',false,true);
+    }
     ['nads-solicitante','nads-solicitud','nads-recomendacion','nads-monto','nads-obs','nads-estacion'].forEach(id=>document.getElementById(id).value='');
+    editADSIdx=null;
     setTimeout(()=>showPage('page-home'),1200);
   }catch(e){toast('Error de conexion',true);}
-  btn.disabled=false;btn.textContent='Guardar solicitud';
+  btn.disabled=false;btn.textContent=editADSIdx!==null?'Actualizar solicitud':'Guardar solicitud';
 }
 
 function abrirNuevoProyecto(){
