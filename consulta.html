@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Gestion de Zona">
-<title>Gestion de Zona</title>
-<meta property="og:title" content="Gestion de Zona">
-<meta property="og:description" content="Sistema de consulta FAMCOVA - Zona 1-4">
+<meta name="apple-mobile-web-app-title" content="Consulta FAMCOVA">
+<title>Consulta FAMCOVA</title>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="shortcut icon" href="icon.png">
 <style>
@@ -125,7 +123,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
 
     <!-- ANALISIS -->
-    <button class="home-btn" onclick="window.location.href='analisis.html?from=consulta&u='+(new URLSearchParams(location.search).get('u')||'')" style="margin-bottom:0">
+    <button class="home-btn" onclick="window.location.href='analisis.html?from=consulta'" style="margin-bottom:0">
       <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
       <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
     </button>
@@ -259,7 +257,7 @@ let filtroFechaUbic='semana',inspectorActual=null;
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
 const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12,obs:13};
 const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
-const INSPECTORES=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
+const INSPECTORES_FIJOS=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
@@ -477,7 +475,11 @@ function renderUbicacionInspectores(){
   const totalFrentes=ubicData.filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)).length;
   document.getElementById('ubic-count').textContent=label+' - '+totalFrentes+' frente'+(totalFrentes!==1?'s':'')+' asignados';
   const list=document.getElementById('ubic-inspectores-list');
-  list.innerHTML=INSPECTORES.map(nombre=>{
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
+  const todosInspectores=[...INSPECTORES_FIJOS,...inspectoresExtra];
+  list.innerHTML=todosInspectores.map(nombre=>{
     const frentes=getFrentesInspector(nombre);
     const color=colorInspector(nombre);
     const ini=inicialesInspector(nombre);
@@ -549,11 +551,7 @@ async function registrarAcceso(){
     const ahora=new Date();
     const fecha=ahora.toISOString().split('T')[0];
     const hora=ahora.toLocaleTimeString('es-CR');
-    const params=new URLSearchParams(location.search);
-    const u=params.get('u')||'desconocido';
-    const usuarios={'eric':'Eric Orozco','alex':'Alexander Mora'};
-    const nombre=usuarios[u.toLowerCase()]||'Otro ('+u+')';
-    const row=[fecha,hora,'Consulta',nombre,'Acceso a consulta.html'];
+    const row=[fecha,hora,'Consulta','Eric/Alexander','Acceso a consulta.html'];
     await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
       body:JSON.stringify({row,sheet:'ACCESOS'}),
       headers:{'Content-Type':'application/json'}});
