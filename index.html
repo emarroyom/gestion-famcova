@@ -408,11 +408,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="section-title">Datos del frente</div>
       <div class="card">
         <div class="field"><label>Inspector</label>
-          <select id="nubic-inspector" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+          <select id="nubic-inspector" onchange="toggleOtroInspector()" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
             <option value="">Seleccionar...</option>
             <option>Jaime Vargas</option><option>Juan Diego Aguero</option>
             <option>Jairo Mendez</option><option>Robnel Ugalde</option><option>Jose A. Madriz</option>
+            <option value="__otro__">Otro inspector...</option>
           </select>
+        </div>
+        <div class="field-extra" id="nubic-otro-inspector-box" style="display:none">
+          <label style="font-size:13px;color:#6D6D72;font-weight:500">Nombre del inspector:</label>
+          <input type="text" id="nubic-otro-inspector-texto" placeholder="Ej: Carlos Mora (Zona 1-6)">
         </div>
         <div class="field"><label>Fecha inicio</label><input type="date" id="nubic-fecha-ini"></div>
         <div class="field"><label>Fecha fin</label><input type="date" id="nubic-fecha-fin"></div>
@@ -466,7 +471,7 @@ let filtroFechaUbic='semana',editUbicRowIndex=null,inspectorActual=null;
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
 const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12,obs:13};
 const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
-const INSPECTORES=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
+const INSPECTORES_FIJOS=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function toast(msg,err=false,ok=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' error':ok?' success':'')+' show';setTimeout(()=>t.className='toast',3500);}
@@ -531,6 +536,13 @@ async function cargarItemsUbic(){
       sel.appendChild(opt);
     });
   }catch(e){console.log('Error items',e);}
+}
+
+function toggleOtroInspector(){
+  const sel=document.getElementById('nubic-inspector');
+  const box=document.getElementById('nubic-otro-inspector-box');
+  box.style.display=sel.value==='__otro__'?'flex':'none';
+  if(sel.value!=='__otro__')document.getElementById('nubic-otro-inspector-texto').value='';
 }
 
 function toggleOtraActividad(){
@@ -813,7 +825,12 @@ function renderUbicacionInspectores(){
   const totalFrentes=ubicData.filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)).length;
   document.getElementById('ubic-count').textContent=label+' - '+totalFrentes+' frente'+(totalFrentes!==1?'s':'')+' asignados';
   const list=document.getElementById('ubic-inspectores-list');
-  list.innerHTML=INSPECTORES.map(nombre=>{
+  // Inspectores adicionales con frentes en el periodo
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
+  const todosInspectores=[...INSPECTORES_FIJOS,...inspectoresExtra];
+  list.innerHTML=todosInspectores.map(nombre=>{
     const frentes=getFrentesInspector(nombre);
     const color=colorInspector(nombre);
     const ini=inicialesInspector(nombre);
@@ -895,6 +912,8 @@ function resetFormUbic(){
   document.getElementById('nubic-fecha-ini').value=hoy();
   document.getElementById('nubic-fecha-fin').value=hoy();
   document.getElementById('nubic-inspector').value='';
+  document.getElementById('nubic-otro-inspector-box').style.display='none';
+  document.getElementById('nubic-otro-inspector-texto').value='';
   document.getElementById('nubic-ruta').value='';
   document.getElementById('nubic-seccion').innerHTML='<option value="">Seleccionar...</option>';
   document.getElementById('nubic-desc-box').style.display='none';
@@ -915,7 +934,16 @@ function editarUbicacion(idx){
   editUbicRowIndex=idx;
   document.getElementById('nubic-fecha-ini').value=String(r[U.fini]).split('T')[0];
   document.getElementById('nubic-fecha-fin').value=String(r[U.ffin]||r[U.fini]).split('T')[0];
-  document.getElementById('nubic-inspector').value=r[U.inspector]||'';
+  const inspNombre=r[U.inspector]||'';
+  const inspFijo=INSPECTORES_FIJOS.includes(inspNombre);
+  if(inspFijo){
+    document.getElementById('nubic-inspector').value=inspNombre;
+    document.getElementById('nubic-otro-inspector-box').style.display='none';
+  }else{
+    document.getElementById('nubic-inspector').value='__otro__';
+    document.getElementById('nubic-otro-inspector-box').style.display='flex';
+    document.getElementById('nubic-otro-inspector-texto').value=inspNombre;
+  }
   document.getElementById('nubic-ruta').value=r[U.ruta]||'';
   actualizarSeccionesUbic();
   setTimeout(()=>{document.getElementById('nubic-seccion').value=r[U.sec]||'';mostrarDescUbic();},200);
@@ -933,7 +961,8 @@ function editarUbicacion(idx){
 }
 
 async function guardarUbicacion(){
-  const inspector=document.getElementById('nubic-inspector').value;
+  const inspectorSel=document.getElementById('nubic-inspector').value;
+  const inspector=inspectorSel==='__otro__'?document.getElementById('nubic-otro-inspector-texto').value.trim():inspectorSel;
   const ruta=document.getElementById('nubic-ruta').value;
   const fini=document.getElementById('nubic-fecha-ini').value;
   const ffin=document.getElementById('nubic-fecha-fin').value;
