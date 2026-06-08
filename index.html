@@ -89,6 +89,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
 .result-count{font-size:11px;color:#6D6D72;margin-bottom:8px;padding-left:4px}
+
+/* VISTA DIARIA */
+.daily-wrap{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px}
+.daily-title{font-size:11px;font-weight:700;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
+.daily-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid #F2F2F7}
+.daily-row:last-child{border-bottom:none}
+.daily-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.daily-name{font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:2px}
+.daily-actividad{font-size:12px;color:#6D6D72;line-height:1.4}
+.daily-sin{font-size:12px;color:#C7C7CC;font-style:italic}
 /* UBICACION */
 .insp-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
 .insp-card:active{opacity:0.8}
@@ -370,13 +380,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <h1 style="margin-top:6px">Ubicacion en Campo</h1>
   </div>
   <div class="content">
-    <div class="filtros">
-      <button class="filtro-btn on" onclick="filtrarFechaUbic('semana',this)">Esta semana</button>
-      <button class="filtro-btn" onclick="filtrarFechaUbic('proxima',this)">Proxima semana</button>
-      <button class="filtro-btn" onclick="filtrarFechaUbic('todos',this)">Historial</button>
+    <div style="display:flex;border-bottom:0.5px solid #E5E5EA;margin-bottom:14px;background:#fff;border-radius:12px 12px 0 0;overflow:hidden">
+      <button id="tab-btn-hoy" onclick="switchUbicTab('hoy')" style="flex:1;padding:12px 6px;background:none;border:none;border-bottom:2px solid #1F3864;font-size:13px;font-weight:600;color:#1F3864;cursor:pointer;font-family:inherit">Hoy</button>
+      <button id="tab-btn-inspector" onclick="switchUbicTab('inspector')" style="flex:1;padding:12px 6px;background:none;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:400;color:#6D6D72;cursor:pointer;font-family:inherit">Por inspector</button>
+      <button id="tab-btn-semana" onclick="switchUbicTab('semana')" style="flex:1;padding:12px 6px;background:none;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:400;color:#6D6D72;cursor:pointer;font-family:inherit">Semana</button>
     </div>
-    <div id="ubic-count" class="result-count"></div>
-    <div id="ubic-inspectores-list"></div>
+    <div id="tab-panel-hoy">
+      <div id="ubic-hoy-lista"></div>
+    </div>
+    <div id="tab-panel-inspector" style="display:none">
+      <div id="ubic-count" class="result-count"></div>
+      <div id="ubic-inspectores-list"></div>
+      <div id="ubic-lista"></div>
+    </div>
+    <div id="tab-panel-semana" style="display:none">
+      <div class="filtros" style="margin-bottom:12px">
+        <button class="filtro-btn on" onclick="filtrarFechaUbic('semana',this)">Esta semana</button>
+        <button class="filtro-btn" onclick="filtrarFechaUbic('proxima',this)">Proxima semana</button>
+        <button class="filtro-btn" onclick="filtrarFechaUbic('todos',this)">Historial</button>
+      </div>
+      <div id="ubic-semana-lista"></div>
+    </div>
   </div>
 </div>
 
@@ -605,7 +629,7 @@ function renderADS(){
   document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  list.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
+  const listEl=document.getElementById('ubic-lista'); if(listEl) listEl.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
     const idx=adsData.indexOf(r);const estado=String(r[A.estado]||'Pendiente');const color=cardColor(estado,String(r[A.prior]));const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
     return'<div class="item-card '+color+'" onclick="verADS('+idx+')">'+
       '<div class="item-title">'+( r[A.solic]||'Sin descripcion')+'</div>'+
@@ -686,7 +710,7 @@ function renderProyectos(){
   document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
   const list=document.getElementById('proy-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  list.innerHTML=rows.map(r=>{
+  const listEl=document.getElementById('ubic-lista'); if(listEl) listEl.innerHTML=rows.map(r=>{
     const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
     const costo=r[P.costo]&&String(r[P.costo])!==''?fmt(r[P.costo]):'Sin monto estimado';
     return'<div class="item-card '+color+' nocursor">'+
@@ -793,7 +817,7 @@ async function cargarUbicacion(){
   try{
     const j=await jsonp(SCRIPT_URL+'?sheet=UBICACION&t='+Date.now());
     ubicData=(j.data||[]).slice(1).filter(r=>(r[U.fini]||r[U.inspector])&&r[U.fini]!=='ELIMINADO');
-    renderUbicacionInspectores();
+    switchUbicTab('hoy');
   }catch(e){document.getElementById('ubic-inspectores-list').innerHTML='<div class="empty-state">Error de conexion</div>';}
 }
 
@@ -801,14 +825,157 @@ function filtrarFechaUbic(f,btn){
   filtroFechaUbic=f;
   document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  renderUbicacionInspectores();
-  if(inspectorActual)renderDetalleInspector(inspectorActual);
+  renderUbicacionSemana();
 }
 
 function getPeriodo(){
   if(filtroFechaUbic==='semana')return{ini:inicioSemana(0),fin:finSemana(0)};
   if(filtroFechaUbic==='proxima')return{ini:inicioSemana(1),fin:finSemana(1)};
   return{ini:'2000-01-01',fin:'2099-12-31'};
+}
+
+function getFrentesUnicos(nombre, periodoOverride){
+  const p = periodoOverride || getPeriodo();
+  const frentes = ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin));
+  const actividadesUnicas = [...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
+  return actividadesUnicas.length;
+}
+
+function getFrentesHoy(nombre){
+  const h=hoy();
+  return ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoIncluyeHoy(r[U.fini],r[U.ffin]));
+}
+
+function rangoIncluyeHoy(fini,ffin){
+  const h=hoy();
+  const i=String(fini).split('T')[0];
+  const f=String(ffin||fini).split('T')[0];
+  return h>=i&&h<=f;
+}
+
+function switchUbicTab(tab){
+  ['hoy','inspector','semana'].forEach(t=>{
+    const panel=document.getElementById('tab-panel-'+t);
+    const btn=document.getElementById('tab-btn-'+t);
+    if(panel) panel.style.display=t===tab?'block':'none';
+    if(btn){
+      btn.style.borderBottom=t===tab?'2px solid #1F3864':'2px solid transparent';
+      btn.style.color=t===tab?'#1F3864':'#6D6D72';
+      btn.style.fontWeight=t===tab?'600':'400';
+    }
+  });
+  if(tab==='hoy') renderVistaDiariaHoy();
+  if(tab==='inspector') renderUbicacionInspectores();
+  if(tab==='semana') renderUbicacionSemana();
+}
+
+function renderVistaDiariaHoy(){
+  const wrap=document.getElementById('ubic-hoy-lista');
+  if(!wrap)return;
+  const dias=['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+  const ahora=new Date();
+  const fechaLabel=dias[ahora.getDay()]+' '+ahora.getDate()+' '+meses[ahora.getMonth()]+' '+ahora.getFullYear();
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin])&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
+  const todosHoy=[...INSPECTORES_FIJOS,...inspectoresExtra];
+  const colores={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};
+  const rows=todosHoy.map(nombre=>{
+    const col=colores[nombre]||'#3B6D11';
+    const frentes=ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoIncluyeHoy(r[U.fini],r[U.ffin]));
+    if(!frentes.length){
+      return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;opacity:0.5;display:flex;align-items:center;gap:10px">
+        <div style="width:10px;height:10px;border-radius:50%;background:#C7C7CC;flex-shrink:0"></div>
+        <div><div style="font-size:13px;font-weight:600;color:#6D6D72">${nombre}</div>
+        <div style="font-size:11px;color:#C7C7CC;font-style:italic">Sin asignacion hoy</div></div>
+      </div>`;
+    }
+    const actividades=[...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
+    const numFrentes=actividades.length;
+    const badge=numFrentes>1?`<span style="font-size:10px;background:#FFF3E0;color:#7A4500;padding:2px 7px;border-radius:10px;font-weight:600">${numFrentes} frentes</span>`:`<span style="font-size:10px;background:#EBF3FB;color:#1F3864;padding:2px 7px;border-radius:10px;font-weight:600">1 frente</span>`;
+    const actHTML=actividades.map(act=>{
+      const rutas=frentes.filter(r=>String(r[U.actividad]||'').trim()===act)
+        .map(r=>(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec.'+r[U.sec]:'')).filter(Boolean).join(' · ');
+      return`<div style="margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#1C1C1E">${act}</span>${rutas?'<br><span style="font-size:11px;color:#6D6D72">'+rutas+'</span>':''}</div>`;
+    }).join('');
+    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
+        <div style="font-size:13px;font-weight:600;color:#1C1C1E;flex:1">${nombre}</div>
+        ${badge}
+      </div>
+      <div style="padding-left:18px">${actHTML}</div>
+    </div>`;
+  }).join('');
+  wrap.innerHTML=`<div style="font-size:11px;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:10px;padding-left:4px">${fechaLabel}</div>${rows}`;
+}
+
+function renderUbicacionSemana(){
+  const wrap=document.getElementById('ubic-semana-lista');
+  if(!wrap)return;
+  const p=getPeriodo();
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
+  const todos=[...INSPECTORES_FIJOS,...inspectoresExtra];
+  const colores={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};
+  wrap.innerHTML=todos.map(nombre=>{
+    const col=colores[nombre]||'#3B6D11';
+    const frentes=ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin));
+    const numFrentes=getFrentesUnicos(nombre);
+    const subtext=numFrentes>0?numFrentes+' frente'+(numFrentes>1?'s distintos':''):'Sin asignacion este periodo';
+    const subtextColor=numFrentes>0?'#1C1C1E':'#C7C7CC';
+    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;opacity:${numFrentes>0?'1':'0.5'}" onclick="verInspectorUbic('${nombre}')">
+      <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:#1C1C1E">${nombre}</div>
+        <div style="font-size:11px;color:${subtextColor}">${subtext}</div>
+      </div>
+      <span style="font-size:18px;color:#C7C7CC">›</span>
+    </div>`;
+  }).join('');
+}
+
+function renderVistaDiaria(){
+  const wrap=document.getElementById('ubic-daily-wrap');
+  if(!wrap)return;
+  const dias=['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+  const ahora=new Date();
+  const diaNombre=dias[ahora.getDay()];
+  const fechaLabel=diaNombre+' '+ahora.getDate()+' '+meses[ahora.getMonth()]+' '+ahora.getFullYear();
+
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin])&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
+  const todosHoy=[...INSPECTORES_FIJOS,...inspectoresExtra];
+
+  const rows=todosHoy.map(nombre=>{
+    const color=colorInspector(nombre);
+    const frentes=getFrentesHoy(nombre);
+    if(!frentes.length){
+      return`<div class="daily-row">
+        <div class="daily-dot" style="background:#E5E5EA"></div>
+        <div><div class="daily-name">${nombre}</div><div class="daily-sin">Sin asignacion hoy</div></div>
+      </div>`;
+    }
+    const actividades=[...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
+    const actHTML=actividades.map(act=>{
+      const rutasFrente=frentes.filter(r=>String(r[U.actividad]||'').trim()===act);
+      const rutas=rutasFrente.map(r=>(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec. '+r[U.sec]:'')).filter(Boolean).join(' · ');
+      return`<div style="margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#1C1C1E">${act}</span>${rutas?'<br><span style="font-size:11px;color:#6D6D72">'+rutas+'</span>':''}</div>`;
+    }).join('');
+    return`<div class="daily-row">
+      <div class="daily-dot" style="background:${color}"></div>
+      <div style="flex:1"><div class="daily-name">${nombre}</div><div class="daily-actividad">${actHTML}</div></div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML=`<div class="daily-wrap">
+    <div class="daily-title">Hoy — ${fechaLabel}</div>
+    ${rows}
+  </div>`;
 }
 
 function getFrentesInspector(nombre){
@@ -830,12 +997,15 @@ function renderUbicacionInspectores(){
     .filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
     .map(r=>r[U.inspector]))];
   const todosInspectores=[...INSPECTORES_FIJOS,...inspectoresExtra];
-  list.innerHTML=todosInspectores.map(nombre=>{
+  const list2=document.getElementById('ubic-lista');
+  if(!list2)return;
+  list2.innerHTML=todosInspectores.map(nombre=>{
     const frentes=getFrentesInspector(nombre);
     const color=colorInspector(nombre);
     const ini=inicialesInspector(nombre);
-    const subtext=frentes.length>0?frentes.length+' frente'+(frentes.length!==1?'s':'')+' asignado'+(frentes.length!==1?'s':''):'Sin asignacion este periodo';
-    const subtextColor=frentes.length>0?'#1C1C1E':'#C7C7CC';
+    const numFrentes=getFrentesUnicos(nombre);
+    const subtext=numFrentes>0?numFrentes+' frente'+(numFrentes!==1?'s':'')+' de trabajo'+(numFrentes>1?' distintos':''):'Sin asignacion este periodo';
+    const subtextColor=numFrentes>0?'#1C1C1E':'#C7C7CC';
     return'<div class="insp-card" onclick="verInspector(\''+nombre+'\')">'+
       '<div class="insp-left">'+
         '<div class="insp-avatar" style="background:'+color+'20;color:'+color+'">'+ini+'</div>'+
