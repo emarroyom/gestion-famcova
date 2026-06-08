@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Consulta FAMCOVA">
-<title>Consulta FAMCOVA</title>
+<meta name="apple-mobile-web-app-title" content="Gestion FAMCOVA">
+<title>Sistema de Gestion FAMCOVA</title>
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="shortcut icon" href="icon.png">
 <style>
@@ -20,6 +20,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .header-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
 .btn-back{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
 .content{padding:16px;padding-bottom:max(40px,env(safe-area-inset-bottom))}
+.section{margin-bottom:12px}
+.section-title{font-size:12px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;padding-left:4px}
+.card{background:#fff;border-radius:12px;overflow:hidden;margin-bottom:8px}
+.field{padding:12px 16px;border-bottom:0.5px solid #E5E5EA;display:flex;align-items:center;justify-content:space-between;min-height:48px}
+.field:last-child{border-bottom:none}
+.field label{font-size:15px;color:#1C1C1E;flex:1}
+.field input[type="date"],.field select,.field input[type="text"],.field input[type="number"]{border:none;outline:none;font-size:15px;color:#1C1C1E;text-align:right;background:transparent;max-width:60%;font-family:inherit}
+.field input[type="date"]{color:#007AFF}
+.field select{color:#007AFF;-webkit-appearance:none}
+.field textarea{border:none;outline:none;font-size:14px;color:#1C1C1E;background:transparent;width:100%;resize:none;height:72px;margin-top:6px;font-family:inherit;line-height:1.5}
+.field-vertical{flex-direction:column;align-items:flex-start;gap:4px}
+.field-desc{padding:10px 16px;background:#EBF3FB;border-bottom:0.5px solid #E5E5EA}
+.field-desc p{font-size:12px;color:#1F3864;font-weight:500;line-height:1.4}
+.field-extra{padding:10px 16px;border-bottom:0.5px solid #E5E5EA;display:flex;flex-direction:column;gap:6px}
+.field-extra input{border:none;border-bottom:0.5px solid #E5E5EA;outline:none;font-size:14px;color:#1C1C1E;background:transparent;width:100%;padding:6px 0;font-family:inherit}
+.btn-primary{width:100%;padding:14px;background:#1F3864;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.btn-primary:disabled{opacity:0.5}
+.btn-primary:active{opacity:0.8}
+.btn-danger{width:100%;padding:14px;background:#FFEBEE;color:#8B1A1A;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit}
+.toast{position:fixed;bottom:max(32px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#1F3864;color:#fff;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.error{background:#C0392B}
+.toast.success{background:#1A5C2E}
 .home-btn{display:flex;align-items:center;gap:14px;background:#fff;border-radius:12px;padding:16px;margin-bottom:8px;cursor:pointer;border:none;width:100%;text-align:left;font-family:inherit}
 .home-btn-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
 .home-btn-title{font-size:15px;font-weight:600;color:#1C1C1E}
@@ -35,7 +58,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .filtro-amparo.on{background:#8B1A1A;color:#fff;border-color:#8B1A1A}
 .search-box{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;color:#1C1C1E}
 .select-filtro{width:100%;padding:10px 14px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;background:#fff;font-family:inherit;outline:none;margin-bottom:8px;color:#1C1C1E;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236D6D72' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
-.item-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;border-left:4px solid #E5E5EA}
+.item-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;border-left:4px solid #E5E5EA}
 .item-card.alta{border-left-color:#FF3B30}
 .item-card.media{border-left-color:#FF9500}
 .item-card.baja{border-left-color:#34C759}
@@ -43,7 +66,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .item-card.pendiente{border-left-color:#FF9500}
 .item-card.ejecucion{border-left-color:#007AFF}
 .item-card.programar{border-left-color:#FF9500}
-.item-card.clickable{cursor:pointer}
+.item-card.nocursor{cursor:default}
 .item-title{font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:5px;line-height:1.4}
 .item-meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .chip{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600}
@@ -66,8 +89,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .detail-section-title{font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
 .loading{text-align:center;padding:40px;color:#6D6D72;font-size:14px}
 .result-count{font-size:11px;color:#6D6D72;margin-bottom:8px;padding-left:4px}
-.readonly-badge{background:#EBF3FB;color:#1F3864;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;text-align:center;margin-bottom:12px}
 
+/* VISTA DIARIA */
 .daily-wrap{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px}
 .daily-title{font-size:11px;font-weight:700;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
 .daily-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid #F2F2F7}
@@ -76,6 +99,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .daily-name{font-size:13px;font-weight:600;color:#1C1C1E;margin-bottom:2px}
 .daily-actividad{font-size:12px;color:#6D6D72;line-height:1.4}
 .daily-sin{font-size:12px;color:#C7C7CC;font-style:italic}
+/* UBICACION */
 .insp-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
 .insp-card:active{opacity:0.8}
 .insp-left{display:flex;align-items:center;gap:12px}
@@ -89,9 +113,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .frente-rango{font-size:11px;font-weight:700;color:#fff;padding:3px 10px;border-radius:12px}
 .frente-contrato{font-size:10px;color:#6D6D72;font-weight:600}
 .frente-ubicacion{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.frente-ruta-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px}
+.frente-ruta-badge{font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:8px}
 .frente-actividad{font-size:13px;font-weight:600;color:#1C1C1E;line-height:1.4;margin-bottom:4px}
 .frente-obs{font-size:11px;color:#6D6D72;font-style:italic;margin-top:4px}
+.frente-edit{font-size:10px;color:#C7C7CC;text-align:right;margin-top:6px}
+.sin-asignacion{background:#F8F8F8;border-radius:10px;padding:12px;text-align:center;color:#6D6D72;font-size:13px}
 </style>
 </head>
 <body>
@@ -105,48 +131,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
   <div class="content">
-    <div class="readonly-badge">Modo consulta - solo lectura</div>
-
-    <!-- ADS SECTION -->
     <div class="stats-grid">
       <div class="stat-card" onclick="abrirADSFiltrado('Todos')" style="cursor:pointer"><div class="stat-num" id="stat-ads-total">-</div><div class="stat-label">ADS totales</div></div>
       <div class="stat-card" onclick="abrirADSFiltrado('Pendiente')" style="cursor:pointer"><div class="stat-num" id="stat-ads-pend">-</div><div class="stat-label">ADS pendientes</div></div>
-    </div>
-    <button class="home-btn" onclick="abrirADS()" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
-      <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver todas las solicitudes</div></div>
-    </button>
-
-    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
-
-    <!-- PROYECTOS SECTION -->
-    <div class="stats-grid">
       <div class="stat-card"><div class="stat-num" id="stat-proy-total">-</div><div class="stat-label">Proyectos</div></div>
       <div class="stat-card" onclick="abrirProyectosFiltrado('Ejecucion')" style="cursor:pointer"><div class="stat-num" id="stat-proy-ejec">-</div><div class="stat-label">En ejecucion</div></div>
     </div>
-    <button class="home-btn" onclick="abrirProyectos()" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
-      <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
-    </button>
 
-    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
+    <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Consulta</div>
+    <div style="margin-bottom:12px">
+      <button class="home-btn" onclick="abrirADS()">
+        <div class="home-btn-icon" style="background:#FFEBEE">📋</div>
+        <div><div class="home-btn-title">Solicitudes de Atencion (ADS)</div><div class="home-btn-sub">Ver y gestionar todas las solicitudes</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirProyectos()">
+        <div class="home-btn-icon" style="background:#EBF3FB">🗂️</div>
+        <div><div class="home-btn-title">Banco de Proyectos</div><div class="home-btn-sub">Matriz de gestion de proyectos</div></div>
+      </button>
+      <button class="home-btn" onclick="abrirUbicacion()">
+        <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
+        <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
+      </button>
+      <button class="home-btn" onclick="window.location.href='analisis.html'">
+        <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
+        <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
+      </button>
+    </div>
 
-    <!-- ANALISIS -->
-    <button class="home-btn" onclick="window.location.href='analisis.html?from=consulta'" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#EBF3FB">📊</div>
-      <div><div class="home-btn-title">Analisis</div><div class="home-btn-sub">Estadisticas y tendencias historicas</div></div>
-    </button>
+    <div style="font-size:11px;font-weight:600;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-left:4px">Agregar</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      <button onclick="abrirNuevaADS()" style="background:#1F3864;border:none;border-radius:12px;padding:14px 12px;cursor:pointer;text-align:left;font-family:inherit">
+        <div style="font-size:20px;margin-bottom:6px">➕</div>
+        <div style="color:#fff;font-size:13px;font-weight:600">Nueva ADS</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:2px">Nueva solicitud</div>
+      </button>
+      <button onclick="abrirNuevoProyecto()" style="background:#1F3864;border:none;border-radius:12px;padding:14px 12px;cursor:pointer;text-align:left;font-family:inherit">
+        <div style="font-size:20px;margin-bottom:6px">📌</div>
+        <div style="color:#fff;font-size:13px;font-weight:600">Nuevo Proyecto</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:11px;margin-top:2px">Agregar al banco</div>
+      </button>
+    </div>
 
-    <div style="height:1px;background:#E5E5EA;margin:12px 0"></div>
-
-    <!-- UBICACION -->
-    <button class="home-btn" onclick="abrirUbicacion()" style="margin-bottom:0">
-      <div class="home-btn-icon" style="background:#FFF3E0">📍</div>
-      <div><div class="home-btn-title">Ubicacion de Inspectores</div><div class="home-btn-sub">Frentes de trabajo activos en campo</div></div>
-    </button>
-
-    <div style="text-align:center;font-size:11px;color:#C7C7CC;margin:12px 0" id="last-update">Actualizando...</div>
-
+    <div style="text-align:center;font-size:11px;color:#C7C7CC" id="last-update">Actualizando...</div>
   </div>
 </div>
 
@@ -155,7 +181,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="header-actions">
       <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Solicitudes ADS</span>
-      <div style="width:60px"></div>
+      <button class="btn-back" onclick="abrirNuevaADS()">+ Nueva</button>
     </div>
     <h1 style="margin-top:6px">Solicitudes de Atencion</h1>
   </div>
@@ -191,7 +217,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="header-actions">
       <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Banco de Proyectos</span>
-      <div style="width:60px"></div>
+      <button class="btn-back" onclick="abrirNuevoProyecto()">+ Nuevo</button>
     </div>
     <h1 style="margin-top:6px">Banco de Proyectos</h1>
   </div>
@@ -224,12 +250,132 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<div class="page" id="page-nueva-ads">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Nueva ADS</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Nueva Solicitud de Atencion</h1>
+  </div>
+  <div class="content">
+    <div id="ads-form-banner" style="display:none;background:#EBF3FB;border-radius:12px;padding:10px 16px;margin-bottom:8px;font-size:12px;color:#1F3864;font-weight:500;text-align:center">Modo edicion — actualizando solicitud existente</div>
+    <div class="section">
+      <div class="section-title">Datos de la solicitud</div>
+      <div class="card">
+        <div class="field"><label>Fecha ingreso</label><input type="date" id="nads-fecha"></div>
+        <div class="field"><label>Solicitante</label><input type="text" id="nads-solicitante" placeholder="Nombre del solicitante"></div>
+        <div class="field field-vertical"><label>Solicitud</label><textarea id="nads-solicitud" placeholder="Descripcion de la solicitud..."></textarea></div>
+        <div class="field"><label>Ruta</label>
+          <select id="nads-ruta" onchange="actualizarSeccionesADS()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field"><label>Seccion de control</label>
+          <select id="nads-seccion" onchange="mostrarDescADS()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field-desc" id="nads-desc-box" style="display:none"><p id="nads-desc-texto"></p></div>
+        <div class="field"><label>Estacion</label><input type="text" id="nads-estacion" placeholder="Ej: 1+500"></div>
+        <div class="field"><label>Aplica?</label>
+          <select id="nads-aplica" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Si</option><option>No</option>
+          </select>
+        </div>
+        <div class="field field-vertical"><label>Recomendacion de solucion</label><textarea id="nads-recomendacion" placeholder="Recomendacion de solucion..."></textarea></div>
+        <div class="field"><label>Prioridad</label>
+          <select id="nads-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="1">1 - Alta</option><option value="2">2 - Media</option><option value="3">3 - Baja</option>
+          </select>
+        </div>
+        <div class="field"><label>Estado inicial</label>
+          <select id="nads-estado" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Pendiente</option><option>Programar</option><option>En ejecucion</option><option>Atendido</option>
+          </select>
+        </div>
+        <div class="field"><label>Monto estimado</label><input type="number" id="nads-monto" placeholder="0" style="max-width:60%"></div>
+        <div class="field field-vertical"><label>Observaciones</label><textarea id="nads-obs" placeholder="Observaciones adicionales..."></textarea></div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-guardar-ads" onclick="guardarADS()">Guardar solicitud</button>
+  </div>
+</div>
+
+<div class="page" id="page-nuevo-proy">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
+      <span style="color:#fff;font-size:13px;font-weight:500">Nuevo Proyecto</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Nuevo Proyecto</h1>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Datos del proyecto</div>
+      <div class="card">
+        <div class="field"><label>Zona</label><input type="text" id="nproy-zona" value="1-4" style="max-width:80px"></div>
+        <div class="field"><label>Ruta</label>
+          <select id="nproy-ruta" onchange="actualizarSeccionesProy()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field"><label>Seccion de control</label>
+          <select id="nproy-seccion" onchange="mostrarDescProy()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field-desc" id="nproy-desc-box" style="display:none"><p id="nproy-desc-texto"></p></div>
+        <div class="field"><label>Estacion</label><input type="text" id="nproy-estacion" placeholder="Ej: 1+500"></div>
+        <div class="field"><label>Tipo de gestion</label>
+          <select id="nproy-gestion" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+            <option>Acera Peatonal</option><option>Bacheo formal</option><option>Bacheo urgencia</option>
+            <option>Baranda de puente</option><option>Baranda de puente, concreto y gaviones</option>
+            <option>Canal revestido</option><option>Concreto</option><option>Demarcacion</option>
+            <option>Descuaje</option><option>Diseno muro contencion</option><option>Escollera</option>
+            <option>Estudio Departamento Puentes</option><option>Estudio hidrologico</option>
+            <option>Guardacaminos</option><option>Limpiezas</option>
+            <option>Muro de contencion</option><option>Parrilla</option><option>Remocion de arbol</option>
+            <option>Tapa con flanger</option><option>Tuberia y canal revestido</option>
+            <option>Tuberia y concreto</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="field field-vertical"><label>Descripcion de la situacion</label><textarea id="nproy-descripcion" placeholder="Descripcion detallada..."></textarea></div>
+        <div class="field"><label>Prioridad</label>
+          <select id="nproy-prioridad" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Alta</option><option>Media</option><option>Baja</option>
+          </select>
+        </div>
+        <div class="field"><label>Costo estimado</label><input type="number" id="nproy-costo" placeholder="0" style="max-width:60%"></div>
+        <div class="field"><label>Estado</label>
+          <select id="nproy-estado" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option>Pendiente</option><option>Ejecucion</option><option>Atendido</option>
+          </select>
+        </div>
+        <div class="field field-vertical"><label>Solicitud / Origen</label><textarea id="nproy-solicitud" placeholder="Expediente, COFEC, reclamo de usuario..."></textarea></div>
+        <div class="field"><label>Contrato</label>
+          <select id="nproy-contrato" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Sin asignar</option>
+            <option value="2022CD-000145-0006000001">CD-000145</option>
+            <option value="2022CD-000128-0006000001">CD-000128</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-guardar-proy" onclick="guardarProyecto()">Guardar proyecto</button>
+  </div>
+</div>
+
+<!-- UBICACION - LISTA INSPECTORES -->
 <div class="page" id="page-ubicacion">
   <div class="header">
     <div class="header-actions">
       <button class="btn-back" onclick="showPage('page-home')">Inicio</button>
       <span style="color:#fff;font-size:13px;font-weight:500">Ubicacion Inspectores</span>
-      <div style="width:60px"></div>
+      <button class="btn-back" onclick="abrirNuevaUbicacion()">+ Asignar</button>
     </div>
     <h1 style="margin-top:6px">Ubicacion en Campo</h1>
   </div>
@@ -239,10 +385,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button id="tab-btn-inspector" onclick="switchUbicTab('inspector')" style="flex:1;padding:12px 6px;background:none;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:400;color:#6D6D72;cursor:pointer;font-family:inherit">Por inspector</button>
       <button id="tab-btn-semana" onclick="switchUbicTab('semana')" style="flex:1;padding:12px 6px;background:none;border:none;border-bottom:2px solid transparent;font-size:13px;font-weight:400;color:#6D6D72;cursor:pointer;font-family:inherit">Semana</button>
     </div>
-    <div id="tab-panel-hoy"><div id="ubic-hoy-lista"></div></div>
+    <div id="tab-panel-hoy">
+      <div id="ubic-hoy-lista"></div>
+    </div>
     <div id="tab-panel-inspector" style="display:none">
-    <div id="ubic-count" class="result-count"></div>
-    <div id="ubic-inspectores-list"></div>
+      <div id="ubic-count" class="result-count"></div>
+      <div id="ubic-inspectores-list"></div>
+      <div id="ubic-lista"></div>
     </div>
     <div id="tab-panel-semana" style="display:none">
       <div class="filtros" style="margin-bottom:12px">
@@ -255,41 +404,110 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<!-- UBICACION - DETALLE INSPECTOR -->
 <div class="page" id="page-ubicacion-inspector">
   <div class="header">
     <div class="header-actions">
       <button class="btn-back" onclick="showPage('page-ubicacion')">Inspectores</button>
       <span style="color:#fff;font-size:13px;font-weight:500" id="ubic-insp-titulo">Inspector</span>
-      <div style="width:60px"></div>
+      <button class="btn-back" onclick="abrirNuevaUbicacionParaInspector()">+ Frente</button>
     </div>
     <h1 style="margin-top:6px" id="ubic-insp-nombre-header">Frentes de trabajo</h1>
   </div>
   <div class="content" id="ubic-inspector-detail"></div>
 </div>
 
+<!-- NUEVA UBICACION -->
+<div class="page" id="page-nueva-ubic">
+  <div class="header">
+    <div class="header-actions">
+      <button class="btn-back" onclick="volverDeFormUbic()">Volver</button>
+      <span style="color:#fff;font-size:13px;font-weight:500" id="ubic-form-label">Asignar frente</span>
+      <div style="width:60px"></div>
+    </div>
+    <h1 style="margin-top:6px">Asignacion de Frente</h1>
+  </div>
+  <div class="content">
+    <div class="section">
+      <div class="section-title">Datos del frente</div>
+      <div class="card">
+        <div class="field"><label>Inspector</label>
+          <select id="nubic-inspector" onchange="toggleOtroInspector()" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+            <option>Jaime Vargas</option><option>Juan Diego Aguero</option>
+            <option>Jairo Mendez</option><option>Robnel Ugalde</option><option>Jose A. Madriz</option>
+            <option value="__otro__">Otro inspector...</option>
+          </select>
+        </div>
+        <div class="field-extra" id="nubic-otro-inspector-box" style="display:none">
+          <label style="font-size:13px;color:#6D6D72;font-weight:500">Nombre del inspector:</label>
+          <input type="text" id="nubic-otro-inspector-texto" placeholder="Ej: Carlos Mora (Zona 1-6)">
+        </div>
+        <div class="field"><label>Fecha inicio</label><input type="date" id="nubic-fecha-ini"></div>
+        <div class="field"><label>Fecha fin</label><input type="date" id="nubic-fecha-fin"></div>
+        <div class="field"><label>Ruta</label>
+          <select id="nubic-ruta" onchange="actualizarSeccionesUbic()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field"><label>Seccion de control</label>
+          <select id="nubic-seccion" onchange="mostrarDescUbic()" style="max-width:55%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+          </select>
+        </div>
+        <div class="field-desc" id="nubic-desc-box" style="display:none"><p id="nubic-desc-texto"></p></div>
+        <div class="field"><label>Actividad / Item</label>
+          <select id="nubic-actividad" onchange="toggleOtraActividad()" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:14px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+            <option value="__otra__">Otra actividad...</option>
+          </select>
+        </div>
+        <div class="field-extra" id="nubic-otra-box" style="display:none">
+          <label style="font-size:13px;color:#6D6D72;font-weight:500">Describi la actividad:</label>
+          <input type="text" id="nubic-otra-texto" placeholder="Ej: Inventario alcantarillas, Puente modular...">
+        </div>
+        <div class="field"><label>Contrato</label>
+          <select id="nubic-contrato" style="max-width:60%;color:#007AFF;border:none;outline:none;font-size:15px;background:transparent;-webkit-appearance:none;font-family:inherit">
+            <option value="">Seleccionar...</option>
+            <option value="2022CD-000145-0006000001">CD-000145</option>
+            <option value="2022CD-000128-0006000001">CD-000128</option>
+            <option value="2025LD-000022-0006000001">Contrato Lastre</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="field field-vertical"><label>Observaciones</label>
+          <textarea id="nubic-obs" placeholder="Observaciones adicionales..." style="border:none;outline:none;font-size:14px;color:#1C1C1E;background:transparent;width:100%;resize:none;height:60px;margin-top:6px;font-family:inherit;line-height:1.5"></textarea>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-guardar-ubic" onclick="guardarUbicacion()">Guardar asignacion</button>
+    <button class="btn-danger" id="btn-eliminar-ubic" style="display:none;margin-top:6px" onclick="eliminarUbicacion()">Eliminar asignacion</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxvNQyTXX2stItDJRFuNZYrTD8vJy7XjR9860hB5ZkuxrFav7JUpxzoYU4Ay5PUsBG7Yw/exec';
-let adsData=[],proyData=[],rutasData=[],ubicData=[];
-let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false;
-let filtroFechaUbic='semana',inspectorActual=null;
+let adsData=[],proyData=[],rutasData=[],ubicData=[],itemsUbicData=[];
+let filtroADS='Todos',filtroProyEstado='Todos',soloAmparo=false,soloAmparoProy=false,editADSIdx=null;
+let filtroFechaUbic='semana',editUbicRowIndex=null,inspectorActual=null;
 const A={fecha:0,sol:1,solic:2,ruta:3,sec:4,est:5,aplica:6,rec:7,monto:8,evid:9,fcierre:10,obs:11,estado:12,prior:13};
 const P={zona:0,ruta:1,sec:2,est:3,gestion:4,desc:5,prior:6,costo:7,fprop:8,fdef:9,solicitud:10,estado:11,contrato:12,obs:13};
 const U={fini:0,ffin:1,inspector:2,ruta:3,sec:4,actividad:5,contrato:6,obs:7};
 const INSPECTORES_FIJOS=['Jaime Vargas','Juan Diego Aguero','Jairo Mendez','Robnel Ugalde','Jose A. Madriz'];
 
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',3000);}
+function toast(msg,err=false,ok=false){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' error':ok?' success':'')+' show';setTimeout(()=>t.className='toast',3500);}
 function jsonp(url){
   return new Promise((res,rej)=>{
     const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
     const s=document.createElement('script');
     window[cb]=data=>{res(data);delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);};
     s.src=url+'&callback='+cb;
-    s.onerror=()=>{delete window[cb];rej(new Error('error'));};
+    s.onerror=()=>{delete window[cb];rej(new Error('JSONP error'));};
     document.head.appendChild(s);
-    setTimeout(()=>{delete window[cb];rej(new Error('timeout'));},12000);
+    setTimeout(()=>{delete window[cb];rej(new Error('Timeout'));},12000);
   });
 }
 function fmt(n){if(!n||n==='')return'-';const num=parseFloat(String(n).replace(/[^\d.]/g,''));if(isNaN(num))return String(n);return'CRC'+num.toLocaleString('es-CR');}
@@ -323,10 +541,47 @@ async function cargarRutas(){
     const rows=(j.data||[]).slice(1).filter(r=>r[0]&&String(r[0]).trim()!=='');
     rutasData=rows.map(r=>({ruta:String(r[0]).trim(),seccion:String(r[1]).trim(),desc:String(r[2]||'').trim()}));
     const rutas=[...new Set(rutasData.map(r=>r.ruta))];
-    const sel=document.getElementById('proy-filtro-ruta');if(!sel)return;
-    rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
+    ['nads-ruta','nproy-ruta','nubic-ruta','proy-filtro-ruta'].forEach(id=>{
+      const sel=document.getElementById(id);if(!sel)return;
+      rutas.forEach(r=>{const opt=document.createElement('option');opt.value=r;opt.textContent='Ruta '+r;sel.appendChild(opt);});
+    });
   }catch(e){console.log('Error rutas',e);}
 }
+
+async function cargarItemsUbic(){
+  try{
+    const j=await jsonp(SCRIPT_URL+'?sheet=ITEM&t='+Date.now());
+    itemsUbicData=(j.data||[]).slice(1).filter(r=>r[0]||r[1]);
+    const sel=document.getElementById('nubic-actividad');if(!sel)return;
+    itemsUbicData.forEach(r=>{
+      const opt=document.createElement('option');
+      opt.value=r[0]+' - '+r[1];
+      opt.textContent=r[0]+' - '+r[1];
+      sel.appendChild(opt);
+    });
+  }catch(e){console.log('Error items',e);}
+}
+
+function toggleOtroInspector(){
+  const sel=document.getElementById('nubic-inspector');
+  const box=document.getElementById('nubic-otro-inspector-box');
+  box.style.display=sel.value==='__otro__'?'flex':'none';
+  if(sel.value!=='__otro__')document.getElementById('nubic-otro-inspector-texto').value='';
+}
+
+function toggleOtraActividad(){
+  const sel=document.getElementById('nubic-actividad');
+  const box=document.getElementById('nubic-otra-box');
+  box.style.display=sel.value==='__otra__'?'flex':'none';
+  if(sel.value!=='__otra__')document.getElementById('nubic-otra-texto').value='';
+}
+
+function actualizarSeccionesADS(){const ruta=document.getElementById('nads-ruta').value;const sel=document.getElementById('nads-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nads-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
+function mostrarDescADS(){const sel=document.getElementById('nads-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nads-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nads-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
+function actualizarSeccionesProy(){const ruta=document.getElementById('nproy-ruta').value;const sel=document.getElementById('nproy-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nproy-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
+function mostrarDescProy(){const sel=document.getElementById('nproy-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nproy-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nproy-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
+function actualizarSeccionesUbic(){const ruta=document.getElementById('nubic-ruta').value;const sel=document.getElementById('nubic-seccion');sel.innerHTML='<option value="">Seleccionar...</option>';document.getElementById('nubic-desc-box').style.display='none';if(!ruta)return;rutasData.filter(r=>r.ruta===ruta).forEach(s=>{const opt=document.createElement('option');opt.value=s.seccion;opt.textContent=s.seccion;opt.dataset.desc=s.desc;sel.appendChild(opt);});}
+function mostrarDescUbic(){const sel=document.getElementById('nubic-seccion');const opt=sel.options[sel.selectedIndex];const desc=opt?opt.dataset.desc:'';const box=document.getElementById('nubic-desc-box');if(desc&&desc!=='undefined'){document.getElementById('nubic-desc-texto').textContent=desc;box.style.display='block';}else box.style.display='none';}
 
 async function cargarDatos(spinner=false){
   if(spinner){const b=document.getElementById('btn-refresh-home');if(b)b.textContent='...';}
@@ -374,13 +629,10 @@ function renderADS(){
   document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  list.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
-    const idx=adsData.indexOf(r);
-    const estado=String(r[A.estado]||'Pendiente');
-    const color=cardColor(estado,String(r[A.prior]));
-    const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
-    return'<div class="item-card '+color+' clickable" onclick="verADS('+idx+')">'+
-      '<div class="item-title">'+(r[A.solic]||'Sin descripcion')+'</div>'+
+  const listEl=document.getElementById('ubic-lista'); if(listEl) listEl.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
+    const idx=adsData.indexOf(r);const estado=String(r[A.estado]||'Pendiente');const color=cardColor(estado,String(r[A.prior]));const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
+    return'<div class="item-card '+color+'" onclick="verADS('+idx+')">'+
+      '<div class="item-title">'+( r[A.solic]||'Sin descripcion')+'</div>'+
       '<div style="font-size:12px;color:#6D6D72;margin-top:2px">'+(r[A.sol]||'-')+'</div>'+
       '<div class="item-meta">'+
         (r[A.ruta]?'<span class="chip chip-ruta">Ruta '+r[A.ruta]+'</span>':'')+
@@ -397,6 +649,7 @@ function renderADS(){
 function verADS(idx){
   const r=adsData[idx];if(!r)return;
   const estado=String(r[A.estado]||'Pendiente');
+  const estados=['Pendiente','Programar','En ejecucion','Atendido'];
   const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
   document.getElementById('ads-detail-content').innerHTML=
     '<div class="detail-section">'+
@@ -408,7 +661,6 @@ function verADS(idx){
       '<div class="detail-field"><span class="detail-label">Estacion</span><span class="detail-value">'+(r[A.est]||'-')+'</span></div>'+
       '<div class="detail-field"><span class="detail-label">Aplica?</span><span class="detail-value">'+(r[A.aplica]||'-')+'</span></div>'+
       '<div class="detail-field"><span class="detail-label">Prioridad</span><span class="detail-value">'+labelPrioridad(r[A.prior])+'</span></div>'+
-      '<div class="detail-field"><span class="detail-label">Estado</span><span class="detail-value"><strong>'+estado+'</strong></span></div>'+
       (amparo?'<div class="detail-field"><span class="detail-label">Tipo</span><span class="detail-value" style="color:#6B21A8;font-weight:600">Recurso de amparo</span></div>':'')+
     '</div>'+
     '<div class="detail-section"><div class="detail-section-title">Solicitud</div><div style="font-size:13px;color:#1C1C1E;line-height:1.6">'+(r[A.solic]||'-')+'</div></div>'+
@@ -419,8 +671,26 @@ function verADS(idx){
       '<div class="detail-field"><span class="detail-label">Evidencia de cierre</span><span class="detail-value">'+(r[A.evid]||'-')+'</span></div>'+
       '<div class="detail-field"><span class="detail-label">Fecha cierre</span><span class="detail-value">'+fmtF(r[A.fcierre])+'</span></div>'+
       '<div class="detail-field"><span class="detail-label">Observaciones</span><span class="detail-value">'+(r[A.obs]||'-')+'</span></div>'+
-    '</div>';
+    '</div>'+
+    '<div class="detail-section">'+
+      '<div class="detail-section-title">Estado actual: <strong>'+estado+'</strong></div>'+
+      '<div style="font-size:11px;color:#FF9500;margin-bottom:10px;background:#FFF3E0;padding:8px;border-radius:8px">Solo Emanuel puede actualizar el estado</div>'+
+      '<select id="estado-ads-sel" style="width:100%;padding:10px;border:0.5px solid #E5E5EA;border-radius:10px;font-size:14px;font-family:inherit;color:#1C1C1E;background:#fff;-webkit-appearance:none">'+
+        estados.map(e=>'<option value="'+e+'"'+(e===estado?' selected':'')+'>'+e+'</option>').join('')+
+      '</select>'+
+      '<button class="btn-primary" onclick="actualizarEstadoADS('+idx+')" style="margin-top:8px">Actualizar estado</button>'+
+    '</div>'+
+    '<button class="btn-primary" onclick="abrirEditarADS('+idx+')" style="margin-top:6px;background:#534AB7">Editar solicitud completa</button>';
   showPage('page-ads-detail');
+}
+
+async function actualizarEstadoADS(idx){
+  const nuevoEstado=document.getElementById('estado-ads-sel').value;
+  const row=[...adsData[idx]];row[A.estado]=nuevoEstado;
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:idx+1,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+    adsData[idx]=row;actualizarStats();toast('Estado actualizado: '+nuevoEstado,false,true);
+  }catch(e){toast('Error de conexion',true);}
 }
 
 function abrirProyectos(){showPage('page-proyectos');if(!proyData.length)cargarDatos().then(renderProyectos);else renderProyectos();}
@@ -440,10 +710,10 @@ function renderProyectos(){
   document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
   const list=document.getElementById('proy-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  list.innerHTML=rows.map(r=>{
+  const listEl=document.getElementById('ubic-lista'); if(listEl) listEl.innerHTML=rows.map(r=>{
     const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
     const costo=r[P.costo]&&String(r[P.costo])!==''?fmt(r[P.costo]):'Sin monto estimado';
-    return'<div class="item-card '+color+'">'+
+    return'<div class="item-card '+color+' nocursor">'+
       '<div style="font-size:10px;font-weight:600;color:#6D6D72;text-transform:uppercase;margin-bottom:4px">'+(r[P.gestion]||'-')+'</div>'+
       '<div class="item-title">'+(r[P.desc]||'Sin descripcion')+'</div>'+
       '<div class="item-meta">'+
@@ -461,7 +731,88 @@ function renderProyectos(){
   }).join('');
 }
 
-function abrirUbicacion(){showPage('page-ubicacion');cargarUbicacion();}
+
+function abrirEditarADS(idx){
+  const r=adsData[idx];if(!r)return;
+  editADSIdx=idx;
+  document.getElementById('nads-fecha').value=fmtF(r[A.fecha]);
+  document.getElementById('nads-solicitante').value=r[A.sol]||'';
+  document.getElementById('nads-solicitud').value=r[A.solic]||'';
+  document.getElementById('nads-ruta').value=r[A.ruta]||'';
+  actualizarSeccionesADS();
+  setTimeout(()=>{document.getElementById('nads-seccion').value=r[A.sec]||'';mostrarDescADS();},200);
+  document.getElementById('nads-estacion').value=r[A.est]||'';
+  document.getElementById('nads-aplica').value=r[A.aplica]||'Si';
+  document.getElementById('nads-recomendacion').value=r[A.rec]||'';
+  document.getElementById('nads-monto').value=r[A.monto]||'';
+  document.getElementById('nads-obs').value=r[A.obs]||'';
+  document.getElementById('nads-estado').value=r[A.estado]||'Pendiente';
+  document.getElementById('nads-prioridad').value=r[A.prior]||'2';
+  document.getElementById('btn-guardar-ads').textContent='Actualizar solicitud';
+  document.getElementById('ads-form-banner').style.display='block';
+  showPage('page-nueva-ads');
+}
+
+function abrirNuevaADS(){
+  editADSIdx=null;
+  document.getElementById('btn-guardar-ads').textContent='Guardar solicitud';
+  document.getElementById('ads-form-banner').style.display='none';
+  document.getElementById('nads-fecha').value=hoy();
+  document.getElementById('nads-ruta').value='';
+  document.getElementById('nads-seccion').innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nads-desc-box').style.display='none';
+  document.getElementById('nads-estacion').value='';
+  showPage('page-nueva-ads');
+}
+async function guardarADS(){
+  const solicitante=document.getElementById('nads-solicitante').value.trim();
+  const solicitud=document.getElementById('nads-solicitud').value.trim();
+  if(!solicitante||!solicitud){toast('Solicitante y solicitud son obligatorios',true);return;}
+  const btn=document.getElementById('btn-guardar-ads');btn.disabled=true;btn.textContent='Guardando...';
+  const row=[document.getElementById('nads-fecha').value,solicitante,solicitud,document.getElementById('nads-ruta').value,document.getElementById('nads-seccion').value,document.getElementById('nads-estacion').value,document.getElementById('nads-aplica').value,document.getElementById('nads-recomendacion').value,document.getElementById('nads-monto').value||'','','',document.getElementById('nads-obs').value,document.getElementById('nads-estado').value,document.getElementById('nads-prioridad').value];
+  try{
+    if(editADSIdx!==null){
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editADSIdx+1,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+      adsData[editADSIdx]=row;actualizarStats();toast('ADS actualizada correctamente',false,true);
+    }else{
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'ADS'}),headers:{'Content-Type':'application/json'}});
+      adsData.push(row);actualizarStats();toast('ADS registrada correctamente',false,true);
+    }
+    ['nads-solicitante','nads-solicitud','nads-recomendacion','nads-monto','nads-obs','nads-estacion'].forEach(id=>document.getElementById(id).value='');
+    editADSIdx=null;
+    setTimeout(()=>showPage('page-home'),1200);
+  }catch(e){toast('Error de conexion',true);}
+  btn.disabled=false;btn.textContent=editADSIdx!==null?'Actualizar solicitud':'Guardar solicitud';
+}
+
+function abrirNuevoProyecto(){
+  document.getElementById('nproy-ruta').value='';
+  document.getElementById('nproy-seccion').innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nproy-desc-box').style.display='none';
+  document.getElementById('nproy-estacion').value='';
+  showPage('page-nuevo-proy');
+}
+async function guardarProyecto(){
+  const ruta=document.getElementById('nproy-ruta').value;
+  const desc=document.getElementById('nproy-descripcion').value.trim();
+  if(!ruta||!desc){toast('Ruta y descripcion son obligatorios',true);return;}
+  const btn=document.getElementById('btn-guardar-proy');btn.disabled=true;btn.textContent='Guardando...';
+  const row=[document.getElementById('nproy-zona').value,ruta,document.getElementById('nproy-seccion').value,document.getElementById('nproy-estacion').value,document.getElementById('nproy-gestion').value,desc,document.getElementById('nproy-prioridad').value,document.getElementById('nproy-costo').value||'','','',document.getElementById('nproy-solicitud').value,document.getElementById('nproy-estado').value,document.getElementById('nproy-contrato').value,document.getElementById('nproy-obs').value||''];
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'PROYECTOS'}),headers:{'Content-Type':'application/json'}});
+    proyData.push(row);actualizarStats();toast('Proyecto registrado correctamente',false,true);
+    ['nproy-descripcion','nproy-costo','nproy-solicitud','nproy-estacion','nproy-obs'].forEach(id=>document.getElementById(id).value='');
+    setTimeout(()=>showPage('page-home'),1200);
+  }catch(e){toast('Error de conexion',true);}
+  btn.disabled=false;btn.textContent='Guardar proyecto';
+}
+
+// ═══ UBICACION ═══
+function abrirUbicacion(){
+  showPage('page-ubicacion');
+  cargarUbicacion();
+}
+
 async function cargarUbicacion(){
   try{
     const j=await jsonp(SCRIPT_URL+'?sheet=UBICACION&t='+Date.now());
@@ -470,50 +821,36 @@ async function cargarUbicacion(){
   }catch(e){document.getElementById('ubic-inspectores-list').innerHTML='<div class="empty-state">Error de conexion</div>';}
 }
 
+function filtrarFechaUbic(f,btn){
+  filtroFechaUbic=f;
+  document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderUbicacionSemana();
+}
+
+function getPeriodo(){
+  if(filtroFechaUbic==='semana')return{ini:inicioSemana(0),fin:finSemana(0)};
+  if(filtroFechaUbic==='proxima')return{ini:inicioSemana(1),fin:finSemana(1)};
+  return{ini:'2000-01-01',fin:'2099-12-31'};
+}
+
+function getFrentesUnicos(nombre, periodoOverride){
+  const p = periodoOverride || getPeriodo();
+  const frentes = ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin));
+  const actividadesUnicas = [...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
+  return actividadesUnicas.length;
+}
+
+function getFrentesHoy(nombre){
+  const h=hoy();
+  return ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoIncluyeHoy(r[U.fini],r[U.ffin]));
+}
+
 function rangoIncluyeHoy(fini,ffin){
   const h=hoy();
   const i=String(fini).split('T')[0];
   const f=String(ffin||fini).split('T')[0];
   return h>=i&&h<=f;
-}
-
-function getFrentesHoy(nombre){
-  return ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoIncluyeHoy(r[U.fini],r[U.ffin]));
-}
-
-function getFrentesUnicos(nombre){
-  const p=getPeriodo();
-  const frentes=ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin));
-  const actividadesUnicas=[...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
-  return actividadesUnicas.length;
-}
-
-function renderVistaDiaria(){
-  const wrap=document.getElementById('ubic-daily-wrap');
-  if(!wrap)return;
-  const dias=['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
-  const meses=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
-  const ahora=new Date();
-  const fechaLabel=dias[ahora.getDay()]+' '+ahora.getDate()+' '+meses[ahora.getMonth()]+' '+ahora.getFullYear();
-  const inspectoresExtra=[...new Set(ubicData
-    .filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin])&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
-    .map(r=>r[U.inspector]))];
-  const todosHoy=[...INSPECTORES_FIJOS,...inspectoresExtra];
-  const rows=todosHoy.map(nombre=>{
-    const color=colorInspector(nombre);
-    const frentes=getFrentesHoy(nombre);
-    if(!frentes.length){
-      return`<div class="daily-row"><div class="daily-dot" style="background:#E5E5EA"></div><div><div class="daily-name">${nombre}</div><div class="daily-sin">Sin asignacion hoy</div></div></div>`;
-    }
-    const actividades=[...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
-    const actHTML=actividades.map(act=>{
-      const rutasFrente=frentes.filter(r=>String(r[U.actividad]||'').trim()===act);
-      const rutas=rutasFrente.map(r=>(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec. '+r[U.sec]:'')).filter(Boolean).join(' · ');
-      return`<div style="margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#1C1C1E">${act}</span>${rutas?'<br><span style="font-size:11px;color:#6D6D72">'+rutas+'</span>':''}</div>`;
-    }).join('');
-    return`<div class="daily-row"><div class="daily-dot" style="background:${color}"></div><div style="flex:1"><div class="daily-name">${nombre}</div><div class="daily-actividad">${actHTML}</div></div></div>`;
-  }).join('');
-  wrap.innerHTML=`<div class="daily-wrap"><div class="daily-title">Hoy — ${fechaLabel}</div>${rows}</div>`;
 }
 
 function switchUbicTab(tab){
@@ -539,18 +876,37 @@ function renderVistaDiariaHoy(){
   const meses=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
   const ahora=new Date();
   const fechaLabel=dias[ahora.getDay()]+' '+ahora.getDate()+' '+meses[ahora.getMonth()]+' '+ahora.getFullYear();
-  const inspectoresExtra=[...new Set(ubicData.filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin])&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector])).map(r=>r[U.inspector]))];
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin])&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
   const todosHoy=[...INSPECTORES_FIJOS,...inspectoresExtra];
   const colores={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};
   const rows=todosHoy.map(nombre=>{
     const col=colores[nombre]||'#3B6D11';
     const frentes=ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoIncluyeHoy(r[U.fini],r[U.ffin]));
-    if(!frentes.length)return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;opacity:0.5;display:flex;align-items:center;gap:10px"><div style="width:10px;height:10px;border-radius:50%;background:#C7C7CC;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:600;color:#6D6D72">${nombre}</div><div style="font-size:11px;color:#C7C7CC;font-style:italic">Sin asignacion hoy</div></div></div>`;
+    if(!frentes.length){
+      return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;opacity:0.5;display:flex;align-items:center;gap:10px">
+        <div style="width:10px;height:10px;border-radius:50%;background:#C7C7CC;flex-shrink:0"></div>
+        <div><div style="font-size:13px;font-weight:600;color:#6D6D72">${nombre}</div>
+        <div style="font-size:11px;color:#C7C7CC;font-style:italic">Sin asignacion hoy</div></div>
+      </div>`;
+    }
     const actividades=[...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
     const numFrentes=actividades.length;
     const badge=numFrentes>1?`<span style="font-size:10px;background:#FFF3E0;color:#7A4500;padding:2px 7px;border-radius:10px;font-weight:600">${numFrentes} frentes</span>`:`<span style="font-size:10px;background:#EBF3FB;color:#1F3864;padding:2px 7px;border-radius:10px;font-weight:600">1 frente</span>`;
-    const actHTML=actividades.map(act=>{const rutas=frentes.filter(r=>String(r[U.actividad]||'').trim()===act).map(r=>(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec.'+r[U.sec]:'')).filter(Boolean).join(' · ');return`<div style="margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#1C1C1E">${act}</span>${rutas?'<br><span style="font-size:11px;color:#6D6D72">'+rutas+'</span>':''}</div>`;}).join('');
-    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div><div style="font-size:13px;font-weight:600;color:#1C1C1E;flex:1">${nombre}</div>${badge}</div><div style="padding-left:18px">${actHTML}</div></div>`;
+    const actHTML=actividades.map(act=>{
+      const rutas=frentes.filter(r=>String(r[U.actividad]||'').trim()===act)
+        .map(r=>(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec.'+r[U.sec]:'')).filter(Boolean).join(' · ');
+      return`<div style="margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#1C1C1E">${act}</span>${rutas?'<br><span style="font-size:11px;color:#6D6D72">'+rutas+'</span>':''}</div>`;
+    }).join('');
+    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
+        <div style="font-size:13px;font-weight:600;color:#1C1C1E;flex:1">${nombre}</div>
+        ${badge}
+      </div>
+      <div style="padding-left:18px">${actHTML}</div>
+    </div>`;
   }).join('');
   wrap.innerHTML=`<div style="font-size:11px;color:#6D6D72;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:10px;padding-left:4px">${fechaLabel}</div>${rows}`;
 }
@@ -559,28 +915,67 @@ function renderUbicacionSemana(){
   const wrap=document.getElementById('ubic-semana-lista');
   if(!wrap)return;
   const p=getPeriodo();
-  const inspectoresExtra=[...new Set(ubicData.filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector])).map(r=>r[U.inspector]))];
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
   const todos=[...INSPECTORES_FIJOS,...inspectoresExtra];
   const colores={'Jaime Vargas':'#185FA5','Juan Diego Aguero':'#1D9E75','Jairo Mendez':'#BA7517','Robnel Ugalde':'#D85A30','Jose A. Madriz':'#534AB7'};
   wrap.innerHTML=todos.map(nombre=>{
     const col=colores[nombre]||'#3B6D11';
+    const frentes=ubicData.filter(r=>String(r[U.inspector])===nombre&&rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin));
     const numFrentes=getFrentesUnicos(nombre);
     const subtext=numFrentes>0?numFrentes+' frente'+(numFrentes>1?'s distintos':''):'Sin asignacion este periodo';
-    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;opacity:${numFrentes>0?'1':'0.5'}"><div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1C1C1E">${nombre}</div><div style="font-size:11px;color:${numFrentes>0?'#1C1C1E':'#C7C7CC'}">${subtext}</div></div><span style="font-size:18px;color:#C7C7CC">›</span></div>`;
+    const subtextColor=numFrentes>0?'#1C1C1E':'#C7C7CC';
+    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;opacity:${numFrentes>0?'1':'0.5'}" onclick="verInspectorUbic('${nombre}')">
+      <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:#1C1C1E">${nombre}</div>
+        <div style="font-size:11px;color:${subtextColor}">${subtext}</div>
+      </div>
+      <span style="font-size:18px;color:#C7C7CC">›</span>
+    </div>`;
   }).join('');
 }
 
-function filtrarFechaUbic(f,btn){
-  filtroFechaUbic=f;
-  document.querySelectorAll('#page-ubicacion .filtro-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderUbicacionSemana();
-}
+function renderVistaDiaria(){
+  const wrap=document.getElementById('ubic-daily-wrap');
+  if(!wrap)return;
+  const dias=['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','set','oct','nov','dic'];
+  const ahora=new Date();
+  const diaNombre=dias[ahora.getDay()];
+  const fechaLabel=diaNombre+' '+ahora.getDate()+' '+meses[ahora.getMonth()]+' '+ahora.getFullYear();
 
-function getPeriodo(){
-  if(filtroFechaUbic==='semana')return{ini:inicioSemana(0),fin:finSemana(0)};
-  if(filtroFechaUbic==='proxima')return{ini:inicioSemana(1),fin:finSemana(1)};
-  return{ini:'2000-01-01',fin:'2099-12-31'};
+  const inspectoresExtra=[...new Set(ubicData
+    .filter(r=>rangoIncluyeHoy(r[U.fini],r[U.ffin])&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
+    .map(r=>r[U.inspector]))];
+  const todosHoy=[...INSPECTORES_FIJOS,...inspectoresExtra];
+
+  const rows=todosHoy.map(nombre=>{
+    const color=colorInspector(nombre);
+    const frentes=getFrentesHoy(nombre);
+    if(!frentes.length){
+      return`<div class="daily-row">
+        <div class="daily-dot" style="background:#E5E5EA"></div>
+        <div><div class="daily-name">${nombre}</div><div class="daily-sin">Sin asignacion hoy</div></div>
+      </div>`;
+    }
+    const actividades=[...new Set(frentes.map(r=>String(r[U.actividad]||'').trim()))].filter(a=>a);
+    const actHTML=actividades.map(act=>{
+      const rutasFrente=frentes.filter(r=>String(r[U.actividad]||'').trim()===act);
+      const rutas=rutasFrente.map(r=>(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec. '+r[U.sec]:'')).filter(Boolean).join(' · ');
+      return`<div style="margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#1C1C1E">${act}</span>${rutas?'<br><span style="font-size:11px;color:#6D6D72">'+rutas+'</span>':''}</div>`;
+    }).join('');
+    return`<div class="daily-row">
+      <div class="daily-dot" style="background:${color}"></div>
+      <div style="flex:1"><div class="daily-name">${nombre}</div><div class="daily-actividad">${actHTML}</div></div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML=`<div class="daily-wrap">
+    <div class="daily-title">Hoy — ${fechaLabel}</div>
+    ${rows}
+  </div>`;
 }
 
 function getFrentesInspector(nombre){
@@ -590,15 +985,21 @@ function getFrentesInspector(nombre){
 
 function renderUbicacionInspectores(){
   const p=getPeriodo();
-  let label=filtroFechaUbic==='semana'?'Esta semana':filtroFechaUbic==='proxima'?'Proxima semana':'Historial';
+  let label='';
+  if(filtroFechaUbic==='semana')label='Esta semana';
+  else if(filtroFechaUbic==='proxima')label='Proxima semana';
+  else label='Historial';
   const totalFrentes=ubicData.filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)).length;
   document.getElementById('ubic-count').textContent=label+' - '+totalFrentes+' frente'+(totalFrentes!==1?'s':'')+' asignados';
   const list=document.getElementById('ubic-inspectores-list');
+  // Inspectores adicionales con frentes en el periodo
   const inspectoresExtra=[...new Set(ubicData
     .filter(r=>rangoEnPeriodo(r[U.fini],r[U.ffin],p.ini,p.fin)&&r[U.inspector]&&!INSPECTORES_FIJOS.includes(r[U.inspector]))
     .map(r=>r[U.inspector]))];
   const todosInspectores=[...INSPECTORES_FIJOS,...inspectoresExtra];
-  list.innerHTML=todosInspectores.map(nombre=>{
+  const list2=document.getElementById('ubic-lista');
+  if(!list2)return;
+  list2.innerHTML=todosInspectores.map(nombre=>{
     const frentes=getFrentesInspector(nombre);
     const color=colorInspector(nombre);
     const ini=inicialesInspector(nombre);
@@ -620,8 +1021,10 @@ function renderUbicacionInspectores(){
 
 function verInspector(nombre){
   inspectorActual=nombre;
+  const color=colorInspector(nombre);
   document.getElementById('ubic-insp-titulo').textContent=nombre.split(' ')[0];
   document.getElementById('ubic-insp-nombre-header').textContent=nombre;
+  document.getElementById('ubic-insp-nombre-header').style.color='#fff';
   renderDetalleInspector(nombre);
   showPage('page-ubicacion-inspector');
 }
@@ -631,16 +1034,19 @@ function renderDetalleInspector(nombre){
   const color=colorInspector(nombre);
   const container=document.getElementById('ubic-inspector-detail');
   if(!frentes.length){
-    container.innerHTML='<div class="empty-state" style="margin-top:20px">Sin frentes asignados para este periodo</div>';
+    container.innerHTML='<div class="empty-state" style="margin-top:20px">Sin frentes asignados para este periodo</div>'+
+      '<button class="btn-primary" onclick="abrirNuevaUbicacionParaInspector()" style="margin-top:16px">+ Asignar frente</button>';
     return;
   }
   const sorted=[...frentes].sort((a,b)=>String(a[U.fini]).localeCompare(String(b[U.fini])));
   container.innerHTML=sorted.map(r=>{
+    const idx=ubicData.indexOf(r);
     const fini=String(r[U.fini]).split('T')[0];
     const ffin=String(r[U.ffin]||r[U.fini]).split('T')[0];
-    const rango=fini===ffin?fmtFShort(fini):fmtFShort(fini)+' a '+fmtFShort(ffin);
+    const mismaFecha=fini===ffin;
+    const rango=mismaFecha?fmtFShort(fini):fmtFShort(fini)+' a '+fmtFShort(ffin);
     const rutaInfo=(r[U.ruta]?'Ruta '+r[U.ruta]:'')+(r[U.sec]?' / Sec. '+r[U.sec]:'');
-    return'<div class="frente-card">'+
+    return'<div class="frente-card" onclick="editarUbicacion('+idx+')">'+
       '<div class="frente-header">'+
         '<span class="frente-rango" style="background:'+color+'">'+rango+'</span>'+
         '<span class="frente-contrato">'+labelContrato(r[U.contrato])+'</span>'+
@@ -648,40 +1054,158 @@ function renderDetalleInspector(nombre){
       (rutaInfo?'<div class="frente-ubicacion"><span class="frente-ruta-badge" style="background:'+color+'20;color:'+color+'">'+rutaInfo+'</span></div>':'')+
       '<div class="frente-actividad">'+(r[U.actividad]||'Sin actividad')+'</div>'+
       (r[U.obs]?'<div class="frente-obs">'+r[U.obs]+'</div>':'')+
+      '<div class="frente-edit">Tocar para editar</div>'+
     '</div>';
   }).join('');
 }
 
+function abrirNuevaUbicacion(){
+  inspectorActual=null;
+  resetFormUbic();
+  document.getElementById('ubic-form-label').textContent='Asignar frente';
+  document.getElementById('btn-guardar-ubic').textContent='Guardar asignacion';
+  document.getElementById('btn-eliminar-ubic').style.display='none';
+  showPage('page-nueva-ubic');
+}
+
+function abrirNuevaUbicacionParaInspector(){
+  resetFormUbic();
+  if(inspectorActual)document.getElementById('nubic-inspector').value=inspectorActual;
+  document.getElementById('ubic-form-label').textContent='Asignar frente';
+  document.getElementById('btn-guardar-ubic').textContent='Guardar asignacion';
+  document.getElementById('btn-eliminar-ubic').style.display='none';
+  showPage('page-nueva-ubic');
+}
+
+function resetFormUbic(){
+  editUbicRowIndex=null;
+  document.getElementById('nubic-fecha-ini').value=hoy();
+  document.getElementById('nubic-fecha-fin').value=hoy();
+  document.getElementById('nubic-inspector').value='';
+  document.getElementById('nubic-otro-inspector-box').style.display='none';
+  document.getElementById('nubic-otro-inspector-texto').value='';
+  document.getElementById('nubic-ruta').value='';
+  document.getElementById('nubic-seccion').innerHTML='<option value="">Seleccionar...</option>';
+  document.getElementById('nubic-desc-box').style.display='none';
+  document.getElementById('nubic-actividad').value='';
+  document.getElementById('nubic-otra-box').style.display='none';
+  document.getElementById('nubic-otra-texto').value='';
+  document.getElementById('nubic-contrato').value='';
+  document.getElementById('nubic-obs').value='';
+}
+
+function volverDeFormUbic(){
+  if(inspectorActual)showPage('page-ubicacion-inspector');
+  else showPage('page-ubicacion');
+}
+
+function editarUbicacion(idx){
+  const r=ubicData[idx];if(!r)return;
+  editUbicRowIndex=idx;
+  document.getElementById('nubic-fecha-ini').value=String(r[U.fini]).split('T')[0];
+  document.getElementById('nubic-fecha-fin').value=String(r[U.ffin]||r[U.fini]).split('T')[0];
+  const inspNombre=r[U.inspector]||'';
+  const inspFijo=INSPECTORES_FIJOS.includes(inspNombre);
+  if(inspFijo){
+    document.getElementById('nubic-inspector').value=inspNombre;
+    document.getElementById('nubic-otro-inspector-box').style.display='none';
+  }else{
+    document.getElementById('nubic-inspector').value='__otro__';
+    document.getElementById('nubic-otro-inspector-box').style.display='flex';
+    document.getElementById('nubic-otro-inspector-texto').value=inspNombre;
+  }
+  document.getElementById('nubic-ruta').value=r[U.ruta]||'';
+  actualizarSeccionesUbic();
+  setTimeout(()=>{document.getElementById('nubic-seccion').value=r[U.sec]||'';mostrarDescUbic();},200);
+  const actVal=r[U.actividad]||'';
+  const sel=document.getElementById('nubic-actividad');
+  let found=false;
+  for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===actVal){sel.value=actVal;found=true;break;}}
+  if(!found&&actVal){sel.value='__otra__';document.getElementById('nubic-otra-box').style.display='flex';document.getElementById('nubic-otra-texto').value=actVal;}
+  document.getElementById('nubic-contrato').value=r[U.contrato]||'';
+  document.getElementById('nubic-obs').value=r[U.obs]||'';
+  document.getElementById('ubic-form-label').textContent='Editar frente';
+  document.getElementById('btn-guardar-ubic').textContent='Actualizar asignacion';
+  document.getElementById('btn-eliminar-ubic').style.display='block';
+  showPage('page-nueva-ubic');
+}
+
+async function guardarUbicacion(){
+  const inspectorSel=document.getElementById('nubic-inspector').value;
+  const inspector=inspectorSel==='__otro__'?document.getElementById('nubic-otro-inspector-texto').value.trim():inspectorSel;
+  const ruta=document.getElementById('nubic-ruta').value;
+  const fini=document.getElementById('nubic-fecha-ini').value;
+  const ffin=document.getElementById('nubic-fecha-fin').value;
+  const selAct=document.getElementById('nubic-actividad');
+  let actividad=selAct.value==='__otra__'?document.getElementById('nubic-otra-texto').value.trim():selAct.value;
+  if(!inspector||!ruta||!actividad||!fini){toast('Inspector, fechas, ruta y actividad son obligatorios',true);return;}
+  if(ffin&&ffin<fini){toast('La fecha fin no puede ser anterior a la fecha inicio',true);return;}
+  const btn=document.getElementById('btn-guardar-ubic');btn.disabled=true;btn.textContent='Guardando...';
+  const row=[fini,ffin||fini,inspector,ruta,document.getElementById('nubic-seccion').value,actividad,document.getElementById('nubic-contrato').value,document.getElementById('nubic-obs').value];
+  try{
+    if(editUbicRowIndex!==null){
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editUbicRowIndex+1,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
+      ubicData[editUbicRowIndex]=row;
+    }else{
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
+      ubicData.push(row);
+    }
+    toast('Asignacion guardada',false,true);
+    const insp=inspector;
+    setTimeout(()=>{
+      inspectorActual=insp;
+      renderUbicacionInspectores();
+      renderDetalleInspector(insp);
+      showPage('page-ubicacion-inspector');
+    },800);
+  }catch(e){toast('Error de conexion',true);}
+  btn.disabled=false;btn.textContent=editUbicRowIndex!==null?'Actualizar asignacion':'Guardar asignacion';
+}
+
+async function eliminarUbicacion(){
+  if(!confirm('Eliminar esta asignacion?'))return;
+  if(editUbicRowIndex===null)return;
+  const insp=ubicData[editUbicRowIndex][U.inspector];
+  const row=['ELIMINADO','','','','','','',''];
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({row,updateRow:editUbicRowIndex+1,sheet:'UBICACION'}),headers:{'Content-Type':'application/json'}});
+    ubicData[editUbicRowIndex]=row;
+    toast('Asignacion eliminada');
+    setTimeout(()=>{
+      inspectorActual=insp;
+      renderUbicacionInspectores();
+      renderDetalleInspector(insp);
+      showPage('page-ubicacion-inspector');
+    },800);
+  }catch(e){toast('Error de conexion',true);}
+}
+
+
 function abrirADSFiltrado(filtro){
   abrirADS();
   filtroADS=filtro;
-  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{b.classList.remove('on');if(norm(b.textContent)===norm(filtro)||filtro==='Todos'&&b.textContent==='Todos')b.classList.add('on');});
+  document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>{
+    b.classList.remove('on');
+    if(filtro==='Todos'&&b.textContent.trim()==='Todos')b.classList.add('on');
+    else if(filtro!=='Todos'&&norm(b.textContent).includes(norm(filtro)))b.classList.add('on');
+  });
   renderADS();
 }
+
 function abrirProyectosFiltrado(filtro){
   abrirProyectos();
   filtroProyEstado=filtro;
-  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{b.classList.remove('on');if(norm(b.textContent).includes(norm(filtro)))b.classList.add('on');});
+  document.querySelectorAll('#page-proyectos .filtro-btn').forEach(b=>{
+    b.classList.remove('on');
+    if(filtro==='Todos'&&b.textContent.trim()==='Todos')b.classList.add('on');
+    else if(filtro!=='Todos'&&norm(b.textContent).includes(norm(filtro)))b.classList.add('on');
+  });
   renderProyectos();
 }
 
-// Log de acceso
-async function registrarAcceso(){
-  try{
-    const ahora=new Date();
-    const fecha=ahora.toISOString().split('T')[0];
-    const hora=ahora.toLocaleTimeString('es-CR');
-    const row=[fecha,hora,'Consulta','Eric/Alexander','Acceso a consulta.html'];
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',
-      body:JSON.stringify({row,sheet:'ACCESOS'}),
-      headers:{'Content-Type':'application/json'}});
-  }catch(e){console.log('Log error',e);}
-}
-
-registrarAcceso();
 cargarDatos(false);
 cargarRutas();
-cargarUbicacion();
+cargarItemsUbic();
 setInterval(()=>cargarDatos(false),5*60*1000);
 </script>
 </body>
