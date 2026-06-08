@@ -926,7 +926,7 @@ function renderUbicacionSemana(){
     const numFrentes=getFrentesUnicos(nombre);
     const subtext=numFrentes>0?numFrentes+' frente'+(numFrentes>1?'s distintos':''):'Sin asignacion este periodo';
     const subtextColor=numFrentes>0?'#1C1C1E':'#C7C7CC';
-    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;opacity:${numFrentes>0?'1':'0.5'}" onclick="verInspectorUbic('${nombre}')">
+    return`<div style="background:#fff;border-radius:10px;border:0.5px solid #E5E5EA;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;opacity:${numFrentes>0?'1':'0.5'}" onclick="verInspector('${nombre}')">
       <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:600;color:#1C1C1E">${nombre}</div>
