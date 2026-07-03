@@ -667,7 +667,7 @@ function renderADS(){
   document.getElementById('ads-count').textContent=rows.length+' solicitud'+(rows.length!==1?'es':'');
   const list=document.getElementById('ads-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  const listEl=document.getElementById('ubic-lista'); if(listEl) listEl.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
+  list.innerHTML=[...rows].sort((a,b)=>parseFecha(b[A.fecha])-parseFecha(a[A.fecha])).map(r=>{
     const idx=adsData.indexOf(r);const estado=String(r[A.estado]||'Pendiente');const color=cardColor(estado,String(r[A.prior]));const amparo=esAmparo(r,[A.solic,A.rec,A.obs]);
     return'<div class="item-card '+color+'" onclick="verADS('+idx+')">'+
       '<div class="item-title">'+( r[A.solic]||'Sin descripcion')+'</div>'+
