@@ -748,7 +748,7 @@ function renderProyectos(){
   document.getElementById('proy-count').textContent=rows.length+' proyecto'+(rows.length!==1?'s':'');
   const list=document.getElementById('proy-list');
   if(!rows.length){list.innerHTML='<div class="empty-state">Sin resultados</div>';return;}
-  const listEl=document.getElementById('ubic-lista'); if(listEl) listEl.innerHTML=rows.map(r=>{
+  list.innerHTML=rows.map(r=>{
     const estado=String(r[P.estado]||'Pendiente');const prioridad=String(r[P.prior]||'Media');const color=cardColor(estado,prioridad);
     const costo=r[P.costo]&&String(r[P.costo])!==''?fmt(r[P.costo]):'Sin monto estimado';
     return'<div class="item-card '+color+' nocursor">'+
