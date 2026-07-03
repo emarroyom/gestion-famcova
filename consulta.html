@@ -352,18 +352,56 @@ function actualizarStats(){
 function abrirADS(){showPage('page-ads');if(!adsData.length)cargarDatos().then(renderADS);else renderADS();}
 function filtrarADS(f,btn){filtroADS=f;document.querySelectorAll('#page-ads .filtro-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderADS();}
 function toggleAmparo(){soloAmparo=!soloAmparo;document.getElementById('btn-amparo').classList.toggle('on',soloAmparo);renderADS();}
-function parseFecha(v){
-  if(!v)return 0;
-  const s=String(v).trim();
-  const meses={'ene':0,'feb':1,'mar':2,'abr':3,'may':4,'jun':5,'jul':6,'ago':7,'set':8,'sep':8,'oct':9,'nov':10,'dic':11};
-  const m1=s.match(/^(\d{1,2})-([a-z]{3,4})-(\d{2,4})$/i);
-  if(m1){const d=parseInt(m1[1]);const mes=meses[m1[2].toLowerCase().slice(0,3)]??0;const anio=parseInt(m1[3])<100?2000+parseInt(m1[3]):parseInt(m1[3]);return new Date(anio,mes,d).getTime();}
-  const m2=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(m2)return new Date(parseInt(m2[1]),parseInt(m2[2])-1,parseInt(m2[3])).getTime();
-  if(s.includes('T'))return new Date(s).getTime();
-  const m3=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if(m3){const anio=parseInt(m3[3])<100?2000+parseInt(m3[3]):parseInt(m3[3]);return new Date(anio,parseInt(m3[2])-1,parseInt(m3[1])).getTime();}
-  return 0;
+function parseFecha(str){
+  if(!str) return new Date(0);
+  str = String(str).trim();
+
+  // Formato 1: ISO completo (2026-01-13T06:00:00.000Z)
+  if(str.includes('T') && str.includes('Z')){
+    const d = new Date(str);
+    return isNaN(d) ? new Date(0) : d;
+  }
+
+  // Formato 2: ISO simple (2026-01-13)
+  if(/^\d{4}-\d{2}-\d{2}$/.test(str)){
+    const d = new Date(str + 'T12:00:00');
+    return isNaN(d) ? new Date(0) : d;
+  }
+
+  // Formato 3: dd/mm/yy o dd/mm/yyyy
+  if(str.includes('/')){
+    const p = str.split('/');
+    if(p.length === 3){
+      let [dd, mm, yy] = p.map(x=>parseInt(x,10));
+      if(yy < 100) yy += 2000;
+      const d = new Date(yy, mm-1, dd, 12, 0, 0);
+      return isNaN(d) ? new Date(0) : d;
+    }
+  }
+
+  // Formato 4: dd-mmm-yy con meses en español (maneja sep Y sept)
+  if(str.includes('-')){
+    const meses = {
+      'ene':0,'feb':1,'mar':2,'abr':3,'may':4,'jun':5,
+      'jul':6,'ago':7,'sep':8,'sept':8,'set':8,
+      'oct':9,'nov':10,'dic':11
+    };
+    const p = str.split('-');
+    if(p.length === 3){
+      const dd = parseInt(p[0],10);
+      const mesTxt = p[1].toLowerCase().replace('.','');
+      let yy = parseInt(p[2],10);
+      if(yy < 100) yy += 2000;
+      const mm = meses[mesTxt];
+      if(mm !== undefined && !isNaN(dd) && !isNaN(yy)){
+        return new Date(yy, mm, dd, 12, 0, 0);
+      }
+    }
+  }
+
+  // Fallback: intento directo
+  const d = new Date(str);
+  return isNaN(d) ? new Date(0) : d;
 }
 function renderADS(){
   const q=(document.getElementById('ads-search').value||'').toLowerCase();
